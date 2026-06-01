@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🍳 AI Recipe Inventor PRO — RAG Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Outfit", sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: #e0e7ff;
+      min-height: 100vh;
+    }
+
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.15;
+      z-index: 0;
+    }
+
+    .orb-1 { width: 400px; height: 400px; top: -100px; left: -100px; background: #6366f1; }
+    .orb-2 { width: 300px; height: 300px; bottom: 50px; right: -50px; background: #ec4899; }
+    .orb-3 { width: 250px; height: 250px; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #8b5cf6; }
+
+    /* ── Header ──────────────────────────────────────────────────────────── */
+    header {
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid rgba(224, 231, 255, 0.1);
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 1400px;
+      margin: 0 auto;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stats-header {
+      display: flex;
+      gap: 20px;
+      margin-left: auto;
+      font-size: 12px;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 6px;
+    }
+
+    .stat-badge .value {
+      font-weight: 600;
+      color: #c7d2fe;
+    }
+
+    /* ── Tab Navigation ──────────────────────────────────────────────────── */
+    .tabs-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(224, 231, 255, 0.1);
+      padding: 0 20px;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      color: #a5b4fc;
+      cursor: pointer;
+      font-family: "Outfit", sans-serif;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: #c7d2fe;
+    }
+
+    .tab-btn.active {
+      color: #6366f1;
+      border-bottom-color: #6366f1;
+    }
+
+    /* ── Main Content ────────────────────────────────────────────────────── */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Glass Card ──────────────────────────────────────────────────────── */
+    .glass-card {
+      background: rgba(30, 27, 75, 0.5);
+      border: 1px solid rgba(224, 231, 255, 0.1);
+      border-radius: 12px;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+      margin-bottom: 20px;
+    }
+
+    /* ── Features Grid ──────────────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .feature-card {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .feature-card:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #c7d2fe;
+    }
+
+    .feature-desc {
+      font-size: 12px;
+      color: #a5b4fc;
+    }
+
+    /* ── Input Sections ──────────────────────────────────────────────────── */
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #c7d2fe;
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a5b4fc;
+    }
+
+    input, select, textarea {
+      background: rgba(30, 27, 75, 0.6);
+      border: 1px solid rgba(224, 231, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #e0e7ff;
+      font-family: "Outfit", sans-serif;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      background: rgba(30, 27, 75, 0.8);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    /* ── Buttons ──────────────────────────────────────────────────────────── */
+    .btn {
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      font-family: "Outfit", sans-serif;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: rgba(99, 102, 241, 0.1);
+      color: #c7d2fe;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(99, 102, 241, 0.2);
+    }
+
+    /* ── Recipe Display ──────────────────────────────────────────────────── */
+    .recipes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 16px;
+    }
+
+    .recipe-card {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .recipe-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 8px;
+    }
+
+    .recipe-title {
+      font-weight: 600;
+      color: #c7d2fe;
+      font-size: 14px;
+    }
+
+    .recipe-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: #a5b4fc;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .recipe-meta span {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .recipe-ingredients {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .recipe-ingredients strong {
+      color: #c7d2fe;
+    }
+
+    .recipe-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .recipe-actions button {
+      flex: 1;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    /* ── Shopping List ──────────────────────────────────────────────────── */
+    .shopping-list {
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .shopping-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      background: rgba(30, 27, 75, 0.4);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .shopping-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .shopping-item.checked {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
+
+    /* ── Nutrition Info ──────────────────────────────────────────────────── */
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .nutrition-item {
+      background: rgba(30, 27, 75, 0.4);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .nutrition-value {
+      font-weight: 600;
+      color: #c7d2fe;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+
+    .nutrition-label {
+      color: #a5b4fc;
+      font-size: 10px;
+    }
+
+    /* ── Loading State ──────────────────────────────────────────────────── */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+      color: #a5b4fc;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(224, 231, 255, 0.2);
+      border-top-color: #6366f1;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Allergen Warning ────────────────────────────────────────────────── */
+    .allergen-warning {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 12px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .allergen-warning.success {
+      background: rgba(34, 197, 94, 0.1);
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    /* ── Preferences ────────────────────────────────────────────────────── */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(30, 27, 75, 0.4);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    .checkbox-item:has(input:checked) {
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.5);
+    }
+
+    /* ── Responsive ──────────────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .stats-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        margin-left: 0;
+        margin-top: 12px;
+        gap: 8px;
+      }
+
+      .header-top {
+        flex-direction: column;
+        align-items: start;
+      }
+
+      .nutrition-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .recipes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="header-top">
+      <h1>🍳 AI Recipe Inventor PRO</h1>
+      <div class="stats-header">
+        <div class="stat-badge"><span class="value" id="statRecipes">—</span> Rețete</div>
+        <div class="stat-badge"><span class="value" id="statCuisines">—</span> Bucătării</div>
+        <div class="stat-badge"><span class="value" id="statMode">RAG v2</span> Engine</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <button class="tab-btn active" data-tab="creator">✨ Creator</button>
+      <button class="tab-btn" data-tab="chatbot">💬 Chatbot</button>
+      <button class="tab-btn" data-tab="shopping">🛒 Shopping List</button>
+      <button class="tab-btn" data-tab="nutrition">📊 Nutrition</button>
+      <button class="tab-btn" data-tab="about">ℹ️ About</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- ── TAB: Creator ────────────────────────────────────────────────────── -->
+    <div class="tab-content active" id="creator-tab">
+      <div class="glass-card">
+        <h2 class="section-title">🎯 Generator Rețete Avansat</h2>
+
+        <!-- Features Showcase -->
+        <div class="features-grid">
+          <div class="feature-card" onclick="this.style.opacity='0.7'">
+            <div class="feature-icon">🔍</div>
+            <div class="feature-title">RAG Hibrid</div>
+            <div class="feature-desc">BM25 + TF-IDF + MMR</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <div class="feature-title">13 Bucătării</div>
+            <div class="feature-desc">De la Italiană la Japoneză</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">289 Rețete</div>
+            <div class="feature-desc">Indexate și Optimizate</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <div class="feature-title">Cosine Similarity</div>
+            <div class="feature-desc">Matchare Vectorială</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🎯</div>
+            <div class="feature-title">Smart Filtering</div>
+            <div class="feature-desc">Vreme, Dificultate, Alergenți</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <div class="feature-title">Budget Calculator</div>
+            <div class="feature-desc">Estimare Cost Per Rație</div>
+          </div>
+        </div>
+
+        <!-- Preferences Section -->
+        <h3 class="section-title">🎨 Preferințe Dietetice</h3>
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox" id="pref-vegan"> 🌱 Vegan
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="pref-gluten-free"> 🌾 Fără Gluten
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="pref-dairy-free"> 🥛 Fără Lactoz
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="pref-low-carb"> 🥗 Low-Carb
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="pref-high-protein"> 💪 High-Protein
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" id="pref-quick"> ⚡ Sub 30 min
+          </label>
+        </div>
+
+        <!-- Ingredients Input -->
+        <h3 class="section-title">🥘 Ingrediente Disponibile</h3>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Introduceți ingredientele</label>
+            <textarea id="ingredientInput" placeholder="Ex: pui, usturoi, lămâie, mărar..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <h3 class="section-title">🔧 Filtre Avansate</h3>
+        <div class="input-row">
+          <div class="input-group">
+            <label>Bucătărie</label>
+            <select id="cuisineFilter">
+              <option value="">Orice</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Timp (minute)</label>
+            <input type="number" id="timeFilter" placeholder="Ex: 30" min="0" max="180">
+          </div>
+          <div class="input-group">
+            <label>Dificultate</label>
+            <select id="difficultyFilter">
+              <option value="">Orice</option>
+              <option value="Easy">Ușor</option>
+              <option value="Medium">Mediu</option>
+              <option value="Hard">Dificil</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label>Budget (RON)</label>
+            <input type="number" id="budgetFilter" placeholder="Fără limită" min="0" max="500">
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="input-row">
+          <button class="btn" onclick="generateRecipes()">🚀 Generează Rețete</button>
+          <button class="btn btn-secondary" onclick="clearFilters()">🔄 Reset</button>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="resultsContainer"></div>
+    </div>
+
+    <!-- ── TAB: Chatbot ─────────────────────────────────────────────────── -->
+    <div class="tab-content" id="chatbot-tab">
+      <div class="glass-card">
+        <h2 class="section-title">💬 Chatbot RAG Conversațional</h2>
+        <p style="color: #a5b4fc; margin-bottom: 16px;">Vorbește cu asistentul tău de rețete. Spune-i ce ai în cămară și te ajută să găsești rețete perfecte!</p>
+        <iframe id="chatbotFrame" style="width: 100%; height: 600px; border: 1px solid rgba(224, 231, 255, 0.1); border-radius: 12px; background: rgba(30, 27, 75, 0.4);" src="/static/chatbot.html"></iframe>
+      </div>
+    </div>
+
+    <!-- ── TAB: Shopping List ───────────────────────────────────────────── -->
+    <div class="tab-content" id="shopping-tab">
+      <div class="glass-card">
+        <h2 class="section-title">🛒 Lista de Cumpărături</h2>
+        <div class="shopping-list" id="shoppingList">
+          <p style="color: #a5b4fc; text-align: center; padding: 20px;">Generează o rețetă ca să adaugi ingredientele la lista de cumpărături!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: Nutrition ───────────────────────────────────────────────── -->
+    <div class="tab-content" id="nutrition-tab">
+      <div class="glass-card">
+        <h2 class="section-title">📊 Informații Nutriționale</h2>
+        <p style="color: #a5b4fc; margin-bottom: 16px;">Analizează valorile nutriționale ale rețetelor generate. Calories, proteine, grasimi, carbohidrați.</p>
+        <div id="nutritionContainer" style="text-align: center; padding: 40px; color: #a5b4fc;">
+          ℹ️ Generează o rețetă ca să vezi valorile nutriționale
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: About ───────────────────────────────────────────────────── -->
+    <div class="tab-content" id="about-tab">
+      <div class="glass-card">
+        <h2 class="section-title">ℹ️ Despre AI Recipe Inventor PRO</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div>
+            <h3 style="color: #c7d2fe; margin-bottom: 8px;">🔬 Tehnologie</h3>
+            <ul style="color: #a5b4fc; line-height: 1.6; font-size: 13px;">
+              <li>✅ <strong>BM25</strong> — Ranking probabilistic</li>
+              <li>✅ <strong>TF-IDF</strong> — Multi-field vectorization</li>
+              <li>✅ <strong>Cosine Similarity</strong> — Semantic matching</li>
+              <li>✅ <strong>MMR</strong> — Diversity re-ranking (λ=0.65)</li>
+              <li>✅ <strong>Query Expansion</strong> — 37 synonym groups</li>
+              <li>✅ <strong>Cuisine Detection</strong> — 12 detectors</li>
+            </ul>
+          </div>
+          <div>
+            <h3 style="color: #c7d2fe; margin-bottom: 8px;">📊 Statistici</h3>
+            <ul style="color: #a5b4fc; line-height: 1.6; font-size: 13px;">
+              <li>📚 289 rețete indexate</li>
+              <li>🌍 13 bucătării diferite</li>
+              <li>🔤 3161 cuvinte în vocabular</li>
+              <li>🎯 Reranking cu diversity</li>
+              <li>⚡ Zero-shot cuisine detection</li>
+              <li>💡 Explained recommendations</li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top: 20px; padding: 16px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; border: 1px solid rgba(99, 102, 241, 0.3);">
+          <p style="color: #c7d2fe; margin-bottom: 8px;"><strong>🚀 PRO Features:</strong></p>
+          <ul style="color: #a5b4fc; font-size: 12px;">
+            <li>✨ Chatbot conversațional cu memorie de context</li>
+            <li>🛒 Generator automat de lista de cumpărături</li>
+            <li>📊 Informații nutriționale per rație</li>
+            <li>💰 Estimare budget per ingredient</li>
+            <li>🌱 Filtrare după preferințe dietetice</li>
+            <li>🔐 Substituții de ingrediente (coming soon)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize
+    let currentRecipes = [];
+
+    // Load stats
+    async function loadStats() {
+      try {
+        const stats = await fetch('/api/stats').then(r => r.json());
+        document.getElementById('statRecipes').textContent = stats.total_recipes;
+        document.getElementById('statCuisines').textContent = stats.cuisines;
+      } catch (e) {
+        console.error('Failed to load stats:', e);
+      }
+    }
+
+    // Load cuisines for filter
+    async function loadCuisines() {
+      try {
+        const cuisines = await fetch('/api/cuisines').then(r => r.json());
+        const select = document.getElementById('cuisineFilter');
+        cuisines.forEach(cuisine => {
+          const option = document.createElement('option');
+          option.value = cuisine;
+          option.textContent = cuisine;
+          select.appendChild(option);
+        });
+      } catch (e) {
+        console.error('Failed to load cuisines:', e);
+      }
+    }
+
+    // Generate recipes
+    async function generateRecipes() {
+      const ingredients = document.getElementById('ingredientInput').value
+        .split(/[,\n]+/)
+        .map(i => i.trim().toLowerCase())
+        .filter(i => i.length > 2);
+
+      if (!ingredients.length) {
+        alert('Introduceți cel puțin un ingredient!');
+        return;
+      }
+
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = '<div class="loading"><div class="spinner"></div> Generez rețete...</div>';
+
+      try {
+        const response = await fetch('/api/invent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ingredients,
+            cuisine: document.getElementById('cuisineFilter').value || 'Any',
+            difficulty: document.getElementById('difficultyFilter').value || 'Any',
+            max_time: document.getElementById('timeFilter').value ? parseInt(document.getElementById('timeFilter').value) : null,
+            num_recipes: 6,
+            use_mmr: true,
+            mmr_lambda: 0.65
+          })
+        }).then(r => r.json());
+
+        currentRecipes = response.recipes;
+        displayRecipes(response.recipes);
+      } catch (e) {
+        container.innerHTML = `<div class="glass-card" style="color: #ef4444;">❌ Eroare: ${e.message}</div>`;
+      }
+    }
+
+    // Display recipes
+    function displayRecipes(recipes) {
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = `<h2 class="section-title" style="margin-top: 24px;">🍽️ ${recipes.length} Rețete Găsite</h2><div class="recipes-grid">` +
+        recipes.map((r, i) => `
+          <div class="recipe-card">
+            <div class="recipe-header">
+              <div>
+                <div class="recipe-title">${r.title}</div>
+                <div class="recipe-meta">
+                  <span>⏱️ ${r.time_minutes}min</span>
+                  <span>📊 ${r.difficulty}</span>
+                  <span>🌍 ${r.cuisine}</span>
+                </div>
+              </div>
+              <button class="btn-secondary" onclick="toggleFavorite(${i})" style="width: 32px; height: 32px; padding: 0;">♡</button>
+            </div>
+            <div class="recipe-ingredients">
+              <strong>🥘 Ingrediente:</strong><br/>
+              ${r.ingredients.slice(0, 8).join(', ')}${r.ingredients.length > 8 ? '...' : ''}
+            </div>
+            <div class="recipe-actions">
+              <button class="btn btn-secondary" onclick="addToShoppingList(${i})">🛒 Adaugă</button>
+              <button class="btn btn-secondary" onclick="viewRecipe(${i})">👁️ Detalii</button>
+            </div>
+          </div>
+        `).join('') +
+        '</div>';
+    }
+
+    function addToShoppingList(index) {
+      const recipe = currentRecipes[index];
+      const list = document.getElementById('shoppingList');
+      list.innerHTML = '';
+
+      recipe.ingredients.forEach(ing => {
+        const item = document.createElement('div');
+        item.className = 'shopping-item';
+        item.innerHTML = `
+          <input type="checkbox" onchange="this.parentElement.classList.toggle('checked')">
+          <span>${ing}</span>
+        `;
+        list.appendChild(item);
+      });
+
+      const tab = document.querySelector('[data-tab="shopping"]');
+      tab.click();
+    }
+
+    function toggleFavorite(index) {
+      alert('❤️ Adăugat la favorite!');
+    }
+
+    function viewRecipe(index) {
+      const recipe = currentRecipes[index];
+      const stepsText = (recipe.steps || recipe.instructions || []);
+      const stepsFormatted = Array.isArray(stepsText)
+        ? stepsText.map((s, i) => `${i+1}. ${s}`).join('\n\n')
+        : stepsText;
+
+      const details = `
+🍳 ${recipe.title}
+
+⏱️ Timp: ${recipe.time_minutes} minute
+📊 Dificultate: ${recipe.difficulty}
+🌍 Bucătărie: ${recipe.cuisine}
+
+🥘 INGREDIENTE:
+${recipe.ingredients.map(i => '• ' + i).join('\n')}
+
+📝 MOD DE PREPARARE:
+${stepsFormatted.substring(0, 500)}
+      `;
+      alert(details);
+    }
+
+    function clearFilters() {
+      document.getElementById('ingredientInput').value = '';
+      document.getElementById('cuisineFilter').value = '';
+      document.getElementById('timeFilter').value = '';
+      document.getElementById('difficultyFilter').value = '';
+      document.getElementById('budgetFilter').value = '';
+      document.getElementById('resultsContainer').innerHTML = '';
+      currentRecipes = [];
+    }
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tabName = e.target.dataset.tab;
+
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        e.target.classList.add('active');
+        document.getElementById(tabName + '-tab').classList.add('active');
+      });
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        generateRecipes();
+      }
+    });
+
+    // Load default recipes on init
+    async function loadDefaultRecipes() {
+      try {
+        const response = await fetch('/api/recipes?limit=6').then(r => r.json());
+        if (response.recipes && response.recipes.length > 0) {
+          currentRecipes = response.recipes;
+          const container = document.getElementById('resultsContainer');
+          container.innerHTML = `<h2 class="section-title">🍽️ ${response.recipes.length} Rețete Populare</h2><div class="recipes-grid">` +
+            response.recipes.map((r, i) => `
+              <div class="recipe-card">
+                <div class="recipe-header">
+                  <div>
+                    <div class="recipe-title">${r.title}</div>
+                    <div class="recipe-meta">
+                      <span>⏱️ ${r.time_minutes}min</span>
+                      <span>📊 ${r.difficulty}</span>
+                      <span>🌍 ${r.cuisine}</span>
+                    </div>
+                  </div>
+                  <button class="btn-secondary" onclick="toggleFavorite(${i})" style="width: 32px; height: 32px; padding: 0;">♡</button>
+                </div>
+                <div class="recipe-ingredients">
+                  <strong>🥘 Ingrediente:</strong><br/>
+                  ${r.ingredients.slice(0, 8).join(', ')}${r.ingredients.length > 8 ? '...' : ''}
+                </div>
+                <div class="recipe-actions">
+                  <button class="btn btn-secondary" onclick="addToShoppingList(${i})">🛒 Adaugă</button>
+                  <button class="btn btn-secondary" onclick="viewRecipe(${i})">👁️ Detalii</button>
+                </div>
+              </div>
+            `).join('') +
+            '</div>';
+        }
+      } catch (e) {
+        console.error('Failed to load default recipes:', e);
+      }
+    }
+
+    // Load on init
+    loadStats();
+    loadCuisines();
+    loadDefaultRecipes();
+  </script>
+</body>
+</html>

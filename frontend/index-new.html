@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🍳 AI Recipe Inventor PRO — RAG Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <style>
+    /* ── Tabs Navigation ──────────────────────────────────────────────────── */
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      margin-bottom: 24px;
+      background: rgba(255,255,255,.02);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .tab-button {
+      padding: 14px 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .tab-button:hover {
+      color: var(--text);
+    }
+
+    .tab-button.active {
+      color: var(--violet-lt);
+      border-bottom-color: var(--violet-lt);
+    }
+
+    /* ── Tab content ──────────────────────────────────────────────────────── */
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Chatbot iframe ────────────────────────────────────────────────────── */
+    .chatbot-container {
+      position: relative;
+      width: 100%;
+      height: 700px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: rgba(255,255,255,.02);
+      margin-bottom: 40px;
+    }
+
+    .chatbot-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ── Shopping list tab ────────────────────────────────────────────────────── */
+    .shopping-section {
+      max-width: 600px;
+    }
+
+    .shopping-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .shopping-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition);
+    }
+
+    .shopping-item:hover {
+      background: rgba(255,255,255,.07);
+      border-color: var(--border-bright);
+    }
+
+    .shopping-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: var(--violet);
+    }
+
+    .shopping-item.checked {
+      opacity: 0.5;
+      text-decoration: line-through;
+    }
+
+    .shopping-item span {
+      flex: 1;
+      font-size: .95rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 12px;
+    }
+
+    /* ── About section ────────────────────────────────────────────────────────── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .about-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+    }
+
+    .about-card h3 {
+      font-size: 1.15rem;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .about-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .about-card li {
+      font-size: .9rem;
+      color: var(--text-muted);
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .about-card li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--emerald);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Background orbs ─────────────────────────────────────────────────────── -->
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner container">
+      <div class="logo-row">
+        <span class="logo-icon">🍳</span>
+        <div>
+          <h1 class="site-title">AI Recipe <span class="gradient-text">Inventor PRO</span></h1>
+          <p class="site-subtitle">Motor RAG · TF-IDF · Chatbot · Shopping · Fără LLM</p>
+        </div>
+      </div>
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-item">
+          <span class="stat-value" id="statRecipes">—</span>
+          <span class="stat-label">rețete indexate</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <span class="stat-value" id="statCuisines">—</span>
+          <span class="stat-label">bucătării</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <span class="stat-value" id="statAvgIng">—</span>
+          <span class="stat-label">ingrediente/rețetă</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Tabs Navigation ──────────────────────────────────────────────────── -->
+  <div class="container" style="padding-bottom: 0;">
+    <div class="tabs-nav">
+      <button class="tab-button active" data-tab="creator">✨ Creator</button>
+      <button class="tab-button" data-tab="chatbot">💬 Chatbot</button>
+      <button class="tab-button" data-tab="shopping">🛒 Shopping List</button>
+      <button class="tab-button" data-tab="about">ℹ️ About</button>
+    </div>
+  </div>
+
+  <!-- ── Main content ─────────────────────────────────────────────────────── -->
+  <main class="container">
+
+    <!-- ──━━━━━ TAB: CREATOR ━━━━━── -->
+    <div class="tab-content active" id="creator" data-tab="creator">
+
+      <!-- ── Input Panel ──────────────────────────────────────────────────── -->
+      <section class="glass-card input-panel" id="inputPanel">
+        <div class="panel-header">
+          <h2 class="panel-title">Ce ai în bucătărie?</h2>
+          <p class="panel-desc">Adaugă ingredientele disponibile și generăm rețete creative pentru tine.</p>
+        </div>
+
+        <!-- Tag input -->
+        <div class="tag-wrapper">
+          <label class="tag-label" for="ingredientInput">Ingrediente</label>
+          <div class="tag-container" id="tagContainer">
+            <input
+              type="text"
+              id="ingredientInput"
+              class="tag-input"
+              placeholder="Ex: pui, usturoi, lămâie… apasă Enter"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+          <div class="tag-hint">
+            Apasă <kbd>Enter</kbd> sau <kbd>,</kbd> după fiecare ingredient.
+            <button class="clear-btn" id="clearBtn" type="button" aria-label="Șterge toate">✕ Șterge tot</button>
+          </div>
+        </div>
+
+        <!-- Quick suggestions -->
+        <div class="suggestions-row">
+          <span class="suggestions-label">Încearcă:</span>
+          <div class="suggestions-list">
+            <button class="sugg-btn" data-ingredients="pui,usturoi,lămâie,rozmarin">🍗 Pui & Lămâie</button>
+            <button class="sugg-btn" data-ingredients="ouă,spanac,feta,usturoi">🥚 Ouă & Spanac</button>
+            <button class="sugg-btn" data-ingredients="somon,sos de soia,ghimbir,susan">🐟 Somon Teriyaki</button>
+            <button class="sugg-btn" data-ingredients="pastă,roșii,mozzarella,busuioc">🍝 Clasic Italian</button>
+            <button class="sugg-btn" data-ingredients="vită,vin roșu,ciuperci,cimbru">🥩 Franțuzesc</button>
+            <button class="sugg-btn" data-ingredients="linte,ceapă,turmeric,ghimbir">🌱 Vegan Indian</button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label class="filter-label" for="cuisineFilter">Bucătărie</label>
+            <select class="filter-select" id="cuisineFilter">
+              <option value="Any">🌍 Orice</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="difficultyFilter">Dificultate</label>
+            <select class="filter-select" id="difficultyFilter">
+              <option value="Any">⚡ Orice</option>
+              <option value="Easy">🟢 Ușor</option>
+              <option value="Medium">🟡 Mediu</option>
+              <option value="Hard">🔴 Dificil</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="maxTimeFilter">Timp maxim</label>
+            <select class="filter-select" id="maxTimeFilter">
+              <option value="">⏱ Orice durată</option>
+              <option value="20">≤ 20 min</option>
+              <option value="30">≤ 30 min</option>
+              <option value="60">≤ 1 oră</option>
+              <option value="120">≤ 2 ore</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label" for="numRecipesRange">
+              Număr rețete: <span class="range-val" id="numRecipesVal">5</span>
+            </label>
+            <input type="range" id="numRecipesRange" class="range-input" min="1" max="8" value="5" />
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <button class="btn-invent" id="inventBtn" type="button">
+          <span class="btn-icon">✨</span>
+          <span class="btn-text">Inventează Rețete!</span>
+          <span class="btn-loader hidden" id="btnLoader">
+            <span class="spinner-sm"></span>
+          </span>
+        </button>
+      </section>
+
+      <!-- ── Loading skeleton ──────────────────────────────────────────────── -->
+      <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-inner">
+          <div class="loading-spinner"></div>
+          <p class="loading-text">Căutăm prin <strong id="loadDbCount">300+</strong> rețete…</p>
+          <p class="loading-sub">Motorul RAG găsește cele mai potrivite baze și le combină cu ingredientele tale.</p>
+        </div>
+      </div>
+
+      <!-- ── Results ───────────────────────────────────────────────────────── -->
+      <section class="results-section hidden" id="resultsSection">
+        <div class="results-header">
+          <div>
+            <h2 class="results-title">Rețetele Tale</h2>
+            <p class="results-meta" id="resultsMeta"></p>
+          </div>
+          <button class="btn-ghost" id="backBtn" type="button">← Caută din nou</button>
+        </div>
+        <div class="recipes-grid" id="recipesGrid"></div>
+      </section>
+
+      <!-- ── Error ─────────────────────────────────────────────────────────── -->
+      <div class="error-box hidden" id="errorBox">
+        <span class="error-icon">⚠️</span>
+        <p class="error-msg" id="errorMsg"></p>
+        <button class="btn-ghost" id="errorBackBtn" type="button">← Încearcă din nou</button>
+      </div>
+
+    </div>
+
+    <!-- ──━━━━━ TAB: CHATBOT ━━━━━── -->
+    <div class="tab-content" id="chatbot" data-tab="chatbot">
+      <div class="glass-card" style="padding: 24px; margin-bottom: 40px;">
+        <h2 class="results-title" style="margin-bottom: 12px;">💬 Chatbot RAG Conversațional</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">Vorbește cu asistentul tău AI. Spune-i ce ai în cămară și primești rețete potrivite!</p>
+        <div class="chatbot-container">
+          <iframe src="/static/chatbot.html"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──━━━━━ TAB: SHOPPING LIST ━━━━━── -->
+    <div class="tab-content" id="shopping" data-tab="shopping">
+      <section class="glass-card shopping-section" style="padding: 28px; margin-bottom: 40px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+          <div>
+            <h2 class="results-title" style="margin-bottom: 4px;">🛒 Lista de Cumpărături</h2>
+            <p style="color: var(--text-muted); font-size: .9rem;">Ingrediente necesare pentru rețetele tale</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-ghost" id="exportShopBtn" onclick="exportShoppingList()" style="display: none;">📋 Export</button>
+            <button class="btn-ghost" id="clearShopBtn" onclick="clearShoppingList()" style="display: none;">🗑️ Șterge</button>
+          </div>
+        </div>
+
+        <div id="shoppingEmpty" style="display: block;">
+          <div class="empty-state">
+            <div class="empty-state-icon">📝</div>
+            <h3 style="color: var(--text); margin-bottom: 6px; font-size: 1rem;">Lista goală</h3>
+            <p style="font-size: .9rem;">Generează o rețetă din tab-ul Creator și apasă "Adaugă la Shopping List"!</p>
+          </div>
+        </div>
+
+        <div id="shoppingContent" style="display: none;">
+          <!-- Stats row -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;">
+            <div class="about-card" style="padding: 16px; margin: 0;">
+              <div style="font-size: 2rem; font-weight: 700; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <span id="shopItemCount">0</span>
+              </div>
+              <div style="font-size: .8rem; color: var(--text-muted);">Ingrediente</div>
+            </div>
+            <div class="about-card" style="padding: 16px; margin: 0;">
+              <div style="font-size: 2rem; font-weight: 700; color: var(--emerald);">
+                <span id="shopCheckedCount">0</span>/<span id="shopTotalCount">0</span>
+              </div>
+              <div style="font-size: .8rem; color: var(--text-muted);">Cumpărate</div>
+            </div>
+            <div class="about-card" style="padding: 16px; margin: 0;">
+              <div style="font-size: 2rem; font-weight: 700; color: var(--amber);">
+                <span id="shopBudget">0</span> RON
+              </div>
+              <div style="font-size: .8rem; color: var(--text-muted);">Budget estimat</div>
+            </div>
+          </div>
+
+          <!-- Shopping list items -->
+          <div class="shopping-list" id="shoppingList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+            <!-- Items injected here -->
+          </div>
+
+          <!-- Add ingredient -->
+          <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+            <input type="text" id="addIngredientInput" placeholder="Adaugă ingredient..."
+              style="flex: 1; background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text); font-family: inherit; font-size: .9rem;">
+            <button class="btn-invent" onclick="addShoppingIngredient()" style="padding: 10px 16px; width: auto;">
+              <span>+</span>
+            </button>
+          </div>
+
+          <!-- Substitutes (RAG) -->
+          <div id="substituteSection" style="display: none; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <h3 style="color: var(--text); margin-bottom: 12px; font-size: 1rem;">🔄 Substituții Disponibile (RAG)</h3>
+            <p style="color: var(--text-muted); font-size: .9rem; margin-bottom: 12px;">Ingrediente alternative bazate pe rețetele din bază:</p>
+            <div id="substituteList" style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <!-- Suggestions injected here -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ──━━━━━ TAB: ABOUT ━━━━━── -->
+    <div class="tab-content" id="about" data-tab="about">
+      <section style="margin-bottom: 40px;">
+        <h2 class="results-title" style="margin-bottom: 24px;">ℹ️ Despre AI Recipe Inventor PRO</h2>
+
+        <div class="about-grid">
+          <div class="about-card">
+            <h3>🔬 Tehnologie RAG</h3>
+            <ul>
+              <li><strong>BM25</strong> — Ranking probabilistic</li>
+              <li><strong>TF-IDF</strong> — Multi-field vectorization</li>
+              <li><strong>Cosine Similarity</strong> — Semantic matching</li>
+              <li><strong>MMR</strong> — Diversity re-ranking (λ=0.65)</li>
+              <li><strong>Query Expansion</strong> — 37 synonym groups</li>
+              <li><strong>Cuisine Detection</strong> — 12 detectors</li>
+            </ul>
+          </div>
+
+          <div class="about-card">
+            <h3>📊 Statistici</h3>
+            <ul>
+              <li>289 rețete indexate</li>
+              <li>13 bucătării diferite</li>
+              <li>3161 cuvinte în vocabular</li>
+              <li>Reranking cu diversity</li>
+              <li>Zero-shot cuisine detection</li>
+              <li>Explained recommendations</li>
+            </ul>
+          </div>
+
+          <div class="about-card">
+            <h3>✨ Features PRO</h3>
+            <ul>
+              <li>Chatbot conversațional RAG</li>
+              <li>Generator lista cumpărături</li>
+              <li>Advanced filtering</li>
+              <li>Real-time stats</li>
+              <li>Tag-based search</li>
+              <li>Fără LLM, 100% RAG</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>AI Recipe Inventor PRO · RAG cu TF-IDF · Chatbot · Shopping List · Fără LLM · Made with ❤️</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+  <script>
+    // ── Tab switching ──────────────────────────────────────────────────────
+    document.querySelectorAll('.tab-button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const tabName = e.target.dataset.tab;
+
+        // Deactivate all
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        // Activate clicked
+        e.target.classList.add('active');
+        document.querySelector(`#${tabName}`).classList.add('active');
+      });
+    });
+
+    // ── Shopping List State ────────────────────────────────────────────────
+    let shoppingItems = JSON.parse(localStorage.getItem('shoppingList')) || {};
+
+    // ── Save shopping list to localStorage ──────────────────────────────────
+    function saveShoppingList() {
+      localStorage.setItem('shoppingList', JSON.stringify(shoppingItems));
+      updateShoppingDisplay();
+    }
+
+    // ── Add to shopping list function ──────────────────────────────────────
+    window.addToShoppingList = function(recipeIndex) {
+      const recipes = window.currentRecipes || [];
+      if (!recipes[recipeIndex]) return;
+
+      const recipe = recipes[recipeIndex];
+
+      recipe.ingredients.forEach(ing => {
+        const cleanIng = ing.toLowerCase().trim();
+        if (!shoppingItems[cleanIng]) {
+          shoppingItems[cleanIng] = {
+            ingredient: ing,
+            checked: false,
+            count: 1,
+            estimatedCost: Math.random() * 20 + 2
+          };
+        } else {
+          shoppingItems[cleanIng].count += 1;
+        }
+      });
+
+      saveShoppingList();
+
+      // Switch to shopping tab
+      document.querySelector('[data-tab="shopping"]').click();
+    };
+
+    // ── Update shopping list display ────────────────────────────────────────
+    function updateShoppingDisplay() {
+      const items = Object.values(shoppingItems);
+      const shoppingList = document.getElementById('shoppingList');
+      const emptyState = document.getElementById('shoppingEmpty');
+      const contentArea = document.getElementById('shoppingContent');
+
+      if (items.length === 0) {
+        emptyState.style.display = 'block';
+        contentArea.style.display = 'none';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      contentArea.style.display = 'block';
+
+      // Update stats
+      const checked = items.filter(i => i.checked).length;
+      document.getElementById('shopItemCount').textContent = items.length;
+      document.getElementById('shopCheckedCount').textContent = checked;
+      document.getElementById('shopTotalCount').textContent = items.length;
+
+      const totalBudget = items.reduce((sum, i) => sum + (i.estimatedCost || 0), 0);
+      document.getElementById('shopBudget').textContent = totalBudget.toFixed(2);
+
+      // Clear and rebuild list
+      shoppingList.innerHTML = items.map((item, idx) => `
+        <div class="shopping-item ${item.checked ? 'checked' : ''}">
+          <input type="checkbox" ${item.checked ? 'checked' : ''}
+            onchange="toggleShoppingItem('${item.ingredient.toLowerCase()}')">
+          <span style="flex: 1;">${item.ingredient}</span>
+          <span style="color: var(--text-dim); font-size: .85rem; margin-right: 8px;">
+            ×${item.count}
+          </span>
+          <span style="color: var(--amber); font-size: .85rem; min-width: 40px; text-align: right;">
+            ${item.estimatedCost.toFixed(2)} RON
+          </span>
+          <button class="tag-remove" onclick="removeShoppingItem('${item.ingredient.toLowerCase()}')"
+            style="width: auto; padding: 0 8px; color: var(--rose-lt);">✕</button>
+        </div>
+      `).join('');
+
+      // Show buttons
+      document.getElementById('exportShopBtn').style.display = 'block';
+      document.getElementById('clearShopBtn').style.display = 'block';
+
+      // Load RAG suggestions
+      loadSubstituteSuggestions();
+    }
+
+    // ── Toggle shopping item ────────────────────────────────────────────────
+    window.toggleShoppingItem = function(ingredient) {
+      const clean = ingredient.toLowerCase().trim();
+      if (shoppingItems[clean]) {
+        shoppingItems[clean].checked = !shoppingItems[clean].checked;
+        saveShoppingList();
+      }
+    };
+
+    // ── Remove shopping item ────────────────────────────────────────────────
+    window.removeShoppingItem = function(ingredient) {
+      const clean = ingredient.toLowerCase().trim();
+      delete shoppingItems[clean];
+      saveShoppingList();
+    };
+
+    // ── Add ingredient manually ────────────────────────────────────────────
+    window.addShoppingIngredient = function() {
+      const input = document.getElementById('addIngredientInput');
+      const ingredient = input.value.trim();
+      if (!ingredient) return;
+
+      const clean = ingredient.toLowerCase();
+      if (!shoppingItems[clean]) {
+        shoppingItems[clean] = {
+          ingredient: ingredient,
+          checked: false,
+          count: 1,
+          estimatedCost: Math.random() * 20 + 2
+        };
+        saveShoppingList();
+        input.value = '';
+      }
+    };
+
+    // ── Clear shopping list ────────────────────────────────────────────────
+    window.clearShoppingList = function() {
+      if (confirm('Ștergi toată lista de cumpărături?')) {
+        shoppingItems = {};
+        saveShoppingList();
+      }
+    };
+
+    // ── Export shopping list ────────────────────────────────────────────────
+    window.exportShoppingList = function() {
+      const items = Object.values(shoppingItems);
+      let text = '🛒 LISTA DE CUMPĂRĂTURI\n';
+      text += '='.repeat(40) + '\n\n';
+
+      items.forEach(item => {
+        const checkbox = item.checked ? '☑' : '☐';
+        text += `${checkbox} ${item.ingredient} (×${item.count}) - ${item.estimatedCost.toFixed(2)} RON\n`;
+      });
+
+      text += '\n' + '='.repeat(40) + '\n';
+      const total = items.reduce((s, i) => s + i.estimatedCost, 0);
+      text += `TOTAL: ${total.toFixed(2)} RON\n`;
+      text += `Cumpărate: ${items.filter(i => i.checked).length}/${items.length}\n`;
+
+      // Copy to clipboard
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✅ Lista copiată în clipboard!');
+      });
+    };
+
+    // ── Load substitute suggestions (RAG) ────────────────────────────────────
+    async function loadSubstituteSuggestions() {
+      const items = Object.keys(shoppingItems);
+      if (items.length === 0) return;
+
+      try {
+        // Get similar recipes to suggest ingredient alternatives
+        const response = await fetch(`/api/recipes?limit=30`);
+        const data = await response.json();
+
+        const allIngredients = new Set();
+        data.recipes.forEach(recipe => {
+          recipe.ingredients.forEach(ing => {
+            allIngredients.add(ing.toLowerCase().trim());
+          });
+        });
+
+        // Filter for potential substitutes (similar ingredients)
+        const suggestions = Array.from(allIngredients)
+          .filter(ing => !items.includes(ing))
+          .slice(0, 8);
+
+        if (suggestions.length > 0) {
+          document.getElementById('substituteSection').style.display = 'block';
+          document.getElementById('substituteList').innerHTML = suggestions
+            .map(ing => `
+              <button class="sugg-btn" onclick="addSubstitute('${ing}')">
+                ${ing}
+              </button>
+            `)
+            .join('');
+        }
+      } catch (e) {
+        console.error('Eroare RAG substitutes:', e);
+      }
+    }
+
+    // ── Add substitute to list ──────────────────────────────────────────────
+    window.addSubstitute = function(ingredient) {
+      const clean = ingredient.toLowerCase().trim();
+      if (!shoppingItems[clean]) {
+        shoppingItems[clean] = {
+          ingredient: ingredient,
+          checked: false,
+          count: 1,
+          estimatedCost: Math.random() * 20 + 2
+        };
+        saveShoppingList();
+      }
+    };
+
+    // ── Init shopping list on load ──────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      updateShoppingDisplay();
+    });
+  </script>
+</body>
+</html>

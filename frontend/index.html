@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Recipe Inventor — RAG Engine</title>
+  <meta name="description" content="Inventează rețete noi pe baza ingredientelor tale folosind un motor RAG peste sute de rețete." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Decorative background orbs ─────────────────────────────────────── -->
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+  <div class="orb orb-3" aria-hidden="true"></div>
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner container">
+      <div class="logo-row">
+        <span class="logo-icon">🍳</span>
+        <div>
+          <h1 class="site-title">AI Recipe <span class="gradient-text">Inventor</span></h1>
+          <p class="site-subtitle">Motor RAG · TF-IDF · Fără LLM</p>
+        </div>
+      </div>
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-item">
+          <span class="stat-value" id="statRecipes">—</span>
+          <span class="stat-label">rețete indexate</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <span class="stat-value" id="statCuisines">—</span>
+          <span class="stat-label">bucătării</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat-item">
+          <span class="stat-value" id="statAvgIng">—</span>
+          <span class="stat-label">ingrediente/rețetă</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main content ─────────────────────────────────────────────────────── -->
+  <main class="container">
+
+    <!-- ── Input Panel ──────────────────────────────────────────────────── -->
+    <section class="glass-card input-panel" id="inputPanel">
+      <div class="panel-header">
+        <h2 class="panel-title">Ce ai în bucătărie?</h2>
+        <p class="panel-desc">Adaugă ingredientele disponibile și generăm rețete creative pentru tine.</p>
+      </div>
+
+      <!-- Tag input -->
+      <div class="tag-wrapper">
+        <label class="tag-label" for="ingredientInput">Ingrediente</label>
+        <div class="tag-container" id="tagContainer">
+          <!-- tags injected here -->
+          <input
+            type="text"
+            id="ingredientInput"
+            class="tag-input"
+            placeholder="Ex: pui, usturoi, lămâie… apasă Enter"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <div class="tag-hint">
+          Apasă <kbd>Enter</kbd> sau <kbd>,</kbd> după fiecare ingredient.
+          <button class="clear-btn" id="clearBtn" type="button" aria-label="Șterge toate">✕ Șterge tot</button>
+        </div>
+      </div>
+
+      <!-- Quick suggestions -->
+      <div class="suggestions-row">
+        <span class="suggestions-label">Încearcă:</span>
+        <div class="suggestions-list">
+          <button class="sugg-btn" data-ingredients="pui,usturoi,lămâie,rozmarin">🍗 Pui & Lămâie</button>
+          <button class="sugg-btn" data-ingredients="ouă,spanac,feta,usturoi">🥚 Ouă & Spanac</button>
+          <button class="sugg-btn" data-ingredients="somon,sos de soia,ghimbir,susan">🐟 Somon Teriyaki</button>
+          <button class="sugg-btn" data-ingredients="pastă,roșii,mozzarella,busuioc">🍝 Clasic Italian</button>
+          <button class="sugg-btn" data-ingredients="vită,vin roșu,ciuperci,cimbru">🥩 Franțuzesc</button>
+          <button class="sugg-btn" data-ingredients="linte,ceapă,turmeric,ghimbir">🌱 Vegan Indian</button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label" for="cuisineFilter">Bucătărie</label>
+          <select class="filter-select" id="cuisineFilter">
+            <option value="Any">🌍 Orice</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="difficultyFilter">Dificultate</label>
+          <select class="filter-select" id="difficultyFilter">
+            <option value="Any">⚡ Orice</option>
+            <option value="Easy">🟢 Ușor</option>
+            <option value="Medium">🟡 Mediu</option>
+            <option value="Hard">🔴 Dificil</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="maxTimeFilter">Timp maxim</label>
+          <select class="filter-select" id="maxTimeFilter">
+            <option value="">⏱ Orice durată</option>
+            <option value="20">≤ 20 min</option>
+            <option value="30">≤ 30 min</option>
+            <option value="60">≤ 1 oră</option>
+            <option value="120">≤ 2 ore</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label" for="numRecipesRange">
+            Număr rețete: <span class="range-val" id="numRecipesVal">5</span>
+          </label>
+          <input type="range" id="numRecipesRange" class="range-input" min="1" max="8" value="5" />
+        </div>
+      </div>
+
+      <!-- CTA Button -->
+      <button class="btn-invent" id="inventBtn" type="button">
+        <span class="btn-icon">✨</span>
+        <span class="btn-text">Inventează Rețete!</span>
+        <span class="btn-loader hidden" id="btnLoader">
+          <span class="spinner-sm"></span>
+        </span>
+      </button>
+    </section>
+
+    <!-- ── Loading skeleton ──────────────────────────────────────────────── -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+      <div class="loading-inner">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Căutăm prin <strong id="loadDbCount">300+</strong> rețete…</p>
+        <p class="loading-sub">Motorul RAG găsește cele mai potrivite baze și le combină cu ingredientele tale.</p>
+      </div>
+    </div>
+
+    <!-- ── Results ───────────────────────────────────────────────────────── -->
+    <section class="results-section hidden" id="resultsSection">
+      <div class="results-header">
+        <div>
+          <h2 class="results-title">Rețetele Tale</h2>
+          <p class="results-meta" id="resultsMeta"></p>
+        </div>
+        <button class="btn-ghost" id="backBtn" type="button">← Caută din nou</button>
+      </div>
+      <div class="recipes-grid" id="recipesGrid"></div>
+    </section>
+
+    <!-- ── Error ─────────────────────────────────────────────────────────── -->
+    <div class="error-box hidden" id="errorBox">
+      <span class="error-icon">⚠️</span>
+      <p class="error-msg" id="errorMsg"></p>
+      <button class="btn-ghost" id="errorBackBtn" type="button">← Încearcă din nou</button>
+    </div>
+
+  </main>
+
+  <!-- ── Footer ───────────────────────────────────────────────────────────── -->
+  <footer class="site-footer">
+    <p>AI Recipe Inventor &middot; RAG cu TF-IDF &middot; Fără LLM &middot; Made with ❤️</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

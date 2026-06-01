@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🍳 Recipe AI Chatbot — RAG Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Outfit", sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      color: #e0e7ff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────────── */
+    .chatbot-header {
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(224, 231, 255, 0.1);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .chatbot-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .chatbot-header .status {
+      font-size: 12px;
+      color: #a5b4fc;
+      margin-left: auto;
+    }
+
+    .status.online::before {
+      content: "● ";
+      color: #4ade80;
+    }
+
+    /* ── Main Chat Area ──────────────────────────────────────────────────── */
+    .chat-container {
+      flex: 1;
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      background: rgba(30, 27, 75, 0.4);
+      border-radius: 16px;
+      border: 1px solid rgba(224, 231, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 16px;
+      gap: 12px;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: rgba(224, 231, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(224, 231, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb:hover {
+      background: rgba(224, 231, 255, 0.3);
+    }
+
+    /* ── Message Bubbles ──────────────────────────────────────────────────── */
+    .message {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .message-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
+
+    .message.user .message-bubble {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message.bot .message-bubble {
+      background: rgba(224, 231, 255, 0.08);
+      border: 1px solid rgba(224, 231, 255, 0.2);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: #a5b4fc;
+      margin-top: 4px;
+    }
+
+    /* ── Sidebar (Quick Options) ──────────────────────────────────────────── */
+    .sidebar {
+      width: 280px;
+      background: rgba(30, 27, 75, 0.4);
+      border-radius: 16px;
+      border: 1px solid rgba(224, 231, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: rgba(224, 231, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    .sidebar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a5b4fc;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .quick-btn {
+      padding: 8px 12px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 8px;
+      color: #c7d2fe;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+
+    .quick-btn:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: rgba(99, 102, 241, 0.5);
+      transform: translateX(2px);
+    }
+
+    .suggested-question {
+      padding: 10px;
+      background: rgba(139, 92, 246, 0.1);
+      border-left: 3px solid #8b5cf6;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 12px;
+    }
+
+    .suggested-question:hover {
+      background: rgba(139, 92, 246, 0.2);
+    }
+
+    /* ── Input Area ──────────────────────────────────────────────────────── */
+    .input-container {
+      background: rgba(15, 23, 42, 0.9);
+      border-top: 1px solid rgba(224, 231, 255, 0.1);
+      padding: 16px 24px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    #chatInput {
+      flex: 1;
+      background: rgba(30, 27, 75, 0.6);
+      border: 1px solid rgba(224, 231, 255, 0.2);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #e0e7ff;
+      font-family: "Outfit", sans-serif;
+      font-size: 14px;
+      resize: none;
+      max-height: 100px;
+      transition: all 0.2s;
+    }
+
+    #chatInput:focus {
+      outline: none;
+      border-color: #6366f1;
+      background: rgba(30, 27, 75, 0.8);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    #sendBtn {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #sendBtn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    #sendBtn:active {
+      transform: translateY(0);
+    }
+
+    #sendBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ── Recipe Card ──────────────────────────────────────────────────────── */
+    .recipe-card {
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .recipe-card .title {
+      font-weight: 600;
+      color: #c7d2fe;
+      margin-bottom: 6px;
+    }
+
+    .recipe-card .meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: #a5b4fc;
+      margin-bottom: 6px;
+    }
+
+    .recipe-card .meta span {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .recipe-card .ingredients {
+      color: #cbd5e1;
+      margin: 6px 0;
+    }
+
+    .recipe-card .ingredients strong {
+      color: #c7d2fe;
+    }
+
+    .recipe-card .instructions {
+      color: #cbd5e1;
+      margin-top: 6px;
+      line-height: 1.3;
+    }
+
+    .recipe-card .match-score {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #4ade80;
+    }
+
+    /* ── Typing Indicator ──────────────────────────────────────────────────── */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 8px;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: #a5b4fc;
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 60%, 100% {
+        opacity: 0.3;
+      }
+      30% {
+        opacity: 1;
+      }
+    }
+
+    /* ── Stats Bar ──────────────────────────────────────────────────────── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 12px;
+      background: rgba(139, 92, 246, 0.1);
+      border-radius: 8px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      font-size: 11px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .stat-label {
+      color: #a5b4fc;
+    }
+
+    .stat-value {
+      color: #c7d2fe;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <div class="chatbot-header">
+    <span style="font-size: 28px;">🍳</span>
+    <h1>Recipe AI Chatbot</h1>
+    <span class="status online">Ready</span>
+  </div>
+
+  <!-- ── Main Content ──────────────────────────────────────────────────────── -->
+  <div class="chat-container">
+    <!-- Chat Messages -->
+    <div class="chat-messages" id="chatMessages">
+      <div class="message bot">
+        <div class="message-bubble">
+          👋 Salut! Sunt asistentul tău AI pentru rețete. Spune-mi ce ingrediente ai și o să găsesc rețete perfecte pentru tine!
+          <div class="message-meta">Acum</div>
+        </div>
+      </div>
+      <div class="message bot">
+        <div class="message-bubble">
+          💡 Poți cere:
+          • "Ce pot face cu pui și lămâie?"
+          • "Rețete italiene rapide"
+          • "Ceva vegan cu broccoli"
+          • "Substitut pentru smântână"
+          <div class="message-meta">Acum</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="stats-bar" id="statsBar"></div>
+
+      <div class="sidebar-section">
+        <h3>🎯 Sugestii Rapide</h3>
+        <div class="suggested-question" onclick="askQuestion('Ce mâncări pot face cu pui, usturoi și lămâie?')">
+          🍗 Pui + Usturoi + Lămâie
+        </div>
+        <div class="suggested-question" onclick="askQuestion('Rețete italiene cu paste și roșii')">
+          🇮🇹 Paste Italiene
+        </div>
+        <div class="suggested-question" onclick="askQuestion('Rețete vegane cu broccoli și ciuperci')">
+          🥦 Broccoli Vegan
+        </div>
+        <div class="suggested-question" onclick="askQuestion('Rețete rapide sub 30 de minute')">
+          ⚡ Rețete Rapide
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>🌍 Bucătării Populare</h3>
+        <button class="quick-btn" onclick="filterByCuisine('Italian')">🇮🇹 Italiană</button>
+        <button class="quick-btn" onclick="filterByCuisine('Thai')">🇹🇭 Thailandeză</button>
+        <button class="quick-btn" onclick="filterByCuisine('Indian')">🇮🇳 Indiană</button>
+        <button class="quick-btn" onclick="filterByCuisine('Mexican')">🇲🇽 Mexicană</button>
+        <button class="quick-btn" onclick="filterByCuisine('Japanese')">🇯🇵 Japoneză</button>
+        <button class="quick-btn" onclick="filterByCuisine('Chinese')">🇨🇳 Chineză</button>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>⏱️ Timp Disponibil</h3>
+        <button class="quick-btn" onclick="filterByTime(15)">🏃 Sub 15 min</button>
+        <button class="quick-btn" onclick="filterByTime(30)">⚡ Sub 30 min</button>
+        <button class="quick-btn" onclick="filterByTime(60)">🍳 Sub 1 oră</button>
+        <button class="quick-btn" onclick="filterByTime(999)">📚 Orice timp</button>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>📊 Dificultate</h3>
+        <button class="quick-btn" onclick="filterByDifficulty('Easy')">😊 Ușor</button>
+        <button class="quick-btn" onclick="filterByDifficulty('Medium')">🙂 Mediu</button>
+        <button class="quick-btn" onclick="filterByDifficulty('Hard')">😰 Dificil</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Input Area ──────────────────────────────────────────────────────── -->
+  <div class="input-container">
+    <div class="input-wrapper">
+      <textarea id="chatInput" placeholder="Spune-mi ce ingrediente ai..." rows="1"></textarea>
+      <button id="sendBtn" onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script>
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput = document.getElementById("chatInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statsBar = document.getElementById("statsBar");
+
+    let currentFilters = {
+      cuisine: null,
+      maxTime: null,
+      difficulty: null,
+    };
+
+    // ── Initialize ──────────────────────────────────────────────────────────
+    async function initializeChatbot() {
+      try {
+        const stats = await fetch("/api/stats").then(r => r.json());
+        displayStats(stats);
+      } catch (error) {
+        console.error("Failed to load stats:", error);
+      }
+    }
+
+    // ── Display Stats ──────────────────────────────────────────────────────
+    function displayStats(stats) {
+      statsBar.innerHTML = `
+        <div class="stat-item">
+          <span class="stat-label">🍽️ Rețete</span>
+          <span class="stat-value">${stats.total_recipes}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">🌍 Bucătării</span>
+          <span class="stat-value">${stats.cuisines}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">🔤 Cuvinte</span>
+          <span class="stat-value">${stats.vocabulary_size}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">📊 Engine</span>
+          <span class="stat-value">RAG v2</span>
+        </div>
+      `;
+    }
+
+    // ── Send Message ────────────────────────────────────────────────────────
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      // User message
+      addMessage(text, "user");
+      chatInput.value = "";
+
+      // Typing indicator
+      const typingId = addMessage("...", "bot", true);
+
+      try {
+        const ingredients = parseIngredients(text);
+        console.log("📝 Parsed ingredients:", ingredients);
+
+        const requestBody = {
+          ingredients: ingredients,
+          cuisine: currentFilters.cuisine || "Any",
+          difficulty: currentFilters.difficulty || "Any",
+          max_time: currentFilters.maxTime || null,
+          num_recipes: 3,
+          use_mmr: true,
+          mmr_lambda: 0.65,
+        };
+
+        console.log("📤 Sending request:", requestBody);
+
+        const fetchResponse = await fetch("/api/invent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestBody),
+        });
+
+        console.log("📥 Response status:", fetchResponse.status);
+
+        if (!fetchResponse.ok) {
+          throw new Error(`HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`);
+        }
+
+        const response = await fetchResponse.json();
+        console.log("✅ API Response:", response);
+
+        removeMessage(typingId);
+
+        if (response.recipes && response.recipes.length > 0) {
+          addMessage(
+            `🎯 Am găsit ${response.recipes.length} rețete bazate pe: ${ingredients.join(", ")}`,
+            "bot"
+          );
+
+          response.recipes.forEach((recipe, idx) => {
+            const recipeHtml = `
+              <div class="recipe-card">
+                <div class="title">🍽️ ${recipe.title}</div>
+                <div class="meta">
+                  <span>⏱️ ${recipe.time_minutes || "?"}min</span>
+                  <span>📊 ${recipe.difficulty || "Med."}</span>
+                  <span>🌍 ${recipe.cuisine || "?"}</span>
+                </div>
+                <div class="ingredients">
+                  <strong>Ingrediente:</strong><br/>
+                  ${(recipe.ingredients || []).slice(0, 6).join(", ")}${(recipe.ingredients || []).length > 6 ? "..." : ""}
+                </div>
+                <div class="instructions">
+                  <strong>Mod de preparare:</strong><br/>
+                  ${((recipe.steps && recipe.steps[0]) || (recipe.instructions) || "").substring(0, 120)}...
+                </div>
+                <div class="match-score">
+                  ✅ Potrivire: ${Math.round((recipe.rag_debug?.user_ingredient_recall || 0.7) * 100)}%
+                </div>
+              </div>
+            `;
+            addMessage(recipeHtml, "bot", false, true);
+          });
+        } else {
+          addMessage(
+            `❌ Nu am găsit rețete cu: ${ingredients.join(", ")}. Încearcă alte ingrediente! 🔍`,
+            "bot"
+          );
+        }
+      } catch (error) {
+        removeMessage(typingId);
+        console.error("🔴 Error:", error);
+        addMessage(`❌ Eroare: ${error.message}. Încearcă din nou!`, "bot");
+      }
+    }
+
+    // ── Parse Ingredients ──────────────────────────────────────────────────
+    function parseIngredients(text) {
+      const stopwords = ["și", "sau", "din", "cu", "pe", "pentru", "ce", "pot", "face", "rețete", "mâncare", "cu", "care", "sub", "minute", "de", "rapid", "rapide", "ușor", "mediu", "dificil", "ceva", "broccoli", "vegan", "italiană", "ital", "thai", "indiană", "mexican", "japoneză"];
+      const words = text
+        .toLowerCase()
+        .split(/[,\s\?\!\.]+/)
+        .filter(w => w.length > 1 && !stopwords.includes(w))
+        .slice(0, 10);
+
+      return words.length > 0 ? words : ["rețete"];
+    }
+
+    // ── Add Message ────────────────────────────────────────────────────────
+    function addMessage(content, role, isTyping = false, isHtml = false) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = `message ${role}`;
+      msgDiv.id = `msg-${Date.now()}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "message-bubble";
+
+      if (isTyping) {
+        bubble.innerHTML = `
+          <div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        `;
+      } else if (isHtml) {
+        bubble.innerHTML = content;
+      } else {
+        bubble.textContent = content;
+      }
+
+      if (!isTyping) {
+        const meta = document.createElement("div");
+        meta.className = "message-meta";
+        meta.textContent = new Date().toLocaleTimeString("ro-RO", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        bubble.appendChild(meta);
+      }
+
+      msgDiv.appendChild(bubble);
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      return msgDiv.id;
+    }
+
+    // ── Remove Message ─────────────────────────────────────────────────────
+    function removeMessage(id) {
+      document.getElementById(id)?.remove();
+    }
+
+    // ── Quick Actions ──────────────────────────────────────────────────────
+    function askQuestion(question) {
+      chatInput.value = question;
+      chatInput.focus();
+      sendMessage();
+    }
+
+    function filterByCuisine(cuisine) {
+      currentFilters.cuisine = cuisine;
+      chatInput.value = `Rețete ${cuisine.toLowerCase()}`;
+      chatInput.focus();
+    }
+
+    function filterByTime(minutes) {
+      currentFilters.maxTime = minutes;
+      chatInput.value = `Rețete rapide sub ${minutes} de minute`;
+      chatInput.focus();
+    }
+
+    function filterByDifficulty(level) {
+      currentFilters.difficulty = level;
+      chatInput.value = `Rețete ${level.toLowerCase()}`;
+      chatInput.focus();
+    }
+
+    // ── Textarea Auto-resize ──────────────────────────────────────────────
+    chatInput.addEventListener("input", function () {
+      this.style.height = "auto";
+      this.style.height = Math.min(this.scrollHeight, 100) + "px";
+    });
+
+    // ── Enter to Send ──────────────────────────────────────────────────────
+    chatInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // ── Initialize ─────────────────────────────────────────────────────────
+    initializeChatbot();
+  </script>
+</body>
+</html>
