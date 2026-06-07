@@ -378,9 +378,169 @@
       color: #a5b4fc;
     }
 
-    .stat-value {
-      color: #c7d2fe;
+    /* ── Agent Terminal ──────────────────────────────────────────────────────── */
+    .agent-terminal-header {
+      display: flex;
+      align-items: center;
+      background: #111827;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-bottom: none;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      padding: 6px 12px;
+      font-size: 10px;
+      color: #34d399;
+      font-family: monospace;
       font-weight: 600;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .agent-terminal-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ef4444;
+    }
+    .agent-terminal-dot:nth-child(2) { background: #f59e0b; }
+    .agent-terminal-dot:nth-child(3) { background: #10b981; }
+
+    .agent-terminal {
+      background: #090d16;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-bottom-left-radius: 6px;
+      border-bottom-right-radius: 6px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 11px;
+      color: #a7f3d0;
+      max-height: 180px;
+      overflow-y: auto;
+      line-height: 1.4;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      white-space: pre-wrap;
+    }
+    .agent-terminal-line {
+      margin-bottom: 2px;
+      opacity: 0.95;
+    }
+
+    /* ── Nutrition Label ──────────────────────────────────────────────────────── */
+    .nutrition-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .nutrition-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .nutrition-val {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #e0e7ff;
+    }
+    .nutrition-lbl {
+      font-size: 0.65rem;
+      color: #a5b4fc;
+      text-transform: uppercase;
+    }
+
+    /* ── Flavor Profile ───────────────────────────────────────────────────────── */
+    .flavor-profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 8px;
+    }
+    .flavor-profile-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .flavor-profile-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+    }
+    .flavor-profile-name { color: #e0e7ff; }
+    .flavor-profile-pct { color: #a5b4fc; font-weight: 600; }
+    .flavor-bar-bg {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .flavor-bar-fill {
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.8s ease-in-out;
+    }
+    .fill-sweet { background: linear-gradient(to right, #f43f5e, #fb7185); }
+    .fill-sour { background: linear-gradient(to right, #eab308, #fef08a); }
+    .fill-salty { background: linear-gradient(to right, #3b82f6, #60a5fa); }
+    .fill-spicy { background: linear-gradient(to right, #f97316, #fb923c); }
+    .fill-creamy { background: linear-gradient(to right, #a855f7, #c084fc); }
+    .fill-umami { background: linear-gradient(to right, #10b981, #34d399); }
+
+    /* ── Plating & Pairing ────────────────────────────────────────────────────── */
+    .plating-box {
+      background: rgba(6, 182, 212, 0.04);
+      border-left: 2px solid #06b6d4;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-top: 6px;
+    }
+    .pairing-box {
+      background: rgba(245, 158, 11, 0.04);
+      border-left: 2px solid #f59e0b;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-top: 6px;
+    }
+
+    /* ── Collapsibles & Accordions ────────────────────────────────────────────── */
+    .collapsible { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
+    .collapsible.open { max-height: 1000px; }
+    .toggle-header { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; }
+    .toggle-header .toggle-icon { font-size: 10px; color: #a5b4fc; transition: transform 0.25s; }
+    .toggle-header.open .toggle-icon { transform: rotate(180deg); }
+
+    /* ── Chat Suggestions ─────────────────────────────────────────────────────── */
+    .suggestions-row-chat {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .chat-sugg-btn {
+      padding: 6px 12px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 20px;
+      color: #c7d2fe;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chat-sugg-btn:hover {
+      background: rgba(99, 102, 241, 0.3);
+      transform: translateY(-1px);
     }
   </style>
 </head>
@@ -417,6 +577,20 @@
     <!-- Sidebar -->
     <div class="sidebar">
       <div class="stats-bar" id="statsBar"></div>
+
+      <!-- Agent activity monitor terminal inside chatbot sidebar -->
+      <div class="sidebar-section">
+        <h3>🤖 Agent Thought Monitor</h3>
+        <div class="agent-terminal-header">
+          <div class="agent-terminal-dot"></div>
+          <div class="agent-terminal-dot"></div>
+          <div class="agent-terminal-dot"></div>
+          <span style="margin-left:4px;">Agent RAG Console</span>
+        </div>
+        <div class="agent-terminal" id="agentTerminal">
+          > Agent idle. Waiting for RAG query...
+        </div>
+      </div>
 
       <div class="sidebar-section">
         <h3>🎯 Sugestii Rapide</h3>
@@ -513,6 +687,122 @@
       `;
     }
 
+    // ── Helper escape function ─────────────────────────────────────────────
+    function esc(str) {
+      if (typeof str !== 'string') return '';
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ── Render inline recipe card for chat ──────────────────────────────────
+    function renderChatRecipeCard(recipe, idx) {
+      const uniqueId = `chat-rec-${Date.now()}-${idx}`;
+      const nutr = recipe.nutrition || { calories: 340, protein: '12g', carbs: '40g', fat: '10g' };
+      const flav = recipe.flavor_percentages || { sweet: 20, sour: 20, salty: 20, spicy: 10, creamy: 15, umami: 15 };
+      
+      const steps = recipe.steps || [];
+      const stepsHTML = steps.map((s, i) => `
+        <div class="step-item" style="display:flex; gap:8px; margin-top:4px; align-items:flex-start;">
+          <span class="step-num" style="width:18px; height:18px; font-size:9px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #8b5cf6); display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0; font-weight:700;">${i+1}</span>
+          <p class="step-text" style="font-size:11px; color:#cbd5e1; line-height:1.4; margin:0;">${esc(s)}</p>
+        </div>
+      `).join('');
+      
+      const ingHTML = (recipe.ingredients || []).map(ing => `
+        <span class="ing-chip" style="background:rgba(255,255,255,0.05); border:1px solid rgba(224,231,255,0.15); padding:2px 6px; border-radius:50px; font-size:10px; color:#cbd5e1; display:inline-block; margin:2px;">${esc(ing)}</span>
+      `).join('');
+
+      const platingHTML = recipe.plating_guide ? `
+        <div style="margin-top: 8px;">
+          <span style="color:#06b6d4; font-size:9px; font-weight:600; text-transform:uppercase; display:block;">🍽 Chef's Plating Guide</span>
+          <div class="plating-box" style="margin-top:2px;">${esc(recipe.plating_guide)}</div>
+        </div>
+      ` : '';
+
+      const pairingHTML = recipe.beverage_pairing ? `
+        <div style="margin-top: 8px;">
+          <span style="color:#f59e0b; font-size:9px; font-weight:600; text-transform:uppercase; display:block;">🍷 Sommelier Pairing</span>
+          <div class="pairing-box" style="margin-top:2px;">${esc(recipe.beverage_pairing)}</div>
+        </div>
+      ` : '';
+
+      return `
+        <div class="recipe-card" style="margin-top: 10px; background: rgba(15,23,42,0.4); border: 1px solid rgba(224,231,255,0.1); border-radius: 12px; padding: 12px; font-size:12px; animation: slideIn 0.3s ease-out;">
+          <div class="title" style="font-weight:700; font-size:13px; color:#c7d2fe; margin-bottom:4px;">🍽️ ${esc(recipe.title)}</div>
+          <div class="meta" style="display:flex; gap:10px; font-size:10px; color:#a5b4fc; margin-bottom:6px;">
+            <span>⏱️ ${recipe.time_minutes || "?"} min</span>
+            <span>📊 ${recipe.difficulty || "Med."}</span>
+            <span>🌍 ${recipe.cuisine || "?"}</span>
+          </div>
+          
+          <!-- Nutrition facts label inline -->
+          <div class="nutrition-grid" style="margin: 6px 0;">
+            <div class="nutrition-item"><span class="nutrition-val">${nutr.calories}</span><span class="nutrition-lbl">Kcal</span></div>
+            <div class="nutrition-item"><span class="nutrition-val">${nutr.protein}</span><span class="nutrition-lbl">Prot</span></div>
+            <div class="nutrition-item"><span class="nutrition-val">${nutr.carbs}</span><span class="nutrition-lbl">Carb</span></div>
+            <div class="nutrition-item"><span class="nutrition-val">${nutr.fat}</span><span class="nutrition-lbl">Lipd</span></div>
+          </div>
+
+          <!-- Collapsible Steps and Details -->
+          <div style="margin-top: 8px; border-top:1px solid rgba(224,231,255,0.06); padding-top:4px;">
+            <div class="toggle-header" onclick="this.nextElementSibling.classList.toggle('open'); this.classList.toggle('open');" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:600; color:#a5b4fc; text-transform:uppercase; padding:4px 0;">
+              <span>Arată pașii de preparare</span>
+              <span class="toggle-icon">▼</span>
+            </div>
+            
+            <div class="collapsible">
+              <div style="margin-top: 6px;">
+                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Ingrediente:</strong>
+                <div>${ingHTML}</div>
+              </div>
+              
+              <div style="margin-top: 8px;">
+                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Mod de preparare:</strong>
+                <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px;">${stepsHTML}</div>
+              </div>
+
+              <!-- Flavor Profile percentages -->
+              <div style="margin-top: 10px; border-top:1px solid rgba(224,231,255,0.06); padding-top:6px;">
+                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Profil de Arome:</strong>
+                <div class="flavor-profile-grid" style="padding:6px; gap:4px 8px; margin-top:4px;">
+                  <div class="flavor-profile-item">
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Dulce</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.sweet}%</span></div>
+                    <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-sweet" style="width: ${flav.sweet}%"></div></div>
+                  </div>
+                  <div class="flavor-profile-item">
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Acru</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.sour}%</span></div>
+                    <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-sour" style="width: ${flav.sour}%"></div></div>
+                  </div>
+                  <div class="flavor-profile-item">
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Sărat</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.salty}%</span></div>
+                    <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-salty" style="width: ${flav.salty}%"></div></div>
+                  </div>
+                  <div class="flavor-profile-item">
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Iute</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.spicy}%</span></div>
+                    <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-spicy" style="width: ${flav.spicy}%"></div></div>
+                  </div>
+                  <div class="flavor-profile-item">
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Cremos</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.creamy}%</span></div>
+                    <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-creamy" style="width: ${flav.creamy}%"></div></div>
+                  </div>
+                  <div class="flavor-profile-item">
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Umami</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.umami}%</span></div>
+                    <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-umami" style="width: ${flav.umami}%"></div></div>
+                  </div>
+                </div>
+              </div>
+
+              ${platingHTML}
+              ${pairingHTML}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
     // ── Send Message ────────────────────────────────────────────────────────
     async function sendMessage() {
       const text = chatInput.value.trim();
@@ -526,25 +816,12 @@
       const typingId = addMessage("...", "bot", true);
 
       try {
-        const ingredients = parseIngredients(text);
-        console.log("📝 Parsed ingredients:", ingredients);
+        console.log("📤 Sending message to Chat RAG:", text);
 
-        const requestBody = {
-          ingredients: ingredients,
-          cuisine: currentFilters.cuisine || "Any",
-          difficulty: currentFilters.difficulty || "Any",
-          max_time: currentFilters.maxTime || null,
-          num_recipes: 3,
-          use_mmr: true,
-          mmr_lambda: 0.65,
-        };
-
-        console.log("📤 Sending request:", requestBody);
-
-        const fetchResponse = await fetch("/api/invent", {
+        const fetchResponse = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody),
+          body: JSON.stringify({ message: text }),
         });
 
         console.log("📥 Response status:", fetchResponse.status);
@@ -554,46 +831,120 @@
         }
 
         const response = await fetchResponse.json();
-        console.log("✅ API Response:", response);
+        console.log("✅ Chatbot Response:", response);
 
         removeMessage(typingId);
 
-        if (response.recipes && response.recipes.length > 0) {
-          addMessage(
-            `🎯 Am găsit ${response.recipes.length} rețete bazate pe: ${ingredients.join(", ")}`,
-            "bot"
-          );
+        // ── Render Agent Terminal Logs ──────────────────────────────────────
+        const agentTerminal = document.getElementById("agentTerminal");
+        if (response.agent_logs && response.agent_logs.length > 0 && agentTerminal) {
+          agentTerminal.innerHTML = "";
+          response.agent_logs.forEach(log => {
+            const line = document.createElement("div");
+            line.className = "agent-terminal-line";
+            if (log.includes("✅") || log.includes("successful")) {
+              line.style.color = "#34d399";
+            } else if (log.includes("⚠️") || log.includes("too low") || log.includes("Self-critique")) {
+              line.style.color = "#fbbf24";
+            } else if (log.includes("Dropped") || log.includes("Dropping") || log.includes("Aborting")) {
+              line.style.color = "#f87171";
+            } else if (log.includes("Iteration")) {
+              line.style.color = "#60a5fa";
+            }
+            line.textContent = `> ${log}`;
+            agentTerminal.appendChild(line);
+          });
+          // Add idle status cursor
+          const idleLine = document.createElement("div");
+          idleLine.innerHTML = `> Agent idle. Waiting...<span class="agent-terminal-cursor"></span>`;
+          agentTerminal.appendChild(idleLine);
+          agentTerminal.scrollTop = agentTerminal.scrollHeight;
+        } else if (agentTerminal) {
+          agentTerminal.innerHTML = "> Agent idle. Quick matched direct query.";
+        }
 
-          response.recipes.forEach((recipe, idx) => {
-            const recipeHtml = `
-              <div class="recipe-card">
-                <div class="title">🍽️ ${recipe.title}</div>
-                <div class="meta">
-                  <span>⏱️ ${recipe.time_minutes || "?"}min</span>
-                  <span>📊 ${recipe.difficulty || "Med."}</span>
-                  <span>🌍 ${recipe.cuisine || "?"}</span>
-                </div>
-                <div class="ingredients">
-                  <strong>Ingrediente:</strong><br/>
-                  ${(recipe.ingredients || []).slice(0, 6).join(", ")}${(recipe.ingredients || []).length > 6 ? "..." : ""}
-                </div>
-                <div class="instructions">
-                  <strong>Mod de preparare:</strong><br/>
-                  ${((recipe.steps && recipe.steps[0]) || (recipe.instructions) || "").substring(0, 120)}...
-                </div>
-                <div class="match-score">
-                  ✅ Potrivire: ${Math.round((recipe.rag_debug?.user_ingredient_recall || 0.7) * 100)}%
-                </div>
+        // ── Render Response Content ─────────────────────────────────────────
+        if (response.type === "text" || response.type === "unknown") {
+          addMessage(response.text, "bot", false, false);
+          
+          if (response.tip) {
+            addMessage(`💡 **Tip culinar:**<br/>${response.tip}`, "bot", false, true);
+          }
+        } 
+        else if (response.type === "help" && response.capabilities) {
+          addMessage(response.text, "bot", false, false);
+          let capHtml = `<div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">`;
+          response.capabilities.forEach(c => {
+            capHtml += `
+              <div class="suggested-question" onclick="askQuestion('${esc(c.example)}')" style="border-left-color:#6366f1;">
+                <strong>${c.icon} ${esc(c.title)}</strong><br/>
+                <span style="color:#cbd5e1; font-size:10px;">Ex: "${esc(c.example)}"</span>
               </div>
             `;
-            addMessage(recipeHtml, "bot", false, true);
           });
-        } else {
-          addMessage(
-            `❌ Nu am găsit rețete cu: ${ingredients.join(", ")}. Încearcă alte ingrediente! 🔍`,
-            "bot"
-          );
+          capHtml += `</div>`;
+          addMessage(capHtml, "bot", false, true);
         }
+        else if (response.type === "recipes" && response.recipes) {
+          addMessage(response.text, "bot", false, false);
+          response.recipes.forEach((recipe, idx) => {
+            addMessage(renderChatRecipeCard(recipe, idx), "bot", false, true);
+          });
+        }
+        else if (response.type === "recipe_detail" && response.recipe) {
+          addMessage(response.text, "bot", false, false);
+          addMessage(renderChatRecipeCard(response.recipe, 0), "bot", false, true);
+        }
+        else if (response.type === "technique") {
+          const techHtml = `
+            <strong>${esc(response.title)}</strong><br/><br/>
+            ${esc(response.text)}
+          `;
+          addMessage(techHtml, "bot", false, true);
+        }
+        else if (response.type === "technique_list" && response.techniques) {
+          addMessage(response.text, "bot", false, false);
+          let pillsHtml = `<div class="suggestions-row-chat">`;
+          response.techniques.forEach(t => {
+            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('Ce este tehnica ${esc(t.ro)}?')">${t.emoji} ${esc(t.ro)}</button>`;
+          });
+          pillsHtml += `</div>`;
+          addMessage(pillsHtml, "bot", false, true);
+        }
+        else if (response.type === "substitution" && response.substitutions) {
+          addMessage(`🔄 **${esc(response.title)}**<br/>${esc(response.text)}`, "bot", false, true);
+          let subsHtml = `<div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">`;
+          response.substitutions.forEach(s => {
+            subsHtml += `
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(224,231,255,0.1); border-radius:8px; padding:8px; font-size:11px;">
+                <strong style="color:#c7d2fe;">🔄 ${esc(s.sub)}</strong> (Rată: ${esc(s.ratio)})<br/>
+                <span style="color:#cbd5e1; font-size:10px;">Excelent pentru: ${esc(s.best_for)}</span>
+              </div>
+            `;
+          });
+          subsHtml += `</div>`;
+          addMessage(subsHtml, "bot", false, true);
+        }
+        else if (response.type === "substitution_list" && response.available) {
+          addMessage(response.text, "bot", false, false);
+          let pillsHtml = `<div class="suggestions-row-chat">`;
+          response.available.forEach(s => {
+            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('Ce pun in loc de ${esc(s.ro)}?')">${s.emoji} ${esc(s.ro)}</button>`;
+          });
+          pillsHtml += `</div>`;
+          addMessage(pillsHtml, "bot", false, true);
+        }
+
+        // Render suggestions if available
+        if (response.suggestions && response.suggestions.length > 0) {
+          let suggsHtml = `<div class="suggestions-row-chat" style="margin-top:10px; border-top:1px solid rgba(224,231,255,0.06); padding-top:6px;">`;
+          response.suggestions.forEach(s => {
+            suggsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('${esc(s)}')">${esc(s)}</button>`;
+          });
+          suggsHtml += `</div>`;
+          addMessage(suggsHtml, "bot", false, true);
+        }
+
       } catch (error) {
         removeMessage(typingId);
         console.error("🔴 Error:", error);

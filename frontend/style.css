@@ -648,3 +648,167 @@ main.container {
 @media (max-width: 480px) {
   .filters-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ── Agent Terminal ──────────────────────────────────────────────────────── */
+.agent-terminal-container {
+  margin-top: 16px;
+  margin-bottom: 24px;
+  animation: slideUp 0.3s ease-out;
+}
+.agent-terminal-header {
+  display: flex;
+  align-items: center;
+  background: #111827;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-bottom: none;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  color: #34d399;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+  gap: 8px;
+}
+.agent-terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ef4444;
+}
+.agent-terminal-dot:nth-child(2) { background: #f59e0b; }
+.agent-terminal-dot:nth-child(3) { background: #10b981; }
+
+.agent-terminal {
+  background: #090d16;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  padding: 16px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.82rem;
+  color: #a7f3d0;
+  max-height: 220px;
+  overflow-y: auto;
+  line-height: 1.5;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+  white-space: pre-wrap;
+}
+.agent-terminal::-webkit-scrollbar {
+  width: 6px;
+}
+.agent-terminal::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.3);
+  border-radius: 3px;
+}
+.agent-terminal-line {
+  margin-bottom: 4px;
+  opacity: 0.95;
+}
+.agent-terminal-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: #10b981;
+  margin-left: 4px;
+  animation: blink 1s step-end infinite;
+  vertical-align: middle;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ── Nutrition Label ──────────────────────────────────────────────────────── */
+.nutrition-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 10px;
+  text-align: center;
+}
+.nutrition-item {
+  display: flex;
+  flex-direction: column;
+}
+.nutrition-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.nutrition-lbl {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* ── Flavor Profile ───────────────────────────────────────────────────────── */
+.flavor-profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 10px;
+}
+.flavor-profile-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.flavor-profile-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.flavor-profile-name { color: var(--text); }
+.flavor-profile-pct { color: var(--text-muted); font-weight: 600; }
+.flavor-bar-bg {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 30px;
+  overflow: hidden;
+}
+.flavor-bar-fill {
+  height: 100%;
+  border-radius: 30px;
+  transition: width 0.8s ease-in-out;
+}
+
+/* Color codes for flavor fills */
+.fill-sweet { background: linear-gradient(to right, #f43f5e, #fb7185); }
+.fill-sour { background: linear-gradient(to right, #eab308, #fef08a); }
+.fill-salty { background: linear-gradient(to right, #3b82f6, #60a5fa); }
+.fill-spicy { background: linear-gradient(to right, #f97316, #fb923c); }
+.fill-creamy { background: linear-gradient(to right, #a855f7, #c084fc); }
+.fill-umami { background: linear-gradient(to right, #10b981, #34d399); }
+
+/* ── Plating & Pairing ────────────────────────────────────────────────────── */
+.plating-box {
+  background: rgba(6, 182, 212, 0.04);
+  border-left: 3px solid var(--cyan);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.pairing-box {
+  background: rgba(245, 158, 11, 0.04);
+  border-left: 3px solid var(--amber);
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+

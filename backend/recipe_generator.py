@@ -202,6 +202,128 @@ def adapt_steps(base_steps: list[str], user_ingredients: list[str], base_recipe:
     return adapted
 
 
+def estimate_nutrition(ingredients: list[str]) -> dict:
+    cal = 180
+    protein = 6
+    carbs = 12
+    fat = 4
+    
+    for ing in ingredients:
+        ing_l = ing.lower()
+        if any(p in ing_l for p in ["chicken", "poultry", "breast", "thighs", "turkey", "duck"]):
+            cal += 140
+            protein += 22
+            fat += 4
+        elif any(b in ing_l for b in ["beef", "steak", "pork", "lamb", "veal", "meat", "bacon"]):
+            cal += 220
+            protein += 20
+            fat += 14
+        elif any(s in ing_l for s in ["salmon", "tuna", "fish", "shrimp", "prawn", "seafood", "mussels", "clams"]):
+            cal += 110
+            protein += 18
+            fat += 4
+        elif any(d in ing_l for d in ["cheese", "parmesan", "cheddar", "mozzarella", "cream", "butter", "ghee", "heavy cream"]):
+            cal += 90
+            protein += 4
+            fat += 8
+        elif any(s in ing_l for s in ["pasta", "rice", "noodle", "potato", "bread", "flour", "spaghetti", "penne", "macaroni", "couscous"]):
+            cal += 150
+            carbs += 30
+            protein += 3
+        elif any(v in ing_l for v in ["spinach", "broccoli", "carrot", "zucchini", "eggplant", "tomato", "onion", "garlic", "shallot", "pepper", "mushroom"]):
+            cal += 20
+            carbs += 3
+            protein += 1
+        elif "oil" in ing_l:
+            cal += 80
+            fat += 9
+        elif "egg" in ing_l:
+            cal += 70
+            protein += 6
+            fat += 5
+        elif "tofu" in ing_l or "paneer" in ing_l:
+            cal += 75
+            protein += 8
+            fat += 4
+            
+    return {
+        "calories": cal,
+        "protein": f"{protein}g",
+        "carbs": f"{carbs}g",
+        "fat": f"{fat}g"
+    }
+
+
+def calculate_flavor_profile(ingredients: list[str]) -> dict:
+    sweet = 12
+    sour = 10
+    salty = 15
+    spicy = 5
+    creamy = 10
+    umami = 15
+    
+    for ing in ingredients:
+        ing_l = ing.lower()
+        if any(x in ing_l for x in ["honey", "sugar", "brown sugar", "pineapple", "maple syrup", "mirin", "sweet", "apple", "carrot"]):
+            sweet += 25
+        if any(x in ing_l for x in ["lemon", "lime", "vinegar", "tomato", "cherry tomatoes", "yogurt", "wine", "tamarind", "orange"]):
+            sour += 20
+        if any(x in ing_l for x in ["soy sauce", "salt", "parmesan", "bacon", "cheese", "olives"]):
+            salty += 22
+        if any(x in ing_l for x in ["chili", "cayenne", "pepper", "ginger", "garlic", "spic", "szechuan"]):
+            spicy += 25
+        if any(x in ing_l for x in ["butter", "cream", "coconut milk", "oil", "cheese", "mozzarella", "ghee", "lard", "heavy cream"]):
+            creamy += 25
+        if any(x in ing_l for x in ["chicken", "beef", "pork", "fish", "salmon", "shrimp", "mushrooms", "tofu", "paneer", "msg", "soy sauce", "parmesan"]):
+            umami += 30
+            
+    # Normalize to nice reasonable percentages
+    total = sweet + sour + salty + spicy + creamy + umami
+    if total > 0:
+        return {
+            "sweet": min(95, int((sweet / total) * 200) + 5),
+            "sour": min(95, int((sour / total) * 200) + 5),
+            "salty": min(95, int((salty / total) * 200) + 5),
+            "spicy": min(95, int((spicy / total) * 250) + 2),
+            "creamy": min(95, int((creamy / total) * 200) + 5),
+            "umami": min(95, int((umami / total) * 200) + 8)
+        }
+    return {"sweet": 10, "sour": 10, "salty": 15, "spicy": 5, "creamy": 10, "umami": 15}
+
+
+def get_plating_guide(cuisine: str) -> str:
+    if cuisine == "Italian":
+        return "Plated in a shallow rimmed bowl, topped with a cascade of freshly shaved Parmigiano-Reggiano, finished with a precise thread of cold-pressed olive oil and a sprig of fresh basil."
+    elif cuisine in ["Thai", "Chinese", "Vietnamese", "Japanese", "Korean"]:
+        return "Served in a deep stoneware bowl, ingredients arranged in clean sections over the base, garnished with toasted sesame seeds, finely sliced scallions, and a drizzle of toasted chili oil."
+    elif cuisine == "Indian":
+        return "Presented in a warm copper handi or deep bowl, finished with a spiral of fresh cream, fresh coriander leaves, and served with charred naan placed diagonally on the side."
+    elif cuisine == "Mexican":
+        return "Arranged neatly on a rustic wooden board, garnished with fresh cilantro leaves, crumbled cotija cheese, and served with charred lime halves for squeezing."
+    elif cuisine == "French":
+        return "Artfully centered on a wide white plate, finished with a glossy reduction sauce spooned in a crescent shape, and garnished with delicate fresh chervil or microgreens."
+    else:
+        return "Presented in a hot cast-iron skillet or shallow ceramic dish, garnished with fresh chopped herbs and a splash of citrus to brighten the presentation."
+
+
+def get_beverage_pairing(cuisine: str, ingredients: list[str]) -> str:
+    ings_flat = " ".join(ingredients).lower()
+    is_beef = any(b in ings_flat for b in ["beef", "steak", "lamb", "pork", "meat", "bacon"])
+    is_seafood = any(s in ings_flat for s in ["salmon", "fish", "tuna", "shrimp", "prawn", "mussel", "clam", "seafood"])
+    is_chicken = any(c in ings_flat for c in ["chicken", "poultry", "turkey", "duck"])
+    
+    if is_beef:
+        return "🍷 Bold Cabernet Sauvignon or a smoky Syrah (cuts through rich fats and complements savory proteins)."
+    elif is_seafood:
+        return "🥂 Crisp Sauvignon Blanc or dry Pinot Grigio (bright acidity enhances delicate seafood flavors)."
+    elif is_chicken:
+        return "🍷 Light Pinot Noir or lightly oaked Chardonnay (balances white meat nicely)."
+    elif cuisine in ["Thai", "Indian", "Mexican"] or "chili" in ings_flat:
+        return "🍺 Chilled off-dry Riesling or a refreshing lager beer (cools down the heat and complements sweet-sour notes)."
+    else:
+        return "🥂 Dry Rosé or sparkling Prosecco (a versatile, refreshing match for vegetable or starch-heavy dishes)."
+
+
 def invent_recipes(
     user_ingredients: list[str],
     retrieved_recipes: list[dict],
@@ -239,6 +361,11 @@ def invent_recipes(
             "tips":          COOKING_TIPS.get(cuisine, COOKING_TIPS["International"])[:2],
             "key_technique": base.get("key_technique", ""),
             "score":         base.get("score", 0.0),
+            "nutrition":     estimate_nutrition(merged),
+            "flavor_percentages": calculate_flavor_profile(merged),
+            "plating_guide": get_plating_guide(cuisine),
+            "beverage_pairing": get_beverage_pairing(cuisine, merged),
         })
 
     return results
+

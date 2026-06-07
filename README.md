@@ -46,3 +46,15 @@ Deschide `http://localhost:8000` în browser.
 - 🏷️ **Tag input** — Enter/virgulă pentru adăugare, ✕ pentru eliminare
 - 🔬 **Explicații** — de ce funcționează combinațiile de ingrediente
 - 💡 **Sfaturi pro** — specifice fiecărei bucătării
+
+## RAG Research & Comparison Objectives
+
+Pentru proiectele curente, ne axăm pe comparația practică și analiza metodelor RAG local/on-prem:
+- **Comparația dintre diferite metode de retrieval**: Evaluarea Sparse Retrieval (BM25) vs. Dense Semantic Retrieval (ChromaDB).
+- **Reranking**: Utilizarea Maximal Marginal Relevance (MMR) pentru diversitatea recomandărilor.
+- **Setarea unui threshold dinamic pentru relevanță**: Implementarea unui prag de relevanță hibrid folosit de agentul determinist pentru query expansion / ingredient dropping.
+- **Testarea acurateții retrieval-ului**: Analiza automată a recall-ului ingredientelor față de rețetele returnate.
+- **Baze de date vectoriale on-prem**: Integrarea și testarea ChromaDB rulat local fără dependențe cloud externe.
+- **Comparația între modele de embeddings**: Evaluarea performanței modelului `all-MiniLM-L6-v2` față de indexarea TF-IDF tradițională.
+
+Scopul este de a rămâne într-o zonă practică și relevantă, fără a depinde prea mult de contextul și complexitatea unui proiect comercial în această etapă.

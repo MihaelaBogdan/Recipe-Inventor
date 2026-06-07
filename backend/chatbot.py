@@ -361,6 +361,50 @@ CUISINE_MAP: dict[str, str] = {
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# ROMANIAN TO ENGLISH TRANSLATION MAP
+# ─────────────────────────────────────────────────────────────────────────────
+RO_TO_EN: dict[str, str] = {
+    "pui": "chicken", "gaina": "chicken", "puiului": "chicken",
+    "usturoi": "garlic", "usturoiului": "garlic",
+    "ceapa": "onion", "cepei": "onion",
+    "cartof": "potato", "cartofi": "potato", "cartofii": "potato",
+    "orez": "rice", "orezului": "rice",
+    "paste": "pasta", "spaghete": "pasta", "macaroane": "pasta", "penne": "pasta",
+    "spanac": "spinach", "spanacului": "spinach",
+    "ciuperci": "mushroom", "ciuperca": "mushroom", "ciupercile": "mushroom",
+    "ou": "egg", "oua": "egg", "ouale": "egg", "ouelor": "egg",
+    "lapte": "milk", "laptelui": "milk",
+    "unt": "butter", "untului": "butter",
+    "rosie": "tomato", "rosii": "tomato", "rosiile": "tomato",
+    "lamaie": "lemon", "lamai": "lemon", "lamaia": "lemon",
+    "peste": "fish", "pestelui": "fish",
+    "salata": "salad", "salate": "salad",
+    "sare": "salt", "sarii": "salt",
+    "piper": "pepper", "piperului": "pepper",
+    "ulei": "oil", "uleiului": "oil",
+    "carne": "meat", "carnii": "meat",
+    "porc": "pork", "porcului": "pork",
+    "vita": "beef", "vitei": "beef",
+    "branza": "cheese", "cascaval": "cheese", "parmezan": "parmesan",
+    "morcov": "carrot", "morcovi": "carrot", "morcovii": "carrot",
+    "dovlecel": "zucchini", "dovlecei": "zucchini",
+    "vanata": "eggplant", "vinete": "eggplant",
+    "ardei": "pepper", "ardei gras": "bell pepper",
+    "creveti": "shrimp",
+    "iaurt": "yogurt", "iaurtului": "yogurt",
+    "miere": "honey", "mierii": "honey",
+    "zahar": "sugar", "zaharului": "sugar",
+    "faina": "flour", "fainei": "flour",
+    "vin": "wine", "vinului": "wine",
+    "smantana": "cream", "smantanei": "cream",
+    "mar": "apple", "mere": "apple", "merele": "apple",
+    "paine": "bread", "panii": "bread",
+    "naut": "chickpeas", "nautului": "chickpeas",
+    "broccoli": "broccoli",
+}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # CHATBOT ENGINE
 # ─────────────────────────────────────────────────────────────────────────────
 class RecipeChatbot:
@@ -369,8 +413,9 @@ class RecipeChatbot:
     Combină pattern matching pentru intenție cu retrieval RAG pentru conținut.
     """
 
-    def __init__(self, rag_engine):
+    def __init__(self, rag_engine, agent=None):
         self.rag = rag_engine
+        self.agent = agent
         self.compiled = [(re.compile(p, re.IGNORECASE), intent) for p, intent in INTENT_PATTERNS]
 
     # ── Detect intent ─────────────────────────────────────────────────────────
@@ -391,7 +436,7 @@ class RecipeChatbot:
             "ingrediente", "folosesc", "am", "niste", "cateva",
         }
         clean = re.sub(r'[?!.,;:]', ' ', message.lower())
-        tokens = [t.strip() for t in re.split(r'[\s,șiȘIÎîâÂ/]+', clean) if len(t.strip()) > 2]
+        tokens = [t.strip() for t in re.split(r'[\s,;/]+|\bși\b|\bsi\b', clean) if len(t.strip()) > 2]
         result = [t for t in tokens if t not in STOPWORDS]
         return result[:8]  # max 8 ingredients from chat
 
@@ -423,10 +468,19 @@ class RecipeChatbot:
 
     # ── Extract substitution target ───────────────────────────────────────────
     def _extract_sub_target(self, message: str) -> str | None:
+        def stems_match(w1: str, w2: str) -> bool:
+            def stem(w):
+                w = w.lower().strip()
+                w = w.replace("ă", "a").replace("â", "a").replace("î", "i").replace("ș", "s").replace("ț", "t")
+                return w[:3]
+            return stem(w1) == stem(w2) and len(w1) >= 2 and len(w2) >= 2
+
         msg_lower = message.lower()
         patterns = [
             r"in loc de (.+?)[\?!.,]?$",
             r"inlocuiesc (.+?) cu",
+            r"inlocuiesc (.+?)[\?!.,]?$",
+            r"inlocuitor pentru (.+?)[\?!.,]?$",
             r"fara (.+?)[\?!.,]?$",
             r"nu am (.+?)[\?!.,]?$",
             r"alternativa la (.+?)[\?!.,]?$",
@@ -437,12 +491,22 @@ class RecipeChatbot:
                 candidate = m.group(1).strip()
                 # Match to substitution keys
                 for key, data in SUBSTITUTIONS.items():
-                    if key in candidate or data.get("ro", "") in candidate or candidate in key:
+                    ro_name = data.get("ro", "").lower()
+                    if key in candidate or ro_name in candidate or candidate in key or stems_match(candidate, ro_name) or stems_match(candidate, key):
                         return key
                 # Try partial match
                 for key in SUBSTITUTIONS:
                     if any(w in candidate for w in key.split()):
                         return key
+        
+        # Fallback: scan for any substitution ingredient in raw text
+        for word in msg_lower.split():
+            # Clean word
+            w_clean = re.sub(r'[?!.,;:]', '', word)
+            for key, data in SUBSTITUTIONS.items():
+                ro_name = data.get("ro", "").lower()
+                if stems_match(w_clean, ro_name) or stems_match(w_clean, key) or w_clean == ro_name or w_clean == key:
+                    return key
         return None
 
     # ── Extract time limit ────────────────────────────────────────────────────
@@ -523,18 +587,37 @@ class RecipeChatbot:
                             "Încearcă: **'Ce pot face cu pui, usturoi și lămâie?'**",
                     "suggestions": ["Ce pot face cu pui și usturoi?", "Rețetă cu ouă și spanac"],
                 }
-            recipes = self.rag.retrieve(ings, k=3)
+            
+            # Translate ingredients to English for indexing compatibility
+            translated_ings = [RO_TO_EN.get(i, i) for i in ings]
+            
+            agent_logs = []
+            if self.agent:
+                agent_res = self.agent.run_agentic_retrieval(translated_ings, filters={"cuisine": "Any", "difficulty": "Any"})
+                recipes = agent_res["recipes"]
+                agent_logs = agent_res["logs"]
+            else:
+                query_str = " ".join(translated_ings)
+                recipes = self.rag.retrieve(query=query_str, top_k=3)
+                agent_logs = [f"Retrieval run for query: {query_str}"]
+
             if not recipes:
                 return {
                     "type": "text",
                     "text": f"😕 Nu am găsit rețete cu **{', '.join(ings)}**. Încearcă alte ingrediente!",
                     "suggestions": ["Rețete cu pui", "Rețete vegetariene"],
+                    "agent_logs": agent_logs
                 }
+            
+            from recipe_generator import invent_recipes
+            invented = invent_recipes(user_ingredients=translated_ings, retrieved_recipes=recipes, num_recipes=min(3, len(recipes)))
+            
             return {
                 "type": "recipes",
-                "text": f"✨ Am găsit **{len(recipes)} rețete** cu {', '.join(ings[:3])}:",
-                "recipes": [self._recipe_summary(r) for r in recipes],
+                "text": f"✨ Am adaptat **{len(invented)} rețete** pentru tine bazate pe ingredientele cerute:",
+                "recipes": invented,
                 "query_ingredients": ings,
+                "agent_logs": agent_logs
             }
 
         # ── Recipe info ───────────────────────────────────────────────────────
@@ -549,8 +632,10 @@ class RecipeChatbot:
                     "text": "🤔 Spune-mi ce rețetă cauți! Ex: **'Cum fac carbonara?'**",
                     "suggestions": ["Cum fac risotto?", "Rețeta de pad thai", "Cum fac shakshuka?"],
                 }
-            ings = [w for w in dish.lower().split() if len(w) > 2]
-            recipes = self.rag.retrieve(ings or [dish], k=1)
+            
+            translated_dish = " ".join([RO_TO_EN.get(w, w) for w in dish.lower().split()])
+            
+            recipes = self.rag.retrieve(query=translated_dish, top_k=1)
             if not recipes:
                 return {
                     "type": "text",
@@ -558,10 +643,17 @@ class RecipeChatbot:
                             f"Încearcă să cauți cu ingredientele principale!",
                     "suggestions": [f"Ce pot face cu {dish}?", "Surprinde-mă!"],
                 }
+            
+            from recipe_generator import invent_recipes
+            base_recipe = recipes[0]
+            invented = invent_recipes(user_ingredients=base_recipe.get("ingredients", [])[:3], retrieved_recipes=[base_recipe], num_recipes=1)
+            full_rec = invented[0] if invented else base_recipe
+            
             return {
                 "type": "recipe_detail",
                 "text": f"📖 Am găsit cea mai potrivită rețetă pentru **{dish}**:",
-                "recipe": self._recipe_full(recipes[0]),
+                "recipe": full_rec,
+                "agent_logs": [f"Căutare după preparat: '{translated_dish}' matches '{base_recipe.get('title')}' with score {base_recipe.get('hybrid_score', 0):.2f}"]
             }
 
         # ── Technique info ────────────────────────────────────────────────────
@@ -624,22 +716,28 @@ class RecipeChatbot:
                 tag, label = "vegan", "sănătoase 💚"
 
             ings = ["vegetable"] if tag == "vegan" else ["egg", "cheese"]
-            extra_filter = tag
-            recipes = self.rag.retrieve(ings, k=3)
-            if extra_filter:
-                recipes = [r for r in recipes if extra_filter in r.get("tags", [])][:3]
+            recipes = self.rag.retrieve(query=" ".join(ings), top_k=10)
+            if tag:
+                recipes = [r for r in recipes if tag in r.get("tags", [])]
+            recipes = recipes[:3]
+            
             if not recipes:
                 return {"type": "text", "text": f"😕 Nu am găsit rețete {label} cu aceste criterii.", "suggestions": ["Rețete vegane simple", "Surprinde-mă!"]}
+            
+            from recipe_generator import invent_recipes
+            invented = invent_recipes(user_ingredients=ings, retrieved_recipes=recipes, num_recipes=len(recipes))
+            
             return {
                 "type": "recipes",
                 "text": f"🌿 **Rețete {label}** din baza de date:",
-                "recipes": [self._recipe_summary(r) for r in recipes],
+                "recipes": invented,
+                "agent_logs": [f"Filtrare dietă: '{tag or 'gluten-free'}' pe rezultate RAG"]
             }
 
         # ── Time filter ───────────────────────────────────────────────────────
         if intent == "time_filter":
             max_t = self._extract_time(message) or 30
-            recipes = self.rag.retrieve(["quick", "fast", "easy"], k=15)
+            recipes = self.rag.retrieve(query="quick fast easy", top_k=15)
             fast = [r for r in recipes if r.get("time_minutes", 999) <= max_t][:3]
             if not fast:
                 return {
@@ -647,10 +745,15 @@ class RecipeChatbot:
                     "text": f"😕 Nu am găsit rețete sub {max_t} minute. Încearcă 30 sau 45 minute!",
                     "suggestions": ["Rețete sub 30 minute", "Ceva rapid cu ouă"],
                 }
+            
+            from recipe_generator import invent_recipes
+            invented = invent_recipes(user_ingredients=["quick"], retrieved_recipes=fast, num_recipes=len(fast))
+            
             return {
                 "type": "recipes",
                 "text": f"⚡ **Rețete rapide sub {max_t} minute:**",
-                "recipes": [self._recipe_summary(r) for r in fast],
+                "recipes": invented,
+                "agent_logs": [f"Filtrare timp: rețete sub {max_t} minute din vector index"]
             }
 
         # ── Cuisine filter ────────────────────────────────────────────────────
@@ -667,29 +770,39 @@ class RecipeChatbot:
                     "text": "🌍 Ce bucătărie preferi?",
                     "suggestions": ["Rețete italiene", "Rețete thai", "Rețete indiene", "Rețete japoneze", "Rețete mexicane"],
                 }
-            recipes = self.rag.retrieve(["classic", "traditional"], k=20)
-            filtered = [r for r in recipes if r.get("cuisine") == cuisine_en][:3]
-            if not filtered:
+            recipes = self.rag.retrieve(query="classic traditional cuisine", filters={"cuisine": cuisine_en}, top_k=3)
+            if not recipes:
                 return {
                     "type": "text",
                     "text": f"😕 Nu am găsit rețete din bucătăria **{cuisine_en}** cu aceste criterii.",
                     "suggestions": ["Rețete italiene", "Surprinde-mă!"],
                 }
+            
+            from recipe_generator import invent_recipes
+            invented = invent_recipes(user_ingredients=["traditional"], retrieved_recipes=recipes, num_recipes=len(recipes))
+            
             return {
                 "type": "recipes",
                 "text": f"🌍 **Rețete din bucătăria {cuisine_en}:**",
-                "recipes": [self._recipe_summary(r) for r in filtered],
+                "recipes": invented,
+                "agent_logs": [f"Filtrare bucătărie: '{cuisine_en}'"]
             }
 
         # ── Random ────────────────────────────────────────────────────────────
         if intent == "random_recipe":
             all_r = self.rag.recipes
             recipe = random.choice(all_r)
+            
+            from recipe_generator import invent_recipes
+            invented = invent_recipes(user_ingredients=recipe.get("ingredients", [])[:3], retrieved_recipes=[recipe], num_recipes=1)
+            full_rec = invented[0] if invented else recipe
+            
             return {
                 "type": "recipe_detail",
                 "text": f"🎲 Iată surpriza zilei!",
-                "recipe": self._recipe_full(recipe),
+                "recipe": full_rec,
                 "suggestions": ["Altă surpriză!", "Rețete similare"],
+                "agent_logs": ["Rețetă aleatorie selectată din vector DB"]
             }
 
         # ── Unknown / fallback ────────────────────────────────────────────────
