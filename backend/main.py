@@ -4,7 +4,7 @@ main.py — FastAPI backend v3 (Agentic RAG)
 import os, sys, random
 sys.path.insert(0, os.path.dirname(__file__))
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -16,6 +16,7 @@ from rag_engine import RecipeRAGEngine
 from deterministic_agent import DeterministicAgent
 from recipe_generator import invent_recipes
 from chatbot import RecipeChatbot
+from object_detector import DETECTOR
 
 app = FastAPI(
     title="AI Recipe Agent PRO",
@@ -30,12 +31,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-print("🍳 Loading recipe database...")
+print("Loading recipe database...")
 ALL_RECIPES = load_recipes()
 ENGINE = RecipeRAGEngine(ALL_RECIPES)
 AGENT = DeterministicAgent(ENGINE)
 CHATBOT = RecipeChatbot(ENGINE, AGENT)
-print(f"✅ API v3 ready — {len(ALL_RECIPES)} recipes indexed.")
+print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed.")
 
 class InventRequest(BaseModel):
     ingredients: list[str]
@@ -468,6 +469,15 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
         }
     ]
     return {"models": models}
+
+@app.post("/api/playground/upload_fridge")
+async def upload_fridge(file: UploadFile = File(...)):
+    try:
+        contents = await file.read()
+        detected = DETECTOR.detect_ingredients(contents)
+        return {"ingredients": detected}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to process image: {str(e)}")
 
 @app.get("/")
 def serve_app():

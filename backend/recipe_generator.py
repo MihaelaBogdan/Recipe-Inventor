@@ -313,15 +313,15 @@ def get_beverage_pairing(cuisine: str, ingredients: list[str]) -> str:
     is_chicken = any(c in ings_flat for c in ["chicken", "poultry", "turkey", "duck"])
     
     if is_beef:
-        return "🍷 Bold Cabernet Sauvignon or a smoky Syrah (cuts through rich fats and complements savory proteins)."
+        return " Bold Cabernet Sauvignon or a smoky Syrah (cuts through rich fats and complements savory proteins)."
     elif is_seafood:
-        return "🥂 Crisp Sauvignon Blanc or dry Pinot Grigio (bright acidity enhances delicate seafood flavors)."
+        return " Crisp Sauvignon Blanc or dry Pinot Grigio (bright acidity enhances delicate seafood flavors)."
     elif is_chicken:
-        return "🍷 Light Pinot Noir or lightly oaked Chardonnay (balances white meat nicely)."
+        return " Light Pinot Noir or lightly oaked Chardonnay (balances white meat nicely)."
     elif cuisine in ["Thai", "Indian", "Mexican"] or "chili" in ings_flat:
-        return "🍺 Chilled off-dry Riesling or a refreshing lager beer (cools down the heat and complements sweet-sour notes)."
+        return " Chilled off-dry Riesling or a refreshing lager beer (cools down the heat and complements sweet-sour notes)."
     else:
-        return "🥂 Dry Rosé or sparkling Prosecco (a versatile, refreshing match for vegetable or starch-heavy dishes)."
+        return " Dry Rosé or sparkling Prosecco (a versatile, refreshing match for vegetable or starch-heavy dishes)."
 
 
 def invent_recipes(

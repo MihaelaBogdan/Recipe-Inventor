@@ -31,7 +31,7 @@ from typing import Optional
 # ─────────────────────────────────────────────────────────────────────────────
 TECHNIQUES: dict[str, dict] = {
     "braising": {
-        "ro": "brezare", "emoji": "🍲",
+        "ro": "brezare", "emoji": "",
         "explanation": (
             "Brezarea (braising) este o tehnică de gătit lentă, în două etape: "
             "întâi ingredientele sunt rumenite la temperatură înaltă pentru a dezvolta "
@@ -43,7 +43,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["braising", "brezare", "brezat", "slow cook", "fiert lent"],
     },
     "sauteing": {
-        "ro": "sotare", "emoji": "🥘",
+        "ro": "sotare", "emoji": "",
         "explanation": (
             "Sotarea (sautéing) gătește ingredientele rapid în puțin grăsime la temperatură "
             "înaltă, agitând sau mișcând constant tigaia. Scopul este caramelizarea "
@@ -54,7 +54,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["sote", "sotare", "saute", "sauté", "calire", "calit"],
     },
     "wok hei": {
-        "ro": "wok hei", "emoji": "🔥",
+        "ro": "wok hei", "emoji": "",
         "explanation": (
             "Wok hei (镬气, 'suflarea wok-ului') este aroma fumată, ușor carbonizată și "
             "intensă pe care o capătă mâncarea gătită într-un wok extrem de fierbinte. "
@@ -66,7 +66,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["wok hei", "wok", "stir fry", "prajit wok", "tigaie chinezeasca"],
     },
     "emulsification": {
-        "ro": "emulsionare", "emoji": "🥗",
+        "ro": "emulsionare", "emoji": "",
         "explanation": (
             "Emulsionarea combină două lichide care normal nu se amestecă (grăsime + apă) "
             "printr-un agent emulsificator (lecitină din gălbenuș, mustard, miso). "
@@ -78,7 +78,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["emulsionare", "emulsifiere", "emulsificat", "emulsification", "cremos fara smantana"],
     },
     "blanching": {
-        "ro": "opărire", "emoji": "🥦",
+        "ro": "opărire", "emoji": "",
         "explanation": (
             "Opărirea (blanching) gătește parțial legumele în apă clocotită cu sare (30 sec – 3 min), "
             "urmat imediat de răcire în apă cu gheață pentru a opri gătirea. "
@@ -101,7 +101,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["reductie", "reducție", "reduction", "reduce", "ingrosat", "concentrat"],
     },
     "caramelization": {
-        "ro": "caramelizare", "emoji": "🟤",
+        "ro": "caramelizare", "emoji": "",
         "explanation": (
             "Caramelizarea este oxidarea termică a zaharurilor la 160–180°C, producând "
             "sute de compuși aromatici noi cu note de unt, nucă, vanilie și amărăciune complexă. "
@@ -113,7 +113,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["caramelizare", "caramelizat", "caramelization", "caramel", "zahar ars", "ceapa caramelizata"],
     },
     "maillard": {
-        "ro": "reacția Maillard", "emoji": "🥩",
+        "ro": "reacția Maillard", "emoji": "",
         "explanation": (
             "Reacția Maillard este o reacție chimică între aminoacizi și zaharuri reducătoare "
             "la 140–165°C, creând sute de compuși aromatici ce dau nota de 'prăjit', "
@@ -125,7 +125,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["maillard", "reactia maillard", "rumenire", "crusta", "brun", "prajit"],
     },
     "tempering": {
-        "ro": "temperare condimente", "emoji": "🌶️",
+        "ro": "temperare condimente", "emoji": "️",
         "explanation": (
             "Temperarea (tadka/tempering) este tehnica indiană de a înflori condimentele "
             "în grăsime fierbinte (unt clarificat, ulei) pentru a elibera compușii "
@@ -137,7 +137,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["temperare", "tadka", "tempering", "condimente in ulei", "inflorit condimente", "blooming"],
     },
     "deglazing": {
-        "ro": "dezglasat", "emoji": "🍷",
+        "ro": "dezglasat", "emoji": "",
         "explanation": (
             "Dezglasarea (deglazing) adaugă lichid (vin, bulion, oțet, suc de citrice) "
             "într-o tigaie fierbinte după rumenire pentru a dizolva 'fondul' — "
@@ -150,7 +150,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["dezglasat", "deglazing", "deglaze", "fond", "resturi tigaie", "vin in tigaie"],
     },
     "confit": {
-        "ro": "confit", "emoji": "🦆",
+        "ro": "confit", "emoji": "",
         "explanation": (
             "Confit-ul gătește ingredientele COMPLET IMERSATE în grăsime la temperatură joasă "
             "(70–90°C) pentru o perioadă lungă. Rața confit se gătește în propria grăsime "
@@ -162,7 +162,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["confit", "confitat", "grasime", "ulei scufundat", "rata confit", "usturoi confit"],
     },
     "poaching": {
-        "ro": "braconat / poșare", "emoji": "🥚",
+        "ro": "braconat / poșare", "emoji": "",
         "explanation": (
             "Poșarea gătește delicate alimente (ouă, pește, pui) în lichid la 71–82°C "
             "— sub punctul de fierbere. Bulele mici pe fund indică temperatura corectă. "
@@ -180,7 +180,7 @@ TECHNIQUES: dict[str, dict] = {
 # ─────────────────────────────────────────────────────────────────────────────
 SUBSTITUTIONS: dict[str, dict] = {
     "eggs": {
-        "ro": "ouă", "emoji": "🥚",
+        "ro": "ouă", "emoji": "",
         "subs": [
             {"sub": "Ou de in (flax egg)", "ratio": "1 lingură semințe de in măcinate + 3 linguri apă = 1 ou", "best_for": "prăjituri, muffins, burgeri vegani"},
             {"sub": "Ou de chia", "ratio": "1 lingură semințe chia + 3 linguri apă = 1 ou", "best_for": "prăjituri dense, pâine"},
@@ -190,7 +190,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "butter": {
-        "ro": "unt", "emoji": "🧈",
+        "ro": "unt", "emoji": "",
         "subs": [
             {"sub": "Ulei de cocos", "ratio": "1:1", "best_for": "prăjituri, biscuiți, sosuri"},
             {"sub": "Ulei de măsline", "ratio": "3/4 din cantitate", "best_for": "preparate sărate, sotare"},
@@ -200,7 +200,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "milk": {
-        "ro": "lapte", "emoji": "🥛",
+        "ro": "lapte", "emoji": "",
         "subs": [
             {"sub": "Lapte de ovăz", "ratio": "1:1", "best_for": "sosuri, prăjituri, băuturi — cel mai neutru ca gust"},
             {"sub": "Lapte de migdale", "ratio": "1:1", "best_for": "deserturi, cereale"},
@@ -210,7 +210,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "cream": {
-        "ro": "smântână/frișcă", "emoji": "🍦",
+        "ro": "smântână/frișcă", "emoji": "",
         "subs": [
             {"sub": "Lapte de cocos integral (din cutie)", "ratio": "1:1", "best_for": "currye, supe, deserturi"},
             {"sub": "Cashew cream (cashews înmuiate + blender)", "ratio": "1:1", "best_for": "paste, sosuri, deserturi"},
@@ -219,7 +219,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "parmesan": {
-        "ro": "parmezan", "emoji": "🧀",
+        "ro": "parmezan", "emoji": "",
         "subs": [
             {"sub": "Drojdie nutritivă (nutritional yeast)", "ratio": "3-4 linguri per 100g parmezan", "best_for": "paste, risotto, popcorn — gust umami similar"},
             {"sub": "Pecorino Romano", "ratio": "1:1", "best_for": "mai sărat — reduce sarea din rețetă"},
@@ -228,7 +228,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "flour": {
-        "ro": "făină albă", "emoji": "🌾",
+        "ro": "făină albă", "emoji": "",
         "subs": [
             {"sub": "Făină de migdale", "ratio": "1:1 în cele mai multe cazuri", "best_for": "prăjituri umede, fără gluten"},
             {"sub": "Făină de ovăz (oats mixate)", "ratio": "1:1", "best_for": "prăjituri, biscuiți, pancakes"},
@@ -237,7 +237,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "bacon": {
-        "ro": "bacon", "emoji": "🥓",
+        "ro": "bacon", "emoji": "",
         "subs": [
             {"sub": "Tempeh afumat (afumat cu fum lichid + soia)", "ratio": "1:1", "best_for": "cel mai aproape de texture"},
             {"sub": "Ciuperci king oyster (prăjite la uscat)", "ratio": "felii subțiri", "best_for": "texture crocantă similară"},
@@ -246,7 +246,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "honey": {
-        "ro": "miere", "emoji": "🍯",
+        "ro": "miere", "emoji": "",
         "subs": [
             {"sub": "Sirop de arțar (maple syrup)", "ratio": "3/4 din cantitate", "best_for": "aproape identic în baking"},
             {"sub": "Sirop de agave", "ratio": "3/4 din cantitate", "best_for": "mai neutru, se dizolvă mai ușor"},
@@ -255,7 +255,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "wine": {
-        "ro": "vin alb/roșu pentru gătit", "emoji": "🍷",
+        "ro": "vin alb/roșu pentru gătit", "emoji": "",
         "subs": [
             {"sub": "Bulion de legume + 1 ling oțet de vin alb", "ratio": "1:1", "best_for": "vin alb în risotto, sosuri"},
             {"sub": "Suc de struguri alb/roșu + oțet", "ratio": "3/4 suc + 1/4 oțet", "best_for": "fructat, pentru braise"},
@@ -264,7 +264,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
     "soy sauce": {
-        "ro": "sos de soia", "emoji": "🫙",
+        "ro": "sos de soia", "emoji": "",
         "subs": [
             {"sub": "Tamari (fără gluten)", "ratio": "1:1", "best_for": "identic, fără grâu"},
             {"sub": "Coconut aminos", "ratio": "1:1, mai dulce", "best_for": "soia-free, paleo"},
@@ -278,16 +278,16 @@ SUBSTITUTIONS: dict[str, dict] = {
 # KNOWLEDGE BASE: sfaturi generale gătit
 # ─────────────────────────────────────────────────────────────────────────────
 COOKING_TIPS_GENERAL: list[dict] = [
-    {"tip": "Sărează apa de paste până gustă ca marea. Sub-sărarea pastelor este cea mai comună greșeală din bucătărie.", "emoji": "🧂"},
-    {"tip": "Lasă carnea să ajungă la temperatura camerei 30 minute înainte de a o găti. Vei obține o gătire mai uniformă.", "emoji": "🥩"},
-    {"tip": "Nu aglomera tigaia! Dacă pui prea multe ingrediente, temperatura scade și se fierbe în loc să se prăjească.", "emoji": "🍳"},
-    {"tip": "Rezervă întotdeauna apă de paste înainte de a scurge. Amidonul din ea leagă sosul perfect.", "emoji": "🍝"},
-    {"tip": "Condimentele se adaugă în straturi, nu doar la final. Gustă și ajustează pe parcurs.", "emoji": "🌶️"},
-    {"tip": "O tigaie reală de fontă neagră (cast iron) va fi cel mai bun produs din bucătăria ta. Durează toată viața.", "emoji": "🔥"},
-    {"tip": "Acidul (lămâie, oțet) adăugat la final luminează ORICE fel de mâncare. E magia secretă a restaurantelor.", "emoji": "🍋"},
+    {"tip": "Sărează apa de paste până gustă ca marea. Sub-sărarea pastelor este cea mai comună greșeală din bucătărie.", "emoji": ""},
+    {"tip": "Lasă carnea să ajungă la temperatura camerei 30 minute înainte de a o găti. Vei obține o gătire mai uniformă.", "emoji": ""},
+    {"tip": "Nu aglomera tigaia! Dacă pui prea multe ingrediente, temperatura scade și se fierbe în loc să se prăjească.", "emoji": ""},
+    {"tip": "Rezervă întotdeauna apă de paste înainte de a scurge. Amidonul din ea leagă sosul perfect.", "emoji": ""},
+    {"tip": "Condimentele se adaugă în straturi, nu doar la final. Gustă și ajustează pe parcurs.", "emoji": "️"},
+    {"tip": "O tigaie reală de fontă neagră (cast iron) va fi cel mai bun produs din bucătăria ta. Durează toată viața.", "emoji": ""},
+    {"tip": "Acidul (lămâie, oțet) adăugat la final luminează ORICE fel de mâncare. E magia secretă a restaurantelor.", "emoji": ""},
     {"tip": "Lasă carnea să se odihnească după gătire: 5 min pentru pui, 10 min pentru friptură. Sucurile se redistribuie.", "emoji": "⏳"},
-    {"tip": "Cumpără un cuțit de bucătărie bun și ascuțit-l lunar. Un cuțit bun schimbă complet experiența gătitului.", "emoji": "🔪"},
-    {"tip": "Gătitul unui risotto bun = 18 minute de amestecat + răbdare. Nu există scurtătură pentru asta.", "emoji": "🍚"},
+    {"tip": "Cumpără un cuțit de bucătărie bun și ascuțit-l lunar. Un cuțit bun schimbă complet experiența gătitului.", "emoji": ""},
+    {"tip": "Gătitul unui risotto bun = 18 minute de amestecat + răbdare. Nu există scurtătură pentru asta.", "emoji": ""},
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -531,7 +531,7 @@ class RecipeChatbot:
         if intent == "chitchat_greet":
             return {
                 "type": "text",
-                "text": "👋 Salut! Sunt **Chef Bot RAG** — un chatbot culinar care funcționează 100% fără LLM! "
+                "text": " Salut! Sunt **Chef Bot RAG** — un chatbot culinar care funcționează 100% fără LLM! "
                         "Pot să-ți găsesc rețete, să explic tehnici culinare, să sugerez substituții "
                         "și să inventez rețete noi din ingredientele tale. Ce gătim azi?",
                 "suggestions": ["Ce pot face cu pui și usturoi?", "Explică-mi ce este braising", "Rețete vegane rapide", "Surprinde-mă!"],
@@ -539,16 +539,16 @@ class RecipeChatbot:
 
         if intent == "chitchat_thanks":
             responses = [
-                "🙏 Cu plăcere! Mai ai întrebări culinare?",
-                "😊 Mă bucur că a ajutat! Poftă bună!",
-                "👨‍🍳 La dispoziție! Spune-mi ce mai gătești!",
+                " Cu plăcere! Mai ai întrebări culinare?",
+                " Mă bucur că a ajutat! Poftă bună!",
+                "‍ La dispoziție! Spune-mi ce mai gătești!",
             ]
             return {"type": "text", "text": random.choice(responses), "suggestions": ["Mai vreau o rețetă", "Altă tehnică culinară"]}
 
         if intent == "chitchat_identity":
             return {
                 "type": "text",
-                "text": "🤖 Sunt **Chef Bot RAG** — un chatbot culinar construit fără niciun LLM! "
+                "text": " Sunt **Chef Bot RAG** — un chatbot culinar construit fără niciun LLM! "
                         "Funcționez prin:\n"
                         "• **Detectare intenție** cu regex și keywords\n"
                         "• **Retrieval RAG** cu BM25 + TF-IDF bigramic\n"
@@ -559,21 +559,21 @@ class RecipeChatbot:
             }
 
         if intent == "chitchat_bye":
-            return {"type": "text", "text": "👋 La revedere! Poftă bună la gătit! 🍽️", "suggestions": []}
+            return {"type": "text", "text": " La revedere! Poftă bună la gătit! ️", "suggestions": []}
 
         # ── Help ──────────────────────────────────────────────────────────────
         if intent == "help":
             return {
                 "type": "help",
-                "text": "👨‍🍳 **Pot să te ajut cu:**",
+                "text": "‍ **Pot să te ajut cu:**",
                 "capabilities": [
-                    {"icon": "🔍", "title": "Găsesc rețete după ingrediente", "example": "Ce pot face cu pui, usturoi și lămâie?"},
-                    {"icon": "📖", "title": "Explic orice rețetă din baza de date", "example": "Cum fac carbonara?"},
-                    {"icon": "🔬", "title": "Explic tehnici culinare", "example": "Ce este tehnica wok hei?"},
-                    {"icon": "🔄", "title": "Sugerez substituții de ingrediente", "example": "Ce pun în loc de ouă?"},
-                    {"icon": "🌍", "title": "Filtrez după bucătărie/dietă/timp", "example": "Rețete vegane sub 30 minute"},
-                    {"icon": "🎲", "title": "Îți surprind cu o rețetă aleatorie", "example": "Surprinde-mă!"},
-                    {"icon": "💡", "title": "Dau sfaturi generale de gătit", "example": "Dă-mi un sfat culinar"},
+                    {"icon": "", "title": "Găsesc rețete după ingrediente", "example": "Ce pot face cu pui, usturoi și lămâie?"},
+                    {"icon": "", "title": "Explic orice rețetă din baza de date", "example": "Cum fac carbonara?"},
+                    {"icon": "", "title": "Explic tehnici culinare", "example": "Ce este tehnica wok hei?"},
+                    {"icon": "", "title": "Sugerez substituții de ingrediente", "example": "Ce pun în loc de ouă?"},
+                    {"icon": "", "title": "Filtrez după bucătărie/dietă/timp", "example": "Rețete vegane sub 30 minute"},
+                    {"icon": "", "title": "Îți surprind cu o rețetă aleatorie", "example": "Surprinde-mă!"},
+                    {"icon": "", "title": "Dau sfaturi generale de gătit", "example": "Dă-mi un sfat culinar"},
                 ],
             }
 
@@ -583,7 +583,7 @@ class RecipeChatbot:
             if not ings:
                 return {
                     "type": "text",
-                    "text": "🤔 Nu am reușit să extrag ingrediente din mesajul tău. "
+                    "text": " Nu am reușit să extrag ingrediente din mesajul tău. "
                             "Încearcă: **'Ce pot face cu pui, usturoi și lămâie?'**",
                     "suggestions": ["Ce pot face cu pui și usturoi?", "Rețetă cu ouă și spanac"],
                 }
@@ -604,7 +604,7 @@ class RecipeChatbot:
             if not recipes:
                 return {
                     "type": "text",
-                    "text": f"😕 Nu am găsit rețete cu **{', '.join(ings)}**. Încearcă alte ingrediente!",
+                    "text": f" Nu am găsit rețete cu **{', '.join(ings)}**. Încearcă alte ingrediente!",
                     "suggestions": ["Rețete cu pui", "Rețete vegetariene"],
                     "agent_logs": agent_logs
                 }
@@ -614,7 +614,7 @@ class RecipeChatbot:
             
             return {
                 "type": "recipes",
-                "text": f"✨ Am adaptat **{len(invented)} rețete** pentru tine bazate pe ingredientele cerute:",
+                "text": f" Am adaptat **{len(invented)} rețete** pentru tine bazate pe ingredientele cerute:",
                 "recipes": invented,
                 "query_ingredients": ings,
                 "agent_logs": agent_logs
@@ -629,7 +629,7 @@ class RecipeChatbot:
             if not dish:
                 return {
                     "type": "text",
-                    "text": "🤔 Spune-mi ce rețetă cauți! Ex: **'Cum fac carbonara?'**",
+                    "text": " Spune-mi ce rețetă cauți! Ex: **'Cum fac carbonara?'**",
                     "suggestions": ["Cum fac risotto?", "Rețeta de pad thai", "Cum fac shakshuka?"],
                 }
             
@@ -639,7 +639,7 @@ class RecipeChatbot:
             if not recipes:
                 return {
                     "type": "text",
-                    "text": f"😕 Nu am găsit rețeta pentru **{dish}** în baza de date. "
+                    "text": f" Nu am găsit rețeta pentru **{dish}** în baza de date. "
                             f"Încearcă să cauți cu ingredientele principale!",
                     "suggestions": [f"Ce pot face cu {dish}?", "Surprinde-mă!"],
                 }
@@ -651,7 +651,7 @@ class RecipeChatbot:
             
             return {
                 "type": "recipe_detail",
-                "text": f"📖 Am găsit cea mai potrivită rețetă pentru **{dish}**:",
+                "text": f" Am găsit cea mai potrivită rețetă pentru **{dish}**:",
                 "recipe": full_rec,
                 "agent_logs": [f"Căutare după preparat: '{translated_dish}' matches '{base_recipe.get('title')}' with score {base_recipe.get('hybrid_score', 0):.2f}"]
             }
@@ -671,7 +671,7 @@ class RecipeChatbot:
             # Generic unknown technique
             return {
                 "type": "technique_list",
-                "text": "🔬 **Tehnici culinare disponibile** în baza mea de cunoștințe:",
+                "text": " **Tehnici culinare disponibile** în baza mea de cunoștințe:",
                 "techniques": [
                     {"key": k, "ro": v["ro"], "emoji": v["emoji"]}
                     for k, v in TECHNIQUES.items()
@@ -694,7 +694,7 @@ class RecipeChatbot:
                 }
             return {
                 "type": "substitution_list",
-                "text": "🔄 **Ingrediente cu substituții disponibile:**",
+                "text": " **Ingrediente cu substituții disponibile:**",
                 "available": [
                     {"key": k, "ro": v["ro"], "emoji": v["emoji"]}
                     for k, v in SUBSTITUTIONS.items()
@@ -707,13 +707,13 @@ class RecipeChatbot:
             msg_lower = message.lower()
             tag = None
             if any(w in msg_lower for w in ["vegan", "vegana", "vegane"]):
-                tag, label = "vegan", "vegane 🌱"
+                tag, label = "vegan", "vegane "
             elif any(w in msg_lower for w in ["vegetarian", "vegetariana", "vegetariene"]):
-                tag, label = "vegetarian", "vegetariene 🥗"
+                tag, label = "vegetarian", "vegetariene "
             elif any(w in msg_lower for w in ["gluten", "fara gluten"]):
-                tag, label = None, "fără gluten 🌾"
+                tag, label = None, "fără gluten "
             else:
-                tag, label = "vegan", "sănătoase 💚"
+                tag, label = "vegan", "sănătoase "
 
             ings = ["vegetable"] if tag == "vegan" else ["egg", "cheese"]
             recipes = self.rag.retrieve(query=" ".join(ings), top_k=10)
@@ -722,14 +722,14 @@ class RecipeChatbot:
             recipes = recipes[:3]
             
             if not recipes:
-                return {"type": "text", "text": f"😕 Nu am găsit rețete {label} cu aceste criterii.", "suggestions": ["Rețete vegane simple", "Surprinde-mă!"]}
+                return {"type": "text", "text": f" Nu am găsit rețete {label} cu aceste criterii.", "suggestions": ["Rețete vegane simple", "Surprinde-mă!"]}
             
             from recipe_generator import invent_recipes
             invented = invent_recipes(user_ingredients=ings, retrieved_recipes=recipes, num_recipes=len(recipes))
             
             return {
                 "type": "recipes",
-                "text": f"🌿 **Rețete {label}** din baza de date:",
+                "text": f" **Rețete {label}** din baza de date:",
                 "recipes": invented,
                 "agent_logs": [f"Filtrare dietă: '{tag or 'gluten-free'}' pe rezultate RAG"]
             }
@@ -742,7 +742,7 @@ class RecipeChatbot:
             if not fast:
                 return {
                     "type": "text",
-                    "text": f"😕 Nu am găsit rețete sub {max_t} minute. Încearcă 30 sau 45 minute!",
+                    "text": f" Nu am găsit rețete sub {max_t} minute. Încearcă 30 sau 45 minute!",
                     "suggestions": ["Rețete sub 30 minute", "Ceva rapid cu ouă"],
                 }
             
@@ -751,7 +751,7 @@ class RecipeChatbot:
             
             return {
                 "type": "recipes",
-                "text": f"⚡ **Rețete rapide sub {max_t} minute:**",
+                "text": f" **Rețete rapide sub {max_t} minute:**",
                 "recipes": invented,
                 "agent_logs": [f"Filtrare timp: rețete sub {max_t} minute din vector index"]
             }
@@ -767,14 +767,14 @@ class RecipeChatbot:
             if not cuisine_en:
                 return {
                     "type": "text",
-                    "text": "🌍 Ce bucătărie preferi?",
+                    "text": " Ce bucătărie preferi?",
                     "suggestions": ["Rețete italiene", "Rețete thai", "Rețete indiene", "Rețete japoneze", "Rețete mexicane"],
                 }
             recipes = self.rag.retrieve(query="classic traditional cuisine", filters={"cuisine": cuisine_en}, top_k=3)
             if not recipes:
                 return {
                     "type": "text",
-                    "text": f"😕 Nu am găsit rețete din bucătăria **{cuisine_en}** cu aceste criterii.",
+                    "text": f" Nu am găsit rețete din bucătăria **{cuisine_en}** cu aceste criterii.",
                     "suggestions": ["Rețete italiene", "Surprinde-mă!"],
                 }
             
@@ -783,7 +783,7 @@ class RecipeChatbot:
             
             return {
                 "type": "recipes",
-                "text": f"🌍 **Rețete din bucătăria {cuisine_en}:**",
+                "text": f" **Rețete din bucătăria {cuisine_en}:**",
                 "recipes": invented,
                 "agent_logs": [f"Filtrare bucătărie: '{cuisine_en}'"]
             }
@@ -799,7 +799,7 @@ class RecipeChatbot:
             
             return {
                 "type": "recipe_detail",
-                "text": f"🎲 Iată surpriza zilei!",
+                "text": f" Iată surpriza zilei!",
                 "recipe": full_rec,
                 "suggestions": ["Altă surpriză!", "Rețete similare"],
                 "agent_logs": ["Rețetă aleatorie selectată din vector DB"]
@@ -809,7 +809,7 @@ class RecipeChatbot:
         tip = random.choice(COOKING_TIPS_GENERAL)
         return {
             "type": "unknown",
-            "text": "🤔 Nu am înțeles întrebarea, dar am un sfat culinar pentru tine:",
+            "text": " Nu am înțeles întrebarea, dar am un sfat culinar pentru tine:",
             "tip": f"{tip['emoji']} {tip['tip']}",
             "suggestions": [
                 "Ce pot face cu pui și usturoi?",

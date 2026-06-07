@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🍳 Recipe AI Chatbot — RAG Engine</title>
+  <title> Recipe AI Chatbot — RAG Engine</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -547,7 +547,7 @@
 <body>
   <!-- ── Header ──────────────────────────────────────────────────────────── -->
   <div class="chatbot-header">
-    <span style="font-size: 28px;">🍳</span>
+    <span style="font-size: 28px;"></span>
     <h1>Recipe AI Chatbot</h1>
     <span class="status online">Ready</span>
   </div>
@@ -558,13 +558,13 @@
     <div class="chat-messages" id="chatMessages">
       <div class="message bot">
         <div class="message-bubble">
-          👋 Salut! Sunt asistentul tău AI pentru rețete. Spune-mi ce ingrediente ai și o să găsesc rețete perfecte pentru tine!
+           Salut! Sunt asistentul tău AI pentru rețete. Spune-mi ce ingrediente ai și o să găsesc rețete perfecte pentru tine!
           <div class="message-meta">Acum</div>
         </div>
       </div>
       <div class="message bot">
         <div class="message-bubble">
-          💡 Poți cere:
+           Poți cere:
           • "Ce pot face cu pui și lămâie?"
           • "Rețete italiene rapide"
           • "Ceva vegan cu broccoli"
@@ -580,7 +580,7 @@
 
       <!-- Agent activity monitor terminal inside chatbot sidebar -->
       <div class="sidebar-section">
-        <h3>🤖 Agent Thought Monitor</h3>
+        <h3> Agent Thought Monitor</h3>
         <div class="agent-terminal-header">
           <div class="agent-terminal-dot"></div>
           <div class="agent-terminal-dot"></div>
@@ -593,44 +593,44 @@
       </div>
 
       <div class="sidebar-section">
-        <h3>🎯 Sugestii Rapide</h3>
+        <h3> Sugestii Rapide</h3>
         <div class="suggested-question" onclick="askQuestion('Ce mâncări pot face cu pui, usturoi și lămâie?')">
-          🍗 Pui + Usturoi + Lămâie
+           Pui + Usturoi + Lămâie
         </div>
         <div class="suggested-question" onclick="askQuestion('Rețete italiene cu paste și roșii')">
-          🇮🇹 Paste Italiene
+           Paste Italiene
         </div>
         <div class="suggested-question" onclick="askQuestion('Rețete vegane cu broccoli și ciuperci')">
-          🥦 Broccoli Vegan
+           Broccoli Vegan
         </div>
         <div class="suggested-question" onclick="askQuestion('Rețete rapide sub 30 de minute')">
-          ⚡ Rețete Rapide
+           Rețete Rapide
         </div>
       </div>
 
       <div class="sidebar-section">
-        <h3>🌍 Bucătării Populare</h3>
-        <button class="quick-btn" onclick="filterByCuisine('Italian')">🇮🇹 Italiană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Thai')">🇹🇭 Thailandeză</button>
-        <button class="quick-btn" onclick="filterByCuisine('Indian')">🇮🇳 Indiană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Mexican')">🇲🇽 Mexicană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Japanese')">🇯🇵 Japoneză</button>
-        <button class="quick-btn" onclick="filterByCuisine('Chinese')">🇨🇳 Chineză</button>
+        <h3> Bucătării Populare</h3>
+        <button class="quick-btn" onclick="filterByCuisine('Italian')"> Italiană</button>
+        <button class="quick-btn" onclick="filterByCuisine('Thai')"> Thailandeză</button>
+        <button class="quick-btn" onclick="filterByCuisine('Indian')"> Indiană</button>
+        <button class="quick-btn" onclick="filterByCuisine('Mexican')"> Mexicană</button>
+        <button class="quick-btn" onclick="filterByCuisine('Japanese')"> Japoneză</button>
+        <button class="quick-btn" onclick="filterByCuisine('Chinese')"> Chineză</button>
       </div>
 
       <div class="sidebar-section">
         <h3>⏱️ Timp Disponibil</h3>
-        <button class="quick-btn" onclick="filterByTime(15)">🏃 Sub 15 min</button>
-        <button class="quick-btn" onclick="filterByTime(30)">⚡ Sub 30 min</button>
-        <button class="quick-btn" onclick="filterByTime(60)">🍳 Sub 1 oră</button>
-        <button class="quick-btn" onclick="filterByTime(999)">📚 Orice timp</button>
+        <button class="quick-btn" onclick="filterByTime(15)"> Sub 15 min</button>
+        <button class="quick-btn" onclick="filterByTime(30)"> Sub 30 min</button>
+        <button class="quick-btn" onclick="filterByTime(60)"> Sub 1 oră</button>
+        <button class="quick-btn" onclick="filterByTime(999)"> Orice timp</button>
       </div>
 
       <div class="sidebar-section">
-        <h3>📊 Dificultate</h3>
-        <button class="quick-btn" onclick="filterByDifficulty('Easy')">😊 Ușor</button>
-        <button class="quick-btn" onclick="filterByDifficulty('Medium')">🙂 Mediu</button>
-        <button class="quick-btn" onclick="filterByDifficulty('Hard')">😰 Dificil</button>
+        <h3> Dificultate</h3>
+        <button class="quick-btn" onclick="filterByDifficulty('Easy')"> Ușor</button>
+        <button class="quick-btn" onclick="filterByDifficulty('Medium')"> Mediu</button>
+        <button class="quick-btn" onclick="filterByDifficulty('Hard')"> Dificil</button>
       </div>
     </div>
   </div>
@@ -639,7 +639,7 @@
   <div class="input-container">
     <div class="input-wrapper">
       <textarea id="chatInput" placeholder="Spune-mi ce ingrediente ai..." rows="1"></textarea>
-      <button id="sendBtn" onclick="sendMessage()">➤</button>
+      <button id="sendBtn" onclick="sendMessage()"></button>
     </div>
   </div>
 
@@ -669,19 +669,19 @@
     function displayStats(stats) {
       statsBar.innerHTML = `
         <div class="stat-item">
-          <span class="stat-label">🍽️ Rețete</span>
+          <span class="stat-label">️ Rețete</span>
           <span class="stat-value">${stats.total_recipes}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label">🌍 Bucătării</span>
+          <span class="stat-label"> Bucătării</span>
           <span class="stat-value">${stats.cuisines}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label">🔤 Cuvinte</span>
+          <span class="stat-label"> Cuvinte</span>
           <span class="stat-value">${stats.vocabulary_size}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label">📊 Engine</span>
+          <span class="stat-label"> Engine</span>
           <span class="stat-value">RAG v2</span>
         </div>
       `;
@@ -717,25 +717,25 @@
 
       const platingHTML = recipe.plating_guide ? `
         <div style="margin-top: 8px;">
-          <span style="color:#06b6d4; font-size:9px; font-weight:600; text-transform:uppercase; display:block;">🍽 Chef's Plating Guide</span>
+          <span style="color:#06b6d4; font-size:9px; font-weight:600; text-transform:uppercase; display:block;"> Chef's Plating Guide</span>
           <div class="plating-box" style="margin-top:2px;">${esc(recipe.plating_guide)}</div>
         </div>
       ` : '';
 
       const pairingHTML = recipe.beverage_pairing ? `
         <div style="margin-top: 8px;">
-          <span style="color:#f59e0b; font-size:9px; font-weight:600; text-transform:uppercase; display:block;">🍷 Sommelier Pairing</span>
+          <span style="color:#f59e0b; font-size:9px; font-weight:600; text-transform:uppercase; display:block;"> Sommelier Pairing</span>
           <div class="pairing-box" style="margin-top:2px;">${esc(recipe.beverage_pairing)}</div>
         </div>
       ` : '';
 
       return `
         <div class="recipe-card" style="margin-top: 10px; background: rgba(15,23,42,0.4); border: 1px solid rgba(224,231,255,0.1); border-radius: 12px; padding: 12px; font-size:12px; animation: slideIn 0.3s ease-out;">
-          <div class="title" style="font-weight:700; font-size:13px; color:#c7d2fe; margin-bottom:4px;">🍽️ ${esc(recipe.title)}</div>
+          <div class="title" style="font-weight:700; font-size:13px; color:#c7d2fe; margin-bottom:4px;">️ ${esc(recipe.title)}</div>
           <div class="meta" style="display:flex; gap:10px; font-size:10px; color:#a5b4fc; margin-bottom:6px;">
             <span>⏱️ ${recipe.time_minutes || "?"} min</span>
-            <span>📊 ${recipe.difficulty || "Med."}</span>
-            <span>🌍 ${recipe.cuisine || "?"}</span>
+            <span> ${recipe.difficulty || "Med."}</span>
+            <span> ${recipe.cuisine || "?"}</span>
           </div>
           
           <!-- Nutrition facts label inline -->
@@ -816,7 +816,7 @@
       const typingId = addMessage("...", "bot", true);
 
       try {
-        console.log("📤 Sending message to Chat RAG:", text);
+        console.log(" Sending message to Chat RAG:", text);
 
         const fetchResponse = await fetch("/api/chat", {
           method: "POST",
@@ -824,14 +824,14 @@
           body: JSON.stringify({ message: text }),
         });
 
-        console.log("📥 Response status:", fetchResponse.status);
+        console.log(" Response status:", fetchResponse.status);
 
         if (!fetchResponse.ok) {
           throw new Error(`HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`);
         }
 
         const response = await fetchResponse.json();
-        console.log("✅ Chatbot Response:", response);
+        console.log(" Chatbot Response:", response);
 
         removeMessage(typingId);
 
@@ -842,9 +842,9 @@
           response.agent_logs.forEach(log => {
             const line = document.createElement("div");
             line.className = "agent-terminal-line";
-            if (log.includes("✅") || log.includes("successful")) {
+            if (log.includes("") || log.includes("successful")) {
               line.style.color = "#34d399";
-            } else if (log.includes("⚠️") || log.includes("too low") || log.includes("Self-critique")) {
+            } else if (log.includes("️") || log.includes("too low") || log.includes("Self-critique")) {
               line.style.color = "#fbbf24";
             } else if (log.includes("Dropped") || log.includes("Dropping") || log.includes("Aborting")) {
               line.style.color = "#f87171";
@@ -868,7 +868,7 @@
           addMessage(response.text, "bot", false, false);
           
           if (response.tip) {
-            addMessage(`💡 **Tip culinar:**<br/>${response.tip}`, "bot", false, true);
+            addMessage(` **Tip culinar:**<br/>${response.tip}`, "bot", false, true);
           }
         } 
         else if (response.type === "help" && response.capabilities) {
@@ -912,12 +912,12 @@
           addMessage(pillsHtml, "bot", false, true);
         }
         else if (response.type === "substitution" && response.substitutions) {
-          addMessage(`🔄 **${esc(response.title)}**<br/>${esc(response.text)}`, "bot", false, true);
+          addMessage(` **${esc(response.title)}**<br/>${esc(response.text)}`, "bot", false, true);
           let subsHtml = `<div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">`;
           response.substitutions.forEach(s => {
             subsHtml += `
               <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(224,231,255,0.1); border-radius:8px; padding:8px; font-size:11px;">
-                <strong style="color:#c7d2fe;">🔄 ${esc(s.sub)}</strong> (Rată: ${esc(s.ratio)})<br/>
+                <strong style="color:#c7d2fe;"> ${esc(s.sub)}</strong> (Rată: ${esc(s.ratio)})<br/>
                 <span style="color:#cbd5e1; font-size:10px;">Excelent pentru: ${esc(s.best_for)}</span>
               </div>
             `;
@@ -947,8 +947,8 @@
 
       } catch (error) {
         removeMessage(typingId);
-        console.error("🔴 Error:", error);
-        addMessage(`❌ Eroare: ${error.message}. Încearcă din nou!`, "bot");
+        console.error(" Error:", error);
+        addMessage(` Eroare: ${error.message}. Încearcă din nou!`, "bot");
       }
     }
 

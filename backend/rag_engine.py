@@ -117,7 +117,7 @@ class RecipeRAGEngine:
                 metadatas=batch_metadatas
             )
             
-        print("✅ ChromaDB + BM25 indexing complete!")
+        print(" ChromaDB + BM25 indexing complete!")
 
     def _expand_query(self, query: str) -> str:
         words = query.lower().split()

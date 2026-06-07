@@ -2,7 +2,7 @@
  * app.js — AI Recipe Inventor frontend logic
  *
  * Responsibilities:
- *  - Tag-based ingredient input (Enter / comma to add, ✕ to remove)
+ *  - Tag-based ingredient input (Enter / comma to add,  to remove)
  *  - Quick suggestion buttons
  *  - Fetch /api/stats and /api/cuisines on load
  *  - POST /api/invent → render animated recipe cards
@@ -69,7 +69,7 @@ async function fetchCuisines() {
     list.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c;
-      opt.textContent = `🍽 ${c}`;
+      opt.textContent = ` ${c}`;
       cuisineFilter.appendChild(opt);
     });
   } catch {
@@ -102,7 +102,7 @@ function renderTags() {
     const btn = document.createElement('button');
     btn.className = 'tag-remove';
     btn.type = 'button';
-    btn.textContent = '✕';
+    btn.textContent = '';
     btn.setAttribute('aria-label', `Elimină ${tag}`);
     btn.addEventListener('click', () => removeTag(tag));
     chip.appendChild(btn);
@@ -226,6 +226,79 @@ function bindEvents() {
       }
     });
   }
+
+  // ── Fridge Photo Upload & Detector ──────────────────────────────────────
+  const fridgeUploadInput = document.getElementById('fridgeUploadInput');
+  const fridgeUploadStatus = document.getElementById('fridgeUploadStatus');
+  const fridgePreviewContainer = document.getElementById('fridgePreviewContainer');
+  const fridgeImagePreview = document.getElementById('fridgeImagePreview');
+  const detectedIngredientsList = document.getElementById('detectedIngredientsList');
+  const importDetectedBtn = document.getElementById('importDetectedBtn');
+  let detectedIngredients = [];
+
+  if (fridgeUploadInput) {
+    fridgeUploadInput.addEventListener('change', async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (fridgeUploadStatus) fridgeUploadStatus.textContent = `Se incarca: ${file.name}`;
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (fridgeImagePreview) fridgeImagePreview.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const response = await fetch(`${API}/api/playground/upload_fridge`, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+
+        detectedIngredients = data.ingredients || [];
+        if (fridgeUploadStatus) fridgeUploadStatus.textContent = `Detectat cu succes: ${file.name}`;
+        
+        if (fridgePreviewContainer) fridgePreviewContainer.style.display = 'grid';
+
+        if (detectedIngredientsList) {
+          if (detectedIngredients.length === 0) {
+            detectedIngredientsList.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-dim); font-style: italic;">Nu s-au detectat ingrediente cunoscute.</span>';
+          } else {
+            detectedIngredientsList.innerHTML = detectedIngredients.map(ing => `
+              <span class="ing-chip user-ing" style="padding: 4px 10px; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                ${esc(ing)}
+              </span>
+            `).join('');
+          }
+        }
+      } catch (error) {
+        console.error('Eroare detectie obiecte:', error);
+        if (fridgeUploadStatus) fridgeUploadStatus.textContent = 'Eroare la procesarea imaginii.';
+      }
+    });
+  }
+
+  if (importDetectedBtn) {
+    importDetectedBtn.addEventListener('click', () => {
+      if (detectedIngredients.length > 0) {
+        detectedIngredients.forEach(ing => {
+          if (!tags.includes(ing.toLowerCase())) {
+            addTag(ing.toLowerCase());
+          }
+        });
+        if (fridgePreviewContainer) fridgePreviewContainer.style.display = 'none';
+        if (fridgeUploadInput) fridgeUploadInput.value = '';
+        if (fridgeUploadStatus) fridgeUploadStatus.textContent = 'Nicio imagine selectata';
+        detectedIngredients = [];
+      }
+    });
+  }
 }
 
 // ── Invent ────────────────────────────────────────────────────────────────
@@ -235,7 +308,7 @@ async function handleInvent() {
   if (pending) { addTag(pending); ingredientInput.value = ''; }
 
   if (tags.length === 0) {
-    ingredientInput.placeholder = '⚠ Adaugă măcar un ingredient!';
+    ingredientInput.placeholder = ' Adaugă măcar un ingredient!';
     ingredientInput.focus();
     setTimeout(() => { ingredientInput.placeholder = 'Ex: pui, usturoi, lămâie… apasă Enter'; }, 2500);
     return;
@@ -296,9 +369,9 @@ function printLogsToTerminal(logs, callback) {
       p.className = 'agent-terminal-line';
       
       // Color-coding log prefixes
-      if (lineText.includes('✅') || lineText.includes('successful')) {
+      if (lineText.includes('') || lineText.includes('successful')) {
         p.style.color = '#34d399';
-      } else if (lineText.includes('⚠️') || lineText.includes('too low') || lineText.includes('Self-critique')) {
+      } else if (lineText.includes('️') || lineText.includes('too low') || lineText.includes('Self-critique')) {
         p.style.color = '#fbbf24';
       } else if (lineText.includes('[Iteration')) {
         p.style.color = '#60a5fa';
@@ -362,7 +435,7 @@ function buildCard(recipe, idx, userIngredients) {
     'Hard':   'badge-hard',
   }[recipe.difficulty] || 'badge-medium';
 
-  const diffEmoji = { 'Easy': '🟢', 'Medium': '🟡', 'Hard': '🔴' }[recipe.difficulty] || '🟡';
+  const diffEmoji = { 'Easy': '', 'Medium': '', 'Hard': '' }[recipe.difficulty] || '';
 
   const userSet = new Set(userIngredients.map(i => i.toLowerCase().trim()));
 
@@ -487,14 +560,14 @@ function buildCard(recipe, idx, userIngredients) {
 
   const platingHTML = recipe.plating_guide ? `
     <div style="margin-top: 12px;">
-      <span style="color: var(--cyan); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block;">🍽 Chef's Plating Guide</span>
+      <span style="color: var(--cyan); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block;"> Chef's Plating Guide</span>
       <div class="plating-box">${esc(recipe.plating_guide)}</div>
     </div>
   ` : '';
 
   const pairingHTML = recipe.beverage_pairing ? `
     <div style="margin-top: 12px;">
-      <span style="color: var(--amber); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block;">🍷 Sommelier Beverage Pairing</span>
+      <span style="color: var(--amber); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: block;"> Sommelier Beverage Pairing</span>
       <div class="pairing-box">${esc(recipe.beverage_pairing)}</div>
     </div>
   ` : '';
@@ -506,10 +579,10 @@ function buildCard(recipe, idx, userIngredients) {
       <h3 class="card-title">${esc(recipe.title)}</h3>
 
       <div class="badges">
-        <span class="badge badge-cuisine">🌍 ${esc(recipe.cuisine)}</span>
+        <span class="badge badge-cuisine"> ${esc(recipe.cuisine)}</span>
         <span class="badge ${diffClass}">${diffEmoji} ${esc(recipe.difficulty)}</span>
         <span class="badge badge-time">⏱ ${recipe.time_minutes} min</span>
-        <span class="badge badge-servings">👥 ${recipe.servings} porții</span>
+        <span class="badge badge-servings"> ${recipe.servings} porții</span>
       </div>
 
       <!-- Nutrition label -->
@@ -518,7 +591,7 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Ingredients -->
       <div class="card-section">
         <div class="section-header">
-          <span>🥬 Ingrediente (${recipe.ingredients?.length ?? 0})</span>
+          <span> Ingrediente (${recipe.ingredients?.length ?? 0})</span>
         </div>
         <div class="ingredients-list">${ingHTML}</div>
       </div>
@@ -526,7 +599,7 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Steps -->
       <div class="card-section">
         <div class="section-header toggle-header" data-target="steps-${idx}">
-          <span>📋 Pași de preparare</span>
+          <span> Pași de preparare</span>
           <span class="toggle-icon">▼</span>
         </div>
         <div class="collapsible open" id="steps-${idx}">
@@ -546,7 +619,7 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Explanation -->
       <div class="card-section">
         <div class="section-header toggle-header" data-target="expl-${idx}">
-          <span>🔬 De ce funcționează?</span>
+          <span> De ce funcționează?</span>
           <span class="toggle-icon">▼</span>
         </div>
         <div class="collapsible open" id="expl-${idx}">
@@ -558,7 +631,7 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Culinary Analysis -->
       <div class="card-section">
         <div class="section-header toggle-header" data-target="analysis-${idx}">
-          <span>👨‍🍳 Analiză Culinară & Sommelier</span>
+          <span>‍ Analiză Culinară & Sommelier</span>
           <span class="toggle-icon">▼</span>
         </div>
         <div class="collapsible" id="analysis-${idx}">
@@ -573,7 +646,7 @@ function buildCard(recipe, idx, userIngredients) {
       ${tipsHTML ? `
       <div class="card-section">
         <div class="section-header toggle-header" data-target="tips-${idx}">
-          <span>💡 Sfaturi pro</span>
+          <span> Sfaturi pro</span>
           <span class="toggle-icon">▼</span>
         </div>
         <div class="collapsible" id="tips-${idx}">
@@ -586,14 +659,14 @@ function buildCard(recipe, idx, userIngredients) {
 
       <!-- Inspired by -->
       <p class="inspired-by">
-        ✨ Inspirat din: <em>${esc(recipe.inspired_by || '—')}</em>
+         Inspirat din: <em>${esc(recipe.inspired_by || '—')}</em>
         ${recipe.key_technique ? `· Tehnică cheie: <em>${esc(recipe.key_technique)}</em>` : ''}
       </p>
 
       <!-- Shopping List Button -->
       <div class="card-section" style="margin-top: 20px; display: flex; gap: 8px;">
         <button class="btn-invent" onclick="addToShoppingList(${idx})" style="flex: 1; padding: 10px 16px;">
-          🛒 Adaugă la Shopping
+           Adaugă la Shopping
         </button>
       </div>
 
@@ -821,9 +894,9 @@ function initPlayground() {
             <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">${esc(r.description || 'Nicio descriere disponibilă.')}</div>
             <div style="font-size: 0.8rem; color: var(--text-muted);"><span style="color: var(--text-dim); font-weight: 600;">Ingrediente:</span> ${esc(r.ingredients.join(', '))}</div>
             <div style="display: flex; gap: 16px; font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 8px; margin-top: 4px; flex-wrap: wrap;">
-              <span style="color: var(--cyan); display: flex; align-items: center; gap: 4px;">🧬 Dense (Semantic): <strong>${r.semantic_score.toFixed(3)}</strong></span>
-              <span style="color: var(--rose-lt); display: flex; align-items: center; gap: 4px;">📂 Sparse (BM25): <strong>${r.bm25_score.toFixed(3)}</strong></span>
-              <span style="color: var(--violet-lt); display: flex; align-items: center; gap: 4px;">🌐 Hybrid Combined: <strong>${r.hybrid_score.toFixed(3)}</strong></span>
+              <span style="color: var(--cyan); display: flex; align-items: center; gap: 4px;"> Dense (Semantic): <strong>${r.semantic_score.toFixed(3)}</strong></span>
+              <span style="color: var(--rose-lt); display: flex; align-items: center; gap: 4px;"> Sparse (BM25): <strong>${r.bm25_score.toFixed(3)}</strong></span>
+              <span style="color: var(--violet-lt); display: flex; align-items: center; gap: 4px;"> Hybrid Combined: <strong>${r.hybrid_score.toFixed(3)}</strong></span>
             </div>
           </div>
         `).join('');
@@ -835,7 +908,7 @@ function initPlayground() {
       alert('Eroare la realizarea retrieval-ului.');
     } finally {
       playSearchBtn.disabled = false;
-      playSearchBtn.textContent = '⚡ Rulează Retrieval';
+      playSearchBtn.textContent = ' Rulează Retrieval';
     }
   });
 
@@ -1028,7 +1101,7 @@ for hits in results:
       
       runDbQueryBtn.disabled = true;
       const originalText = runDbQueryBtn.innerHTML;
-      runDbQueryBtn.innerHTML = '<span>🔍 Interogare...</span>';
+      runDbQueryBtn.innerHTML = '<span> Interogare...</span>';
       
       try {
         const res = await fetch(`${API}/api/playground/db_query`, {
@@ -1069,7 +1142,7 @@ for hits in results:
       
       runModelBenchBtn.disabled = true;
       const originalText = runModelBenchBtn.innerHTML;
-      runModelBenchBtn.innerHTML = '<span>⚡ Se codifică...</span>';
+      runModelBenchBtn.innerHTML = '<span> Se codifică...</span>';
       
       if (modelBenchResults) {
         modelBenchResults.innerHTML = `
@@ -1131,9 +1204,9 @@ for hits in results:
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; font-size: 0.8rem; color: var(--text-muted);">
-                  <div>💾 File size: <strong style="color: #fff;">${m.size_mb} MB</strong></div>
-                  <div>🧠 RAM required: <strong style="color: #fff;">${m.ram_mb} MB</strong></div>
-                  <div>🌍 Multilingual support: <strong style="color: #fff;">${esc(m.multilingual)}</strong></div>
+                  <div> File size: <strong style="color: #fff;">${m.size_mb} MB</strong></div>
+                  <div> RAM required: <strong style="color: #fff;">${m.ram_mb} MB</strong></div>
+                  <div> Multilingual support: <strong style="color: #fff;">${esc(m.multilingual)}</strong></div>
                 </div>
 
                 <div style="margin-top: 4px;">

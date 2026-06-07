@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🍳 AI Recipe Agent PRO — Iterative RAG</title>
+  <title> AI Recipe Agent PRO — Iterative RAG</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -168,7 +168,7 @@
     }
 
     .about-card li::before {
-      content: '✓';
+      content: '';
       position: absolute;
       left: 0;
       color: var(--emerald);
@@ -187,7 +187,7 @@
   <header class="site-header">
     <div class="header-inner container">
       <div class="logo-row">
-        <span class="logo-icon">🍳</span>
+        <span class="logo-icon"></span>
         <div>
           <h1 class="site-title">AI Recipe <span class="gradient-text">Inventor PRO</span></h1>
           <p class="site-subtitle">Agentic RAG · Dense Retrieval · Semantic Search</p>
@@ -215,10 +215,10 @@
   <!-- ── Tabs Navigation ──────────────────────────────────────────────────── -->
   <div class="container" style="padding-bottom: 0;">
     <div class="tabs-nav">
-      <button class="tab-button active" data-tab="creator">✨ Creator</button>
-      <button class="tab-button" data-tab="chatbot">💬 Chatbot</button>
-      <button class="tab-button" data-tab="shopping">🛒 Shopping List</button>
-      <button class="tab-button" data-tab="rag-playground">🔬 RAG Playground</button>
+      <button class="tab-button active" data-tab="creator"> Creator</button>
+      <button class="tab-button" data-tab="chatbot"> Chatbot</button>
+      <button class="tab-button" data-tab="shopping"> Shopping List</button>
+      <button class="tab-button" data-tab="rag-playground"> RAG Playground</button>
       <button class="tab-button" data-tab="about">ℹ️ About</button>
     </div>
   </div>
@@ -251,7 +251,7 @@
           </div>
           <div class="tag-hint">
             Press <kbd>Enter</kbd> or <kbd>,</kbd> after each ingredient.
-            <button class="clear-btn" id="clearBtn" type="button" aria-label="Șterge toate">✕ Clear all</button>
+            <button class="clear-btn" id="clearBtn" type="button" aria-label="Șterge toate"> Clear all</button>
           </div>
         </div>
 
@@ -259,12 +259,41 @@
         <div class="suggestions-row">
           <span class="suggestions-label">Try:</span>
           <div class="suggestions-list">
-            <button class="sugg-btn" data-ingredients="pui,usturoi,lămâie,rozmarin">🍗 Pui & Lămâie</button>
-            <button class="sugg-btn" data-ingredients="ouă,spanac,feta,usturoi">🥚 Ouă & Spanac</button>
-            <button class="sugg-btn" data-ingredients="somon,sos de soia,ghimbir,susan">🐟 Somon Teriyaki</button>
-            <button class="sugg-btn" data-ingredients="pastă,roșii,mozzarella,busuioc">🍝 Clasic Italian</button>
-            <button class="sugg-btn" data-ingredients="vită,vin roșu,ciuperci,cimbru">🥩 Franțuzesc</button>
-            <button class="sugg-btn" data-ingredients="linte,ceapă,turmeric,ghimbir">🌱 Vegan Indian</button>
+            <button class="sugg-btn" data-ingredients="pui,usturoi,lămâie,rozmarin"> Pui & Lămâie</button>
+            <button class="sugg-btn" data-ingredients="ouă,spanac,feta,usturoi"> Ouă & Spanac</button>
+            <button class="sugg-btn" data-ingredients="somon,sos de soia,ghimbir,susan"> Somon Teriyaki</button>
+            <button class="sugg-btn" data-ingredients="pastă,roșii,mozzarella,busuioc"> Clasic Italian</button>
+            <button class="sugg-btn" data-ingredients="vită,vin roșu,ciuperci,cimbru"> Franțuzesc</button>
+            <button class="sugg-btn" data-ingredients="linte,ceapă,turmeric,ghimbir"> Vegan Indian</button>
+          </div>
+        </div>
+
+        <!-- Fridge Photo Upload & Object Detector -->
+        <div style="margin-top: 20px; padding: 20px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: rgba(255,255,255,0.01);">
+          <h3 style="font-size: 0.95rem; font-weight: 600; color: var(--emerald); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            Detectare Vizuala (Poza cu Frigider)
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 12px; line-height: 1.4;">
+            Incarca o fotografie cu ingredientele tale. Modelul local YOLOv8 le va identifica automat pentru a le adauga instant in cautarea RAG.
+          </p>
+          
+          <div style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+            <label class="btn-invent" style="width: auto; padding: 10px 18px; margin: 0; font-size: 0.85rem; cursor: pointer; background: rgba(16,185,129,0.1); border-color: var(--emerald); display: inline-flex; align-items: center; gap: 6px;">
+              <span>Incarca Imagine</span>
+              <input type="file" id="fridgeUploadInput" accept="image/*" style="display: none;">
+            </label>
+            <span id="fridgeUploadStatus" style="font-size: 0.8rem; color: var(--text-dim);">Nicio imagine selectata</span>
+          </div>
+
+          <div id="fridgePreviewContainer" style="display: none; margin-top: 16px; gap: 20px; grid-template-columns: 120px 1fr; align-items: flex-start; border-top: 1px solid var(--border); padding-top: 16px;">
+            <img id="fridgeImagePreview" src="" alt="Preview image" style="width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <div>
+              <h4 style="font-size: 0.85rem; font-weight: 600; color: #fff; margin-bottom: 8px;">Ingrediente Detectate:</h4>
+              <div id="detectedIngredientsList" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;"></div>
+              <button id="importDetectedBtn" class="btn-invent" style="width: auto; padding: 6px 12px; font-size: 0.8rem; margin: 0; background: var(--emerald); border-color: var(--emerald);" type="button">
+                <span>Adauga in cautare</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -273,16 +302,16 @@
           <div class="filter-group">
             <label class="filter-label" for="cuisineFilter">Cuisine</label>
             <select class="filter-select" id="cuisineFilter">
-              <option value="Any">🌍 Any</option>
+              <option value="Any"> Any</option>
             </select>
           </div>
           <div class="filter-group">
             <label class="filter-label" for="difficultyFilter">Difficulty</label>
             <select class="filter-select" id="difficultyFilter">
-              <option value="Any">⚡ Any</option>
-              <option value="Easy">🟢 Easy</option>
-              <option value="Medium">🟡 Medium</option>
-              <option value="Hard">🔴 Hard</option>
+              <option value="Any"> Any</option>
+              <option value="Easy"> Easy</option>
+              <option value="Medium"> Medium</option>
+              <option value="Hard"> Hard</option>
             </select>
           </div>
           <div class="filter-group">
@@ -306,7 +335,7 @@
         <!-- Advanced RAG Parameters Accordion -->
         <div style="margin-top: 20px; margin-bottom: 20px; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; background: rgba(255,255,255,0.01);">
           <div id="ragToggleHeader" style="padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; background: rgba(255,255,255,0.02); transition: background var(--transition);" onclick="toggleRagSettings()">
-            <span style="font-size: 0.9rem; font-weight: 600; color: var(--cyan); display: flex; align-items: center; gap: 8px;">⚙️ Parametri RAG Avansați (Strategie, Prag, MMR)</span>
+            <span style="font-size: 0.9rem; font-weight: 600; color: var(--cyan); display: flex; align-items: center; gap: 8px;">️ Parametri RAG Avansați (Strategie, Prag, MMR)</span>
             <span id="ragToggleArrow" style="font-size: 0.8rem; transition: transform var(--transition); color: var(--cyan);">▼</span>
           </div>
           <div id="ragSettingsBody" style="display: none; padding: 20px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.15);">
@@ -316,9 +345,9 @@
               <div class="filter-group" style="margin: 0;">
                 <label class="filter-label" for="creatorRagMethod">Strategie Retrieval</label>
                 <select class="filter-select" id="creatorRagMethod" style="width: 100%; cursor: pointer;">
-                  <option value="hybrid">🌐 Hibrid (Dense + Sparse)</option>
-                  <option value="dense">🧬 Dense Semantic (ChromaDB)</option>
-                  <option value="sparse">📂 Sparse Keyword (BM25)</option>
+                  <option value="hybrid"> Hibrid (Dense + Sparse)</option>
+                  <option value="dense"> Dense Semantic (ChromaDB)</option>
+                  <option value="sparse"> Sparse Keyword (BM25)</option>
                 </select>
               </div>
 
@@ -358,7 +387,7 @@
 
         <!-- CTA Button -->
         <button class="btn-invent" id="inventBtn" type="button">
-          <span class="btn-icon">✨</span>
+          <span class="btn-icon"></span>
           <span class="btn-text">Invent Recipes!</span>
           <span class="btn-loader hidden" id="btnLoader">
             <span class="spinner-sm"></span>
@@ -401,7 +430,7 @@
 
       <!-- ── Error ─────────────────────────────────────────────────────────── -->
       <div class="error-box hidden" id="errorBox">
-        <span class="error-icon">⚠️</span>
+        <span class="error-icon">️</span>
         <p class="error-msg" id="errorMsg"></p>
         <button class="btn-ghost" id="errorBackBtn" type="button">← Try again</button>
       </div>
@@ -411,7 +440,7 @@
     <!-- ──━━━━━ TAB: CHATBOT ━━━━━── -->
     <div class="tab-content" id="chatbot" data-tab="chatbot">
       <div class="glass-card" style="padding: 24px; margin-bottom: 40px;">
-        <h2 class="results-title" style="margin-bottom: 12px;">💬 Chatbot RAG Conversațional</h2>
+        <h2 class="results-title" style="margin-bottom: 12px;"> Chatbot RAG Conversațional</h2>
         <p style="color: var(--text-muted); margin-bottom: 24px;">Talk to your AI Assistant. Tell it what you have and get recipes!</p>
         <div class="chatbot-container">
           <iframe src="/static/chatbot.html"></iframe>
@@ -424,18 +453,18 @@
       <section class="glass-card shopping-section" style="padding: 28px; margin-bottom: 40px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
           <div>
-            <h2 class="results-title" style="margin-bottom: 4px;">🛒 Shopping List</h2>
+            <h2 class="results-title" style="margin-bottom: 4px;"> Shopping List</h2>
             <p style="color: var(--text-muted); font-size: .9rem;">Ingredients necesare pentru rețetele tale</p>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button class="btn-ghost" id="exportShopBtn" onclick="exportShoppingList()" style="display: none;">📋 Export</button>
-            <button class="btn-ghost" id="clearShopBtn" onclick="clearShoppingList()" style="display: none;">🗑️ Clear</button>
+            <button class="btn-ghost" id="exportShopBtn" onclick="exportShoppingList()" style="display: none;"> Export</button>
+            <button class="btn-ghost" id="clearShopBtn" onclick="clearShoppingList()" style="display: none;">️ Clear</button>
           </div>
         </div>
 
         <div id="shoppingEmpty" style="display: block;">
           <div class="empty-state">
-            <div class="empty-state-icon">📝</div>
+            <div class="empty-state-icon"></div>
             <h3 style="color: var(--text); margin-bottom: 6px; font-size: 1rem;">Empty List</h3>
             <p style="font-size: .9rem;">Generate a recipe in the Creator tab and click 'Add to Shopping List'!</p>
           </div>
@@ -480,7 +509,7 @@
 
           <!-- Substitutes (RAG) -->
           <div id="substituteSection" style="display: none; margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
-            <h3 style="color: var(--text); margin-bottom: 12px; font-size: 1rem;">🔄 Available Substitutes (RAG)</h3>
+            <h3 style="color: var(--text); margin-bottom: 12px; font-size: 1rem;"> Available Substitutes (RAG)</h3>
             <p style="color: var(--text-muted); font-size: .9rem; margin-bottom: 12px;">Ingredients alternative bazate pe rețetele din bază:</p>
             <div id="substituteList" style="display: flex; flex-wrap: wrap; gap: 8px;">
               <!-- Suggestions injected here -->
@@ -495,7 +524,7 @@
       
       <!-- Intro Section -->
       <section class="glass-card" style="padding: 28px; margin-bottom: 24px;">
-        <h2 class="results-title" style="margin-bottom: 8px; font-size: 1.6rem;">🔬 RAG Playground & Benchmarking Arena</h2>
+        <h2 class="results-title" style="margin-bottom: 8px; font-size: 1.6rem;"> RAG Playground & Benchmarking Arena</h2>
         <p style="color: var(--text-muted); font-size: .95rem; line-height: 1.6;">
           Testează și compară tehnologiile RAG on-premise. Ajustează ponderile de căutare hibridă, setează praguri dinamice, rulează analize comparative între modele de embeddings și baze de date, și evaluează acuratețea algoritmilor de retrieval în timp real.
         </p>
@@ -507,7 +536,7 @@
         <!-- ROW 1: Custom Retrieval Simulator -->
         <div class="glass-card" style="padding: 28px;">
           <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 20px; color: var(--cyan); display: flex; align-items: center; gap: 8px;">
-            <span>🔍 Simulator Retrieval Parametrizat</span>
+            <span> Simulator Retrieval Parametrizat</span>
           </h3>
           
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px;">
@@ -521,9 +550,9 @@
               <div>
                 <label style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Metodă Retrieval</label>
                 <select id="playMethodSelect" style="width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; color: var(--text); font-family: inherit; font-size: .95rem; cursor: pointer;">
-                  <option value="hybrid">🌐 Hibrid (Dense + Sparse)</option>
-                  <option value="dense">🧬 Dense Semantic (ChromaDB + ST)</option>
-                  <option value="sparse">📂 Sparse Keyword (BM25)</option>
+                  <option value="hybrid"> Hibrid (Dense + Sparse)</option>
+                  <option value="dense"> Dense Semantic (ChromaDB + ST)</option>
+                  <option value="sparse"> Sparse Keyword (BM25)</option>
                 </select>
               </div>
             </div>
@@ -569,7 +598,7 @@
               Filtre active: <span id="playFiltersSummary">Niciunul (Căutare generală)</span>
             </div>
             <button id="playSearchBtn" class="btn-invent" style="width: auto; padding: 12px 28px; margin: 0;">
-              <span>⚡ Rulează Retrieval</span>
+              <span> Rulează Retrieval</span>
             </button>
           </div>
 
@@ -595,13 +624,13 @@
         <div class="glass-card" style="padding: 28px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
             <div>
-              <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--rose-lt);">🎯 Evaluare Acuratețe Retrieval (Test Bench)</h3>
+              <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--rose-lt);"> Evaluare Acuratețe Retrieval (Test Bench)</h3>
               <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">
                 Evaluează acuratețea pe 5 interogări standard folosind setul de date local. Calculează Precision, Recall și Mean Reciprocal Rank (MRR).
               </p>
             </div>
             <button id="runBenchmarkBtn" class="btn-invent" style="width: auto; padding: 10px 20px; font-size: 0.85rem; background: var(--grad); margin: 0;">
-              <span>📊 Rulează Suita de Teste</span>
+              <span> Rulează Suita de Teste</span>
             </button>
           </div>
 
@@ -616,7 +645,7 @@
               
               <!-- BM25 Column -->
               <div class="about-card" style="margin: 0; padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border);">
-                <div style="font-size: 1.05rem; font-weight: 700; color: var(--rose-lt); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">📂 BM25 (Sparse Keyword)</div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: var(--rose-lt); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;"> BM25 (Sparse Keyword)</div>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                   <div>
                     <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
@@ -663,7 +692,7 @@
 
               <!-- Dense Vectorial Column -->
               <div class="about-card" style="margin: 0; padding: 20px; background: rgba(255,255,255,0.01); border: 1px solid var(--border);">
-                <div style="font-size: 1.05rem; font-weight: 700; color: var(--cyan); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">🧬 Dense (SentenceTransformer)</div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: var(--cyan); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;"> Dense (SentenceTransformer)</div>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                   <div>
                     <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
@@ -710,7 +739,7 @@
 
               <!-- Hybrid Fusion Column -->
               <div class="about-card" style="margin: 0; padding: 20px; background: rgba(255,255,255,0.02); border: 1px solid var(--violet-lt);">
-                <div style="font-size: 1.05rem; font-weight: 700; color: var(--violet-lt); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">🌐 Hibrid Fusion (Recomandat)</div>
+                <div style="font-size: 1.05rem; font-weight: 700; color: var(--violet-lt); margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 8px;"> Hibrid Fusion (Recomandat)</div>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                   <div>
                     <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px;">
@@ -763,7 +792,7 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
           <!-- Embeddings Comparison -->
           <div class="glass-card" style="padding: 28px;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--emerald);">🧬 Modele de Embeddings On-Premise (Benchmarker Live)</h3>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--emerald);"> Modele de Embeddings On-Premise (Benchmarker Live)</h3>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
               Generează un vector în timp real și compară viteza de throughput (vectori/sec) a modelului local activ cu estimările altor modele.
             </p>
@@ -771,7 +800,7 @@
               <input type="text" id="modelBenchText" value="Ingrediente proaspete pentru gătit spaghete" placeholder="Scrie ceva pentru codificare..." 
                 style="flex: 1; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text); font-family: inherit; font-size: .88rem;">
               <button id="runModelBenchBtn" class="btn-invent" style="width: auto; padding: 10px 18px; margin: 0; font-size: 0.85rem;">
-                <span>⚡ Run Benchmark</span>
+                <span> Run Benchmark</span>
               </button>
             </div>
             
@@ -784,7 +813,7 @@
 
           <!-- Similarity Arena -->
           <div class="glass-card" style="padding: 28px;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; color: var(--violet-lt);">📏 Calculator de Similitudine Semantică</h3>
+            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; color: var(--violet-lt);"> Calculator de Similitudine Semantică</h3>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">
               Calculează live distanța cosinus (similitudinea semantică) între două texte folosind modelul on-prem.
             </p>
@@ -810,7 +839,7 @@
 
         <!-- ROW 4: On-Premise Vector DB Matrix -->
         <div class="glass-card" style="padding: 28px;">
-          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--amber);">🔒 Baze de date vectoriale local-first (Query & Code Arena)</h3>
+          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--amber);"> Baze de date vectoriale local-first (Query & Code Arena)</h3>
           <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">
             Alege o bază de date și interoghează live colecția de rețete pentru a vizualiza <strong>Codul Sursă SDK</strong> și <strong>Rezultatul Brut (Raw JSON Output)</strong> returnat de motorul vectorial.
           </p>
@@ -833,7 +862,7 @@
 
           <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
             <button id="runDbQueryBtn" class="btn-invent" style="width: auto; padding: 10px 20px; margin: 0; font-size: 0.85rem;">
-              <span>🔍 Interoghează Vector Store</span>
+              <span> Interoghează Vector Store</span>
             </button>
           </div>
 
@@ -841,14 +870,14 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
               <!-- Left: Source Code SDK -->
               <div>
-                <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--cyan); margin-bottom: 8px;">💻 Python SDK / SQL Query Syntax</h4>
+                <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--cyan); margin-bottom: 8px;"> Python SDK / SQL Query Syntax</h4>
                 <pre id="dbQueryCodeBlock" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-family: 'Courier New', monospace; font-size: 0.82rem; color: #34d399; overflow-x: auto; white-space: pre-wrap; line-height: 1.4;"></pre>
               </div>
               
               <!-- Right: Raw Vector Store Output -->
               <div>
                 <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--amber); margin-bottom: 8px;">
-                  📂 Rezultat Brut în DB (Raw JSON Output) 
+                   Rezultat Brut în DB (Raw JSON Output) 
                   <span style="font-size: 0.75rem; font-weight: 400; color: var(--text-muted); float: right;">Latență: <span id="dbQueryLatency" style="color: var(--emerald);">0</span> ms</span>
                 </h4>
                 <pre id="dbQueryOutputBlock" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-family: 'Courier New', monospace; font-size: 0.82rem; color: #e2e8f0; overflow-y: auto; max-height: 300px; white-space: pre-wrap; line-height: 1.4;"></pre>
@@ -867,7 +896,7 @@
 
         <div class="about-grid">
           <div class="about-card">
-            <h3>🔬 Tehnologie RAG</h3>
+            <h3> Tehnologie RAG</h3>
             <ul>
               <li><strong>BM25</strong> — Ranking probabilistic</li>
               <li><strong>TF-IDF</strong> — Multi-field vectorization</li>
@@ -879,7 +908,7 @@
           </div>
 
           <div class="about-card">
-            <h3>📊 Statistici</h3>
+            <h3> Statistici</h3>
             <ul>
               <li>289 recipes indexed</li>
               <li>13 cuisines diferite</li>
@@ -891,7 +920,7 @@
           </div>
 
           <div class="about-card">
-            <h3>✨ Features PRO</h3>
+            <h3> Features PRO</h3>
             <ul>
               <li>Chatbot conversațional RAG</li>
               <li>Generator lista cumpărături</li>
@@ -905,31 +934,31 @@
 
         <!-- RAG Research & Comparison Objectives Section -->
         <div class="glass-card" style="padding: 28px; margin-top: 32px;">
-          <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--cyan);">🔬 Obiective de Cercetare & Analiză RAG</h3>
+          <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--cyan);"> Obiective de Cercetare & Analiză RAG</h3>
           <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6;">
             Pentru proiectele curente, aplicația servește ca platformă practică de testare și comparare a diferitelor tehnologii și abordări RAG on-premise:
           </p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; text-align: left;">
             <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;">📂 RAG Retrieval & Embeddings</strong>
+              <strong style="color: #fff; display: block; margin-bottom: 4px;"> RAG Retrieval & Embeddings</strong>
               <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
                 Compararea performanței dintre Sparse Retrieval (BM25) și Dense Semantic Search utilizând modele locale de embeddings (cum ar fi <code>all-MiniLM-L6-v2</code>).
               </span>
             </div>
             <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;">⚖️ Prag Dinamic de Relevanță</strong>
+              <strong style="color: #fff; display: block; margin-bottom: 4px;">️ Prag Dinamic de Relevanță</strong>
               <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
                 Stabilirea unui threshold dinamic pentru relevanță (Confidence Score), permițând Agentului determinist să ia decizii de re-căutare și auto-corecție.
               </span>
             </div>
             <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;">🎯 Diversificare & Reranking</strong>
+              <strong style="color: #fff; display: block; margin-bottom: 4px;"> Diversificare & Reranking</strong>
               <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
                 Evaluarea impactului algoritmului de re-ranking (cum ar fi MMR) pentru îmbunătățirea relevanței și diversității recomandărilor de rețete.
               </span>
             </div>
             <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;">🔒 Baze de Date Vectoriale On-Prem</strong>
+              <strong style="color: #fff; display: block; margin-bottom: 4px;"> Baze de Date Vectoriale On-Prem</strong>
               <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
                 Rularea exclusiv locală a bazei de date ChromaDB, păstrând toate datele securizate pe infrastructură on-premises fără conexiuni externe.
               </span>
@@ -946,7 +975,7 @@
 
   <!-- ── Footer ───────────────────────────────────────────────────────────── -->
   <footer class="site-footer">
-    <p>AI Recipe Agent PRO · ChromaDB Dense Retrieval · Iterative Agent · Made with ❤️</p>
+    <p>AI Recipe Agent PRO · ChromaDB Dense Retrieval · Iterative Agent · Made with ️</p>
   </footer>
 
   <script src="/static/app.js"></script>
@@ -1040,7 +1069,7 @@
             ${item.estimatedCost.toFixed(2)} RON
           </span>
           <button class="tag-remove" onclick="removeShoppingItem('${item.ingredient.toLowerCase()}')"
-            style="width: auto; padding: 0 8px; color: var(--rose-lt);">✕</button>
+            style="width: auto; padding: 0 8px; color: var(--rose-lt);"></button>
         </div>
       `).join('');
 
@@ -1098,11 +1127,11 @@
     // ── Export shopping list ────────────────────────────────────────────────
     window.exportShoppingList = function() {
       const items = Object.values(shoppingItems);
-      let text = '🛒 LISTA DE CUMPĂRĂTURI\n';
+      let text = ' LISTA DE CUMPĂRĂTURI\n';
       text += '='.repeat(40) + '\n\n';
 
       items.forEach(item => {
-        const checkbox = item.checked ? '☑' : '☐';
+        const checkbox = item.checked ? '' : '';
         text += `${checkbox} ${item.ingredient} (×${item.count}) - ${item.estimatedCost.toFixed(2)} RON\n`;
       });
 
@@ -1113,7 +1142,7 @@
 
       // Copy to clipboard
       navigator.clipboard.writeText(text).then(() => {
-        alert('✅ Lista copiată în clipboard!');
+        alert(' Lista copiată în clipboard!');
       });
     };
 

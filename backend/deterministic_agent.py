@@ -58,7 +58,7 @@ class DeterministicAgent:
             top_recipes = res["recipes"]
             
             if not top_recipes:
-                logs.append("⚠️ No recipes found for this query in the database.")
+                logs.append("️ No recipes found for this query in the database.")
                 if len(current_ingredients) > 1:
                     dropped = current_ingredients.pop()
                     logs.append(f"Action: Dropping '{dropped}' from query to expand search space.")
@@ -73,10 +73,10 @@ class DeterministicAgent:
             logs.append(f"Top result: '{best_recipe.get('title')}' with Confidence Score: {best_score:.3f}")
             
             if best_score >= threshold:
-                logs.append(f"✅ Score {best_score:.3f} is above threshold ({threshold:.2f}). Retrieval successful!")
+                logs.append(f" Score {best_score:.3f} is above threshold ({threshold:.2f}). Retrieval successful!")
                 return {"recipes": top_recipes, "logs": logs}
             else:
-                logs.append(f"⚠️ Score {best_score:.3f} is below target threshold ({threshold:.2f}).")
+                logs.append(f"️ Score {best_score:.3f} is below target threshold ({threshold:.2f}).")
                 logs.append("Self-critique: The query ingredients might be too restrictive.")
                 if len(current_ingredients) > 1:
                     dropped = current_ingredients.pop()
