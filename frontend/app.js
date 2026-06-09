@@ -842,6 +842,23 @@ function initPlayground() {
     }
   });
 
+  // Toggle Prompt Inspector binding
+  const togglePromptInspectorBtn = document.getElementById('togglePromptInspectorBtn');
+  const promptInspectorContainer = document.getElementById('promptInspectorContainer');
+  const promptInspectorCode = document.getElementById('promptInspectorCode');
+  if (togglePromptInspectorBtn && promptInspectorContainer) {
+    togglePromptInspectorBtn.addEventListener('click', () => {
+      const isHidden = promptInspectorContainer.style.display === 'none' || promptInspectorContainer.style.display === '';
+      if (isHidden) {
+        promptInspectorContainer.style.display = 'block';
+        togglePromptInspectorBtn.textContent = 'Ascunde Prompt-ul RAG Augmented';
+      } else {
+        promptInspectorContainer.style.display = 'none';
+        togglePromptInspectorBtn.textContent = 'Vizualizează Prompt-ul RAG Augmented trimis la LLM';
+      }
+    });
+  }
+
   // Search execution
   playSearchBtn.addEventListener('click', async () => {
     const query = playQueryInput.value.trim();
@@ -903,6 +920,24 @@ function initPlayground() {
             </div>
           </div>
         `).join('');
+      }
+
+      if (promptInspectorCode && data.recipes) {
+        let contextText = data.recipes.map((r, i) => {
+          return `DOCUMENT [${i+1}]:\nTitlu: ${r.title}\nCuisine: ${r.cuisine}\nIngrediente: ${r.ingredients.join(', ')}\nDescriere: ${r.description || 'Fără descriere.'}`;
+        }).join('\n\n');
+
+        let promptStr = `SYSTEM INSTRUCTIONS:
+Ești un asistent culinar inteligent și experimentat. Sarcina ta este să creezi rețete noi sau să răspunzi la întrebări pe baza documentelor culinare puse la dispoziție în CONTEXT. Fii factual și nu inventa detalii în afara contextului.
+
+CONTEXT DE RETRIEVAL (Din Vector Database):
+${contextText}
+
+USER QUERY:
+"${query}"
+
+RESPONSE (Generat factual pe baza documentelor furnizate):`;
+        promptInspectorCode.textContent = promptStr;
       }
 
       playResultsContainer.style.display = 'block';
@@ -1474,6 +1509,294 @@ for hits in results:
     updateThematicComparison();
   }
 
+  initThematicExplorer();
+
+  // ── HNSW Graph Search Simulator ──────────────────────────────────────────
+  function initHnswSimulator() {
+    const graphNodes = {
+      mamaliga:  { id: 'mamaliga',  label: 'Mămăligă',  x: 250, y: 130, val: [0.0, 0.0, -0.3, -0.2, -0.9] },
+      sarmale:   { id: 'sarmale',   label: 'Sarmale',   x: 170, y: 190, val: [0.8, 0.3, -0.9, 0.6, -0.9] },
+      papanasi:  { id: 'papanasi',  label: 'Papanași',  x: 80,  y: 130, val: [-0.4, -0.6, 0.8, 0.3, -0.9] },
+      carbonara: { id: 'carbonara', label: 'Spaghete',  x: 250, y: 50,  val: [0.7, 0.2, -0.8, 0.4, 0.6] },
+      somon:     { id: 'somon',     label: 'Somon',     x: 420, y: 130, val: [0.9, 0.0, -0.9, -0.6, 0.4] },
+      curry:     { id: 'curry',     label: 'Curry Pui', x: 330, y: 190, val: [0.8, 0.9, -0.4, 0.8, 0.9] }
+    };
+
+    const graphLinks = [
+      { source: 'mamaliga', target: 'sarmale' },
+      { source: 'mamaliga', target: 'somon' },
+      { source: 'mamaliga', target: 'carbonara' },
+      { source: 'sarmale', target: 'papanasi' },
+      { source: 'sarmale', target: 'curry' },
+      { source: 'somon', target: 'curry' },
+      { source: 'carbonara', target: 'somon' },
+      { source: 'carbonara', target: 'papanasi' }
+    ];
+
+    const targets = {
+      desert:      { name: "'ceva dulce și cald'", vector: [-0.5, -0.7, 0.9, 0.2, -0.8] },
+      peste:       { name: "'pește ușor cu legume'", vector: [0.9, 0.0, -0.9, -0.7, 0.5] },
+      paste:       { name: "'spaghete italienești cremoase'", vector: [0.7, 0.2, -0.8, 0.5, 0.6] },
+      traditional: { name: "'mâncare românească tradițională'", vector: [0.8, 0.3, -0.9, 0.5, -0.9] }
+    };
+
+    const querySelect = document.getElementById('hnswQuerySelect');
+    const startBtn    = document.getElementById('hnswStartBtn');
+    const nextBtn     = document.getElementById('hnswNextBtn');
+    const resetBtn    = document.getElementById('hnswResetBtn');
+    const statusText  = document.getElementById('hnswStatusText');
+
+    if (!querySelect || !startBtn) return;
+
+    let currentNode = null;
+    let visitedLinks = [];
+    let isFinished = false;
+
+    function getCosineSimilarity(v1, v2) {
+      let dot = 0;
+      let n1 = 0;
+      let n2 = 0;
+      for (let i = 0; i < 5; i++) {
+        dot += v1[i] * v2[i];
+        n1 += v1[i] * v1[i];
+        n2 += v2[i] * v2[i];
+      }
+      return n1 > 0 && n2 > 0 ? (dot / (Math.sqrt(n1) * Math.sqrt(n2))) : 0;
+    }
+
+    function drawGraph(activeNodeId, finishedNodeId) {
+      const svgNodes = document.getElementById('hnswNodes');
+      const svgLinks = document.getElementById('hnswLinks');
+      if (!svgNodes || !svgLinks) return;
+
+      svgNodes.innerHTML = '';
+      svgLinks.innerHTML = '';
+
+      // Draw links
+      graphLinks.forEach(link => {
+        const sNode = graphNodes[link.source];
+        const tNode = graphNodes[link.target];
+        const isVisited = visitedLinks.some(vl => 
+          (vl.source === link.source && vl.target === link.target) ||
+          (vl.source === link.target && vl.target === link.source)
+        );
+
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', sNode.x);
+        line.setAttribute('y1', sNode.y);
+        line.setAttribute('x2', tNode.x);
+        line.setAttribute('y2', tNode.y);
+        line.setAttribute('stroke', isVisited ? 'var(--cyan)' : 'rgba(255,255,255,0.08)');
+        line.setAttribute('stroke-width', isVisited ? '3' : '1.5');
+        if (isVisited) {
+          line.setAttribute('stroke-dasharray', 'none');
+        } else {
+          line.setAttribute('stroke-dasharray', '3,3');
+        }
+        svgLinks.appendChild(line);
+      });
+
+      // Draw nodes
+      Object.values(graphNodes).forEach(node => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', node.x);
+        circle.setAttribute('cy', node.y);
+        circle.setAttribute('r', '20');
+        
+        let fill = 'rgba(255,255,255,0.05)';
+        let stroke = 'var(--border)';
+        let strokeWidth = '1.5';
+
+        if (node.id === finishedNodeId) {
+          fill = 'rgba(16,185,129,0.2)';
+          stroke = 'var(--emerald)';
+          strokeWidth = '3';
+        } else if (node.id === activeNodeId) {
+          fill = 'rgba(245,158,11,0.2)';
+          stroke = 'var(--amber)';
+          strokeWidth = '3';
+        } else if (visitedLinks.some(vl => vl.source === node.id || vl.target === node.id)) {
+          fill = 'rgba(6,182,212,0.1)';
+          stroke = 'var(--cyan)';
+          strokeWidth = '2';
+        }
+
+        circle.setAttribute('fill', fill);
+        circle.setAttribute('stroke', stroke);
+        circle.setAttribute('stroke-width', strokeWidth);
+        g.appendChild(circle);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', node.x);
+        text.setAttribute('y', node.y + 4);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '9px');
+        text.setAttribute('fill', '#fff');
+        text.setAttribute('font-weight', 'bold');
+        text.textContent = node.label;
+        g.appendChild(text);
+
+        svgNodes.appendChild(g);
+      });
+    }
+
+    startBtn.addEventListener('click', () => {
+      currentNode = 'mamaliga';
+      visitedLinks = [];
+      isFinished = false;
+      querySelect.disabled = true;
+      startBtn.disabled = true;
+      nextBtn.disabled = false;
+      
+      const targetQuery = targets[querySelect.value];
+      const startSim = getCosineSimilarity(graphNodes.mamaliga.val, targetQuery.vector);
+
+      statusText.innerHTML = `Căutarea HNSW a fost inițializată.<br>
+        <strong>Nod Curent:</strong> Mămăligă (Punct de intrare)<br>
+        <strong>Similitudine inițială:</strong> ${startSim.toFixed(3)}<br>
+        Apasă 'Pasul Următor' pentru a evalua vecinii.`;
+      
+      drawGraph(currentNode, null);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (!currentNode || isFinished) return;
+
+      const targetVal = querySelect.value;
+      const targetQuery = targets[targetVal];
+      const curSim = getCosineSimilarity(graphNodes[currentNode].val, targetQuery.vector);
+
+      // Find neighbors
+      const neighbors = [];
+      graphLinks.forEach(link => {
+        if (link.source === currentNode) neighbors.push(link.target);
+        else if (link.target === currentNode) neighbors.push(link.source);
+      });
+
+      let bestNeighbor = null;
+      let bestSim = curSim;
+
+      neighbors.forEach(nId => {
+        const sim = getCosineSimilarity(graphNodes[nId].val, targetQuery.vector);
+        if (sim > bestSim) {
+          bestSim = sim;
+          bestNeighbor = nId;
+        }
+      });
+
+      if (bestNeighbor) {
+        visitedLinks.push({ source: currentNode, target: bestNeighbor });
+        const oldNodeLabel = graphNodes[currentNode].label;
+        currentNode = bestNeighbor;
+        const newNodeLabel = graphNodes[currentNode].label;
+
+        statusText.innerHTML = `Săritură efectuată în graf:<br>
+          <strong>De la:</strong> ${oldNodeLabel} -> <strong>La:</strong> ${newNodeLabel}<br>
+          <strong>Similitudine nouă:</strong> ${bestSim.toFixed(3)} (Mai bună)<br>
+          Apasă din nou 'Pasul Următor'.`;
+
+        drawGraph(currentNode, null);
+      } else {
+        // Stop, we reached local minimum
+        isFinished = true;
+        nextBtn.disabled = true;
+        const finalLabel = graphNodes[currentNode].label;
+        
+        statusText.innerHTML = `Căutarea HNSW s-a finalizat!<br>
+          <strong>Nod Final:</strong> ${finalLabel}<br>
+          <strong>Similitudine maximă locală:</strong> ${curSim.toFixed(3)}<br>
+          Algoritmul s-a oprit deoarece niciun nod vecin nu oferă o similitudine mai mare. Am găsit rețeta fără a citi celelalte noduri din baza de date.`;
+
+        drawGraph(null, currentNode);
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      currentNode = null;
+      visitedLinks = [];
+      isFinished = false;
+      querySelect.disabled = false;
+      startBtn.disabled = false;
+      nextBtn.disabled = true;
+      statusText.innerHTML = "Apasă 'Inițializează Căutare' pentru a plasa punctul de intrare.";
+      drawGraph(null, null);
+    });
+
+    // Initial draw
+    drawGraph(null, null);
+  }
+
+  // ── RAG vs Pure LLM Showdown ─────────────────────────────────────────────
+  function initShowdown() {
+    const selector = document.getElementById('showdownQuerySelect');
+    const llmConsole = document.getElementById('showdownLlmConsole');
+    const ragConsole = document.getElementById('showdownRagConsole');
+
+    if (!selector || !llmConsole || !ragConsole) return;
+
+    const database = {
+      pui_dacian: {
+        query: "Cum se prepară 'Pui Dacian cu Sos Secret' în aplicația noastră?",
+        llm: "Puiul Dacian cu Sos Secret este o reteta straveche preparata din piept de pui fript pe jar, uns cu miere si mirodenii din padurile Carpatilor. Sosul secret este facut din vin alb dacic, miere de albine salbatice, piper pisat, untura si putin otet de mere fermentat cu usturoi. Totul se fierbe in ceaun pana cand scade si capata o culoare aramie.",
+        rag: "[Căutare Vectorială: 'Pui Dacian cu Sos Secret']\n[ChromaDB a găsit 1 document relevant, Scor: 0.912]\n[Injectare rețetă ID 83 în Contextul Prompt-ului]\n\nConform rețetei din baza de date:\nIngrediente principale: piept de pui, ciuperci champignon, unt, smântână de gătit, vin alb sec, usturoi, cimbru.\nPreparare: Pieptul de pui se prăjește în unt cu usturoi, apoi se adaugă ciupercile tăiate felii. Se stinge totul cu vin alb sec și se adaugă smântâna lichidă. Se reduce sosul la foc mic cu cimbru. Sosul secret este emulsia naturală de unt, smântână și reducerea de vin cu ciuperci."
+      },
+      albinuta: {
+        query: "Care sunt ingredientele exacte pentru Prăjitura 'Albinuța' din baza de date?",
+        llm: "Prăjitura Albinuța tradițională se prepară din: foi pufoase de pandișpan cu vanilie, o cremă aromată de mascarpone cu frișcă lichidă și miere de albine, jeleu de fructe de pădure la mijloc, acoperită cu fulgi mari de nucă de cocos și fistic mărunțit pentru decor.",
+        rag: "[Căutare Vectorială: 'Prăjitura Albinuța']\n[ChromaDB a găsit 1 document relevant, Scor: 0.887]\n[Injectare rețetă ID 142 în Contextul Prompt-ului]\n\nIngredientele oficiale stocate sunt:\nFoi pe fundul tăvii: făină de grâu, miere naturală de albine (3 linguri), unt topit, zahăr pudră, ouă întregi, bicarbonat de sodiu stins cu lămâie.\nCremă fină de griș: lapte dulce, griș de grâu (4 linguri), unt la temperatura camerei, zahăr pudră, coajă și suc de lămâie.\nStrat intermediar: gem acrișor de prune românești."
+      },
+      somon_carpati: {
+        query: "Cum gătesc rețeta de 'Somon în Coajă de Pâine a Carpaților'?",
+        llm: "Aceasta este o rețetă montană dacică. Somonul proaspăt pescuit din râurile Carpaților se condimentează cu sare de salină, se învelește într-un aluat dospit din făină de secară și semințe de in, se unge cu gălbenuș de ou și se coace direct în spuză sau în cuptor cu lemne timp de 45 de minute până pâinea devine crocantă.",
+        rag: "[Căutare Vectorială: 'Somon în Coajă de Pâine a Carpaților']\n[ChromaDB a găsit 1 document relevant, Scor: 0.945]\n[Injectare rețetă ID 208 în Contextul Prompt-ului]\n\nConform bazei de date culinare:\nSomonul se unge cu muștar de Dijon amestecat cu miere. Crusta (coaja de pâine) este realizată din crutoane de pâine albă mărunțite, amestecate cu mărar proaspăt tocat, parmezan ras și ulei de măsline. Peștele se coace pe tavă timp de 12-15 minute la 200 de grade până când crusta este aurie. Nu se folosește aluat de pâine."
+      }
+    };
+
+    let typingTimerLlm = null;
+    let typingTimerRag = null;
+
+    function typeEffect(element, text, delay = 15) {
+      element.textContent = "";
+      let index = 0;
+      
+      function type() {
+        if (index < text.length) {
+          element.textContent += text.charAt(index);
+          index++;
+          element.scrollTop = element.scrollHeight;
+          return setTimeout(type, delay);
+        }
+      }
+      return type();
+    }
+
+    function runShowdown() {
+      // Clear timers
+      if (typingTimerLlm) clearTimeout(typingTimerLlm);
+      if (typingTimerRag) clearTimeout(typingTimerRag);
+
+      const val = selector.value;
+      const data = database[val];
+
+      if (!data) return;
+
+      llmConsole.textContent = "Se generează răspunsul LLM simplu...";
+      ragConsole.textContent = "Se interoghează baza de date vectorială și se augmentează promptul...";
+
+      typingTimerLlm = typeEffect(llmConsole, data.llm, 12);
+      typingTimerRag = typeEffect(ragConsole, data.rag, 10);
+    }
+
+    selector.addEventListener('change', runShowdown);
+
+    // Run first time on load
+    runShowdown();
+  }
+
+  initHnswSimulator();
+  initShowdown();
   initThematicExplorer();
 }
 
