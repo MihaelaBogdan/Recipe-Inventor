@@ -833,6 +833,91 @@
             </div>
             <div style="margin-top: 14px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted);">
               Scorul este normalizat între <strong>-1.0</strong> și <strong>1.0</strong>. Un scor <strong>> 0.60</strong> indică o legătură semantică puternică.
+          </div>
+        </div>
+
+        <!-- ROW 3.5: Thematic Culinary Embedding Explorer (Cum se nasc vectorii) -->
+        <div class="glass-card" style="padding: 28px;">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--cyan); display: flex; align-items: center; gap: 8px;">
+            <span>Cum se nasc vectorii culinari? (Ghid Interactiv Tematic)</span>
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; line-height: 1.5;">
+            Cum asociază inteligența artificială o rețetă precum Sarmale Românești sau Tort de Ciocolată? În loc de cuvinte abstracte, modelele RAG creează o amprentă vectorială (embedding) formată din sute de numere float. 
+            Mai jos poți vedea o simulare a acestui proces folosind 5 axe culinare conceptuale. Observă cum sunt calculate coordonatele și cum similitudinea cosinus determină apropierea lor!
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; align-items: start;">
+            <!-- Panel Stanga: Selectoare retete si calcul Similitudine -->
+            <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+              <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Selectează Rețeta A</label>
+                <select id="thematicRecipeA" style="width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text); font-family: inherit; font-size: .9rem; cursor: pointer;">
+                  <option value="sarmale" selected>Sarmale Românești cu Mămăligă</option>
+                  <option value="tort">Tort de Ciocolată cu Cireșe</option>
+                  <option value="cezar">Salată Cezar cu Pui</option>
+                  <option value="carbonara">Spaghete Carbonara</option>
+                  <option value="somon">Somon la Grătar cu Broccoli</option>
+                  <option value="curry">Curry de Pui Indian</option>
+                </select>
+              </div>
+
+              <div style="display: flex; justify-content: center; font-size: 1.5rem; color: var(--text-dim); margin: -4px 0;">
+                vs
+              </div>
+
+              <div>
+                <label style="display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Selectează Rețeta B</label>
+                <select id="thematicRecipeB" style="width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text); font-family: inherit; font-size: .9rem; cursor: pointer;">
+                  <option value="sarmale">Sarmale Românești cu Mămăligă</option>
+                  <option value="tort">Tort de Ciocolată cu Cireșe</option>
+                  <option value="cezar">Salată Cezar cu Pui</option>
+                  <option value="carbonara">Spaghete Carbonara</option>
+                  <option value="somon" selected>Somon la Grătar cu Broccoli</option>
+                  <option value="curry">Curry de Pui Indian</option>
+                </select>
+              </div>
+
+              <div style="text-align: center; border-top: 1px dashed var(--border); padding-top: 16px; margin-top: 8px;">
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Similitudine Cosinus Calculată</div>
+                <div id="thematicSimVal" style="font-size: 2.2rem; font-weight: 800; color: var(--cyan); text-shadow: 0 0 10px rgba(6,182,212,0.2);">0.000</div>
+              </div>
+
+              <div id="thematicExplanation" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; padding: 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--border);"></div>
+            </div>
+
+            <!-- Panel Dreapta: Vizualizare vectori pe 5 dimensiuni conceptuale -->
+            <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px;">
+              <h4 style="font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 16px;">
+                Comparația Coordonatelor Culinare (-1.0 ... +1.0)
+              </h4>
+              
+              <div id="vectorDimGrid" style="display: flex; flex-direction: column; gap: 14px;">
+                <!-- Renders dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Flowchart / Timeline: Cum se genereaza de fapt vectorul -->
+          <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--violet-lt); margin-bottom: 12px;">Fluxul de Procesare în Generarea Embedding-ului Real:</h4>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; font-size: 0.78rem; line-height: 1.4;">
+              <div style="background: rgba(255,255,255,0.01); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <span style="color: var(--cyan); font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px;">1. Textul Rețetei</span>
+                Textul brut (ex: ingrediente sau titlu) este trimis ca string în motorul de procesare.
+              </div>
+              <div style="background: rgba(255,255,255,0.01); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <span style="color: var(--violet-lt); font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px;">2. Tokenizare Sub-cuvânt</span>
+                Textul este împărțit în sub-cuvinte / ID-uri numerice din dicționar (ex: usturoi devine [12948]).
+              </div>
+              <div style="background: rgba(255,255,255,0.01); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <span style="color: var(--emerald); font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px;">3. Trecerea prin Transformator</span>
+                Modelul de rețea neuronală asociază contextul cuvintelor bazat pe miliarde de asocieri lingvistice de dinainte învățate.
+              </div>
+              <div style="background: rgba(255,255,255,0.01); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <span style="color: var(--amber); font-weight: bold; font-size: 0.85rem; display: block; margin-bottom: 4px;">4. Vectorul de 384 Dimensiuni</span>
+                Rezultatul final este un vector dens (un șir ordonat de 384 numere float), reprezentarea semantică perfectă a rețetei tale.
+              </div>
             </div>
           </div>
         </div>
@@ -883,6 +968,30 @@
                 <pre id="dbQueryOutputBlock" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-family: 'Courier New', monospace; font-size: 0.82rem; color: #e2e8f0; overflow-y: auto; max-height: 300px; white-space: pre-wrap; line-height: 1.4;"></pre>
               </div>
             </div>
+
+            <!-- Bottom row: Embedding Visualization & DB Architecture details -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 20px; margin-top: 20px;">
+              <!-- Left: Vector Embedding Visualization -->
+              <div>
+                <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--emerald); margin-bottom: 8px;">
+                  Amprenta Vectorială (Query Embedding - 384 Dimensiuni)
+                </h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                  Fiecare cuvânt cheie este convertit într-un vector dens prin modelul all-MiniLM-L6-v2. Culorile reprezintă valorile float din vector: <span style="color: var(--cyan); font-weight: 600;">Pozitiv (Cyan)</span> vs <span style="color: var(--amber); font-weight: 600;">Negativ (Amber)</span>.
+                </p>
+                <div id="dbEmbeddingGrid" style="display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; background: rgba(0,0,0,0.2); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 8px;"></div>
+                <div id="dbEmbeddingSummary" style="font-family: monospace; font-size: 0.75rem; color: var(--text-dim); overflow-x: auto; white-space: nowrap; padding: 4px 8px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm);"></div>
+              </div>
+
+              <!-- Right: DB Architecture Details -->
+              <div>
+                <h4 style="font-size: 0.9rem; font-weight: 600; color: var(--violet-lt); margin-bottom: 8px;">
+                  Specificații de Indexare & Stocare Vectorială
+                </h4>
+                <div id="dbIndexDetails" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 8px;"></div>
+              </div>
+            </div>
+
           </div>
         </div>
 

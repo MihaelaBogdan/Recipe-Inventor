@@ -799,6 +799,9 @@ function initPlayground() {
   const dbQueryCodeBlock    = document.getElementById('dbQueryCodeBlock');
   const dbQueryOutputBlock  = document.getElementById('dbQueryOutputBlock');
   const dbQueryLatency      = document.getElementById('dbQueryLatency');
+  const dbEmbeddingGrid     = document.getElementById('dbEmbeddingGrid');
+  const dbEmbeddingSummary  = document.getElementById('dbEmbeddingSummary');
+  const dbIndexDetails      = document.getElementById('dbIndexDetails');
 
   if (!playSearchBtn) return;
 
@@ -1090,6 +1093,52 @@ for hits in results:
     if (dbQueryCodeBlock) {
       dbQueryCodeBlock.textContent = code;
     }
+
+    if (dbIndexDetails) {
+      let detailsHtml = '';
+      if (selectedDb === 'chromadb') {
+        detailsHtml = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW (Hierarchical Navigable Small World)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine Similarity (1 - CosSim)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Metadate:</strong><span>SQLite local pe disc</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Indexare:</strong><span>Automată la adăugarea documentului</span></div>
+          <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+            ChromaDB creează în mod implicit un graf HNSW local. Este ideal pentru colecții locale de rețete (ex. meniul unui restaurant) deoarece vectorii sunt asociați cu metadatele și sunt stocați direct într-o bază SQLite locală, fiind optimizat pentru o inițializare rapidă și zero-config.
+          </div>
+        `;
+      } else if (selectedDb === 'qdrant') {
+        detailsHtml = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW cu Payload Filtering</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine, L2, Dot Product</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Engine:</strong><span>Rust, ultra-rapid</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Stocare:</strong><span>În memorie sau fișiere mapate (mmap)</span></div>
+          <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+            Qdrant este ideal când vrei să filtrezi rețetele în timp ce cauți semantici (ex. cauți 'desert ciocolată' dar doar cele cu eticheta 'fără gluten'). Qdrant permite filtrarea pe payload direct în timpul parcurgerii grafului HNSW, accelerând masiv interogările complexe.
+          </div>
+        `;
+      } else if (selectedDb === 'pgvector') {
+        detailsHtml = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW (v0.5.0+) sau IVFFlat (clustere)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine (<=>), L2 (<->), IP (<#>)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Integrare:</strong><span>Tabel relațional Postgres normal</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Index:</strong><span>CREATE INDEX USING hnsw</span></div>
+          <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+            pgvector stochează embedding-urile direct în rândurile tabelelor SQL normale. Este ideal dacă aplicația ta are deja o bază de date relațională (ex. tabele pentru utilizatori, comenzi, rețete preferate), permițând JOIN-uri și interogări SQL native combinate direct.
+          </div>
+        `;
+      } else {
+        detailsHtml = `
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW, IVF-Flat, ScaNN, IVF-PQ</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine, L2, IP, Jaccard</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Stocare:</strong><span>MinIO (Vectori) + etcd (Metadate)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Scalare:</strong><span>Distribuită orizontal (Sharding)</span></div>
+          <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
+            Milvus fragmentează datele în segmente distribuite. Este ideal pentru platforme globale (ex. milioane de rețete culinare de la mii de utilizatori) deoarece folosește cuantizarea scalară (PQ/SQ) pentru a comprima vectorii rețetelor, reducând memoria ocupată.
+          </div>
+        `;
+      }
+      dbIndexDetails.innerHTML = detailsHtml;
+    }
   }
 
   // Pre-populate syntax code template on startup
@@ -1116,6 +1165,31 @@ for hits in results:
         if (dbQueryCodeBlock) dbQueryCodeBlock.textContent = data.code;
         if (dbQueryOutputBlock) dbQueryOutputBlock.textContent = JSON.stringify(data.raw_output, null, 2);
         if (dbQueryLatency) dbQueryLatency.textContent = data.latency_ms.toFixed(2);
+        
+        // Draw embedding vector footprint
+        if (dbEmbeddingGrid && data.query_vector) {
+          dbEmbeddingGrid.innerHTML = '';
+          data.query_vector.forEach(v => {
+            const cell = document.createElement('div');
+            cell.style.width = '100%';
+            cell.style.paddingBottom = '100%';
+            cell.style.borderRadius = '1px';
+            
+            // Amplify float ranges to make visual differences apparent
+            const opacity = Math.min(1, Math.max(0.15, Math.abs(v) * 6.0));
+            if (v > 0) {
+              cell.style.backgroundColor = `rgba(6, 182, 212, ${opacity})`; // Cyan
+            } else {
+              cell.style.backgroundColor = `rgba(245, 158, 11, ${opacity})`; // Amber
+            }
+            dbEmbeddingGrid.appendChild(cell);
+          });
+        }
+        
+        if (dbEmbeddingSummary && data.query_vector) {
+          const vals = data.query_vector.slice(0, 5).map(x => x.toFixed(4)).join(', ');
+          dbEmbeddingSummary.textContent = `[${vals}, ... (total 384 dim)]`;
+        }
         
         if (dbQueryContainer) {
           dbQueryContainer.style.display = 'grid';
@@ -1237,6 +1311,170 @@ for hits in results:
       }
     });
   }
+
+  // ── Thematic Culinary Embedding Explorer ─────────────────────────────────
+  function initThematicExplorer() {
+    const thematicRecipes = {
+      sarmale: {
+        title: "Sarmale Românești cu Mămăligă",
+        desc: "Savuroase, tradiționale, învelite în varză acră și servite cu mămăligă caldă.",
+        vector: [0.8, 0.3, -0.9, 0.6, -0.9],
+        ingredients: ["carne tocata", "varza acra", "orez", "ceapa", "mamaliga"]
+      },
+      tort: {
+        title: "Tort de Ciocolată cu Cireșe",
+        desc: "Un desert fin, cremos, intens îndulcit și plin de cacao.",
+        vector: [-0.6, -0.8, 1.0, 0.1, 0.2],
+        ingredients: ["ciocolata", "frisca", "cirese", "faina", "zahar"]
+      },
+      cezar: {
+        title: "Salată Cezar cu Pui",
+        desc: "O salată proaspătă cu salată romană, crutoane, pui la grătar și dressing cremos.",
+        vector: [0.5, 0.1, -0.7, -0.4, 0.5],
+        ingredients: ["salata romana", "piept de pui", "parmezan", "crutoane", "dressing"]
+      },
+      carbonara: {
+        title: "Spaghete Carbonara",
+        desc: "Un clasic italian bogat în grăsimi aromate, gălbenuș de ou și pecorino.",
+        vector: [0.7, 0.2, -0.8, 0.4, 0.6],
+        ingredients: ["spaghete", "guanciale", "galbenus ou", "pecorino", "piper"]
+      },
+      somon: {
+        title: "Somon la Grătar cu Broccoli",
+        desc: "O masă sănătoasă, bogată în grăsimi bune și proteine, cu legume gătite la abur.",
+        vector: [0.9, 0.0, -0.9, -0.6, 0.4],
+        ingredients: ["somon", "broccoli", "lamaie", "ulei de masline"]
+      },
+      curry: {
+        title: "Curry de Pui Indian",
+        desc: "O explozie de mirodenii asiatice într-un sos dens de roșii și lapte de cocos.",
+        vector: [0.8, 0.9, -0.4, 0.8, 0.9],
+        ingredients: ["piept de pui", "garam masala", "ghimbir", "lapte de cocos", "curry"]
+      }
+    };
+
+    const recipeASelect = document.getElementById('thematicRecipeA');
+    const recipeBSelect = document.getElementById('thematicRecipeB');
+    const thematicSimVal = document.getElementById('thematicSimVal');
+    const thematicExplanation = document.getElementById('thematicExplanation');
+    const vectorDimGrid = document.getElementById('vectorDimGrid');
+
+    if (!recipeASelect || !recipeBSelect) return;
+
+    // Dimensions labels & metadata
+    const dimensions = [
+      { name: "Proteine & Structură (Sărat vs Dulce)", desc: "Savuros, carne/pește vs texturi ușoare/zahăr" },
+      { name: "Intensitate Condimente & Mirodenii", desc: "Cantitatea de piper, ierburi aromatice, ghimbir, chili" },
+      { name: "Dulceață & Profil Desert", desc: "Zahăr, ciocolată, fructe dulci, vanilie" },
+      { name: "Umiditate & Densitate Sos", desc: "Sosuri abundente, supe, tocănițe vs preparate uscate/grătar" },
+      { name: "Origine & Caracter Exotic", desc: "Rețete globale, asiatice/mediteraneene vs preparate pur tradiționale" }
+    ];
+
+    function updateThematicComparison() {
+      const keyA = recipeASelect.value;
+      const keyB = recipeBSelect.value;
+      const rA = thematicRecipes[keyA];
+      const rB = thematicRecipes[keyB];
+
+      if (!rA || !rB) return;
+
+      // Cosine similarity computation
+      let dot = 0;
+      let normA = 0;
+      let normB = 0;
+      for (let i = 0; i < 5; i++) {
+        dot += rA.vector[i] * rB.vector[i];
+        normA += rA.vector[i] * rA.vector[i];
+        normB += rB.vector[i] * rB.vector[i];
+      }
+      normA = Math.sqrt(normA);
+      normB = Math.sqrt(normB);
+      const similarity = normA > 0 && normB > 0 ? (dot / (normA * normB)) : 0;
+
+      // Display similarity score
+      thematicSimVal.textContent = similarity.toFixed(3);
+      if (similarity > 0.6) {
+        thematicSimVal.style.color = "var(--emerald)";
+      } else if (similarity > 0.1) {
+        thematicSimVal.style.color = "var(--amber)";
+      } else {
+        thematicSimVal.style.color = "var(--red)";
+      }
+
+      // Semantic explanation
+      let expl = "";
+      if (similarity > 0.6) {
+        expl = `Asemănare semantică puternică! Ambele rețete împart caracteristici culinare majore. În spațiul vectorial dens, acestea sunt amplasate foarte aproape datorită ingredientelor de bază comune și a profilului de aromă similar (de exemplu, ambele fiind feluri de mâncare sărate, calde, bogate în proteine).`;
+      } else if (similarity > 0.1) {
+        expl = `Similitudine moderată. Preparatele au unele corelații (de exemplu, sunt ambele rețete sărate de origine internațională), dar diferă semnificativ prin ingredientele cheie și modul de gătire (unul este uscat, celălalt sos/supă, sau folosesc condimente foarte diferite).`;
+      } else {
+        expl = `Similitudine foarte mică sau negativă! Cele două rețete reprezintă concepte culinare opuse în spațiul vectorial. De exemplu, una este un fel principal tradițional și sărat (sarmale), iar cealaltă este un desert dulce internațional (tort de ciocolată). Un algoritm RAG va ști că o interogare pentru una dintre ele nu trebuie să returneze cealaltă.`;
+      }
+      thematicExplanation.innerHTML = `<strong>Analiză semantică:</strong> ${expl} <br><br>
+        <span style="color: var(--text-muted); font-size: 0.8rem;">
+          Notă: Modelele reale folosesc 384 de astfel de dimensiuni abstracte (nu doar 5 dimensiuni umane). Fiecare dimensiune captează asocieri subtile de limbaj și concepte (ex: 'grătar' cu 'cărbuni', 'somon' cu 'pește').
+        </span>`;
+
+      // Render the comparison table / progress bars
+      let gridHtml = `
+        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; font-weight: 700; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;">
+          <div>Dimensiune Conceptuală</div>
+          <div style="text-align: center;">${rA.title.split(' ')[0]}</div>
+          <div style="text-align: center;">${rB.title.split(' ')[0]}</div>
+        </div>
+      `;
+
+      for (let i = 0; i < 5; i++) {
+        const valA = rA.vector[i];
+        const valB = rB.vector[i];
+
+        // Format to percentage
+        const pctA = Math.round((valA + 1) * 50); // Map -1..1 to 0..100%
+        const pctB = Math.round((valB + 1) * 50);
+
+        const colorA = valA > 0 ? "var(--cyan)" : "var(--amber)";
+        const colorB = valB > 0 ? "var(--cyan)" : "var(--amber)";
+
+        gridHtml += `
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem;">
+            <div>
+              <div style="font-weight: 600; color: #fff;">${dimensions[i].name}</div>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">${dimensions[i].desc}</div>
+            </div>
+            
+            <!-- Recipe A Bar -->
+            <div style="padding: 0 4px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 2px;">
+                <span style="color: ${colorA}; font-weight: bold;">${valA > 0 ? '+' : ''}${valA.toFixed(1)}</span>
+              </div>
+              <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                <div style="width: ${pctA}%; height: 100%; background: ${colorA};"></div>
+              </div>
+            </div>
+
+            <!-- Recipe B Bar -->
+            <div style="padding: 0 4px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 2px;">
+                <span style="color: ${colorB}; font-weight: bold;">${valB > 0 ? '+' : ''}${valB.toFixed(1)}</span>
+              </div>
+              <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
+                <div style="width: ${pctB}%; height: 100%; background: ${colorB};"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      vectorDimGrid.innerHTML = gridHtml;
+    }
+
+    recipeASelect.addEventListener('change', updateThematicComparison);
+    recipeBSelect.addEventListener('change', updateThematicComparison);
+
+    updateThematicComparison();
+  }
+
+  initThematicExplorer();
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────
