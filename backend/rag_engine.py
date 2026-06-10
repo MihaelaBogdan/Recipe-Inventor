@@ -57,7 +57,7 @@ class RecipeRAGEngine:
         self.recipes = recipes
         
         print("Loading SentenceTransformer model...")
-        self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
+        self.encoder = SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2', device='cuda')
         
         # Init ChromaDB
         db_path = os.path.join(os.path.dirname(__file__), "..", "data", "chroma_db")

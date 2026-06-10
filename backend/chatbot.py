@@ -24,6 +24,9 @@ Intenții suportate:
 import re
 import random
 from typing import Optional
+import numpy as np
+from sentence_transformers import SentenceTransformer
+from intent_examples import INTENT_EXAMPLES
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -404,31 +407,63 @@ RO_TO_EN: dict[str, str] = {
 }
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# CHATBOT ENGINE
-# ─────────────────────────────────────────────────────────────────────────────
 class RecipeChatbot:
     """
-    RAG Chatbot fără LLM.
-    Combină pattern matching pentru intenție cu retrieval RAG pentru conținut.
+    RAG Chatbot cu semantic intent detection.
     """
-
+ 
     def __init__(self, rag_engine, agent=None):
         self.rag = rag_engine
         self.agent = agent
-        self.compiled = [(re.compile(p, re.IGNORECASE), intent) for p, intent in INTENT_PATTERNS]
-
+        self.encoder = rag_engine.encoder
+ 
+        # Index tehnici semantic
+        self._technique_keys = list(TECHNIQUES.keys())
+        self._technique_texts = [
+            f"{v['ro']} {' '.join(v['keywords'])}"
+            for v in TECHNIQUES.values()
+        ]
+        self._technique_matrix = self.encoder.encode(self._technique_texts)
+ 
+        # Index substituții semantic
+        self._sub_keys = list(SUBSTITUTIONS.keys())
+        self._sub_texts = [
+            f"{v['ro']} {k}"
+            for k, v in SUBSTITUTIONS.items()
+        ]
+        self._sub_matrix = self.encoder.encode(self._sub_texts)
+ 
+        # Index intenții semantic
+        self._intent_labels = []
+        self._intent_vectors = []
+        for intent, examples in INTENT_EXAMPLES.items():
+            for emb in self.encoder.encode(examples):
+                self._intent_labels.append(intent)
+                self._intent_vectors.append(emb)
+        self._intent_matrix = np.array(self._intent_vectors)
+ 
+        print(f"Semantic intent + technique + substitution indexes ready.")
+ 
+    # ── Cosine similarity helper ──────────────────────────────────────────────
+    def _cosine_best(self, matrix: np.ndarray, query_vec: np.ndarray) -> tuple[int, float]:
+        norms = np.linalg.norm(matrix, axis=1)
+        q_norm = np.linalg.norm(query_vec)
+        if q_norm == 0:
+            return 0, 0.0
+        sims = matrix @ query_vec / (norms * q_norm + 1e-9)
+        best = int(np.argmax(sims))
+        return best, float(sims[best])
+ 
     # ── Detect intent ─────────────────────────────────────────────────────────
-    def _detect_intent(self, message: str) -> tuple[str, re.Match | None]:
-        for pattern, intent in self.compiled:
-            m = pattern.search(message)
-            if m:
-                return intent, m
-        return "unknown", None
-
+    def _detect_intent(self, message: str) -> tuple[str, None]:
+        q = self.encoder.encode([message])[0]
+        best_idx, best_score = self._cosine_best(self._intent_matrix, q)
+        if best_score < 0.25:
+            return "unknown", None
+        return self._intent_labels[best_idx], None
+ 
     # ── Extract ingredients from message ──────────────────────────────────────
     def _extract_ingredients(self, message: str) -> list[str]:
-        """Simple heuristic: split on common separators and clean stopwords."""
         STOPWORDS = {
             "ce", "cu", "si", "sau", "am", "la", "de", "un", "o", "al", "in", "pe",
             "din", "pentru", "mai", "ca", "pot", "fac", "am", "face", "faci", "avem",
@@ -438,8 +473,8 @@ class RecipeChatbot:
         clean = re.sub(r'[?!.,;:]', ' ', message.lower())
         tokens = [t.strip() for t in re.split(r'[\s,;/]+|\bși\b|\bsi\b', clean) if len(t.strip()) > 2]
         result = [t for t in tokens if t not in STOPWORDS]
-        return result[:8]  # max 8 ingredients from chat
-
+        return result[:8]
+ 
     # ── Extract recipe name from message ──────────────────────────────────────
     def _extract_dish_name(self, message: str) -> str:
         patterns = [
@@ -456,59 +491,23 @@ class RecipeChatbot:
             if m:
                 return m.group(1).strip()
         return ""
-
+ 
     # ── Extract technique from message ────────────────────────────────────────
     def _extract_technique(self, message: str) -> str | None:
-        msg_lower = message.lower()
-        for key, data in TECHNIQUES.items():
-            kws = data.get("keywords", []) + [key, data.get("ro", "")]
-            if any(kw in msg_lower for kw in kws):
-                return key
-        return None
-
+        q = self.encoder.encode([message])[0]
+        best_idx, best_score = self._cosine_best(self._technique_matrix, q)
+        if best_score < 0.30:
+            return None
+        return self._technique_keys[best_idx]
+ 
     # ── Extract substitution target ───────────────────────────────────────────
     def _extract_sub_target(self, message: str) -> str | None:
-        def stems_match(w1: str, w2: str) -> bool:
-            def stem(w):
-                w = w.lower().strip()
-                w = w.replace("ă", "a").replace("â", "a").replace("î", "i").replace("ș", "s").replace("ț", "t")
-                return w[:3]
-            return stem(w1) == stem(w2) and len(w1) >= 2 and len(w2) >= 2
-
-        msg_lower = message.lower()
-        patterns = [
-            r"in loc de (.+?)[\?!.,]?$",
-            r"inlocuiesc (.+?) cu",
-            r"inlocuiesc (.+?)[\?!.,]?$",
-            r"inlocuitor pentru (.+?)[\?!.,]?$",
-            r"fara (.+?)[\?!.,]?$",
-            r"nu am (.+?)[\?!.,]?$",
-            r"alternativa la (.+?)[\?!.,]?$",
-        ]
-        for p in patterns:
-            m = re.search(p, msg_lower)
-            if m:
-                candidate = m.group(1).strip()
-                # Match to substitution keys
-                for key, data in SUBSTITUTIONS.items():
-                    ro_name = data.get("ro", "").lower()
-                    if key in candidate or ro_name in candidate or candidate in key or stems_match(candidate, ro_name) or stems_match(candidate, key):
-                        return key
-                # Try partial match
-                for key in SUBSTITUTIONS:
-                    if any(w in candidate for w in key.split()):
-                        return key
-        
-        # Fallback: scan for any substitution ingredient in raw text
-        for word in msg_lower.split():
-            # Clean word
-            w_clean = re.sub(r'[?!.,;:]', '', word)
-            for key, data in SUBSTITUTIONS.items():
-                ro_name = data.get("ro", "").lower()
-                if stems_match(w_clean, ro_name) or stems_match(w_clean, key) or w_clean == ro_name or w_clean == key:
-                    return key
-        return None
-
+        q = self.encoder.encode([message])[0]
+        best_idx, best_score = self._cosine_best(self._sub_matrix, q)
+        if best_score < 0.30:
+            return None
+        return self._sub_keys[best_idx]
+ 
     # ── Extract time limit ────────────────────────────────────────────────────
     def _extract_time(self, message: str) -> int | None:
         m = re.search(r'(\d+)\s*(min|minute|ore?)', message.lower())
@@ -519,24 +518,24 @@ class RecipeChatbot:
         if 'rapid' in message.lower() or 'repede' in message.lower():
             return 30
         return None
-
+ 
     # ── Build response ────────────────────────────────────────────────────────
     def respond(self, message: str) -> dict:
         intent, match = self._detect_intent(message)
         return self._build_response(intent, message)
-
+ 
     def _build_response(self, intent: str, message: str) -> dict:
-
+ 
         # ── Chitchat ─────────────────────────────────────────────────────────
         if intent == "chitchat_greet":
             return {
                 "type": "text",
-                "text": " Salut! Sunt **Chef Bot RAG** — un chatbot culinar care funcționează 100% fără LLM! "
+                "text": " Salut! Sunt **Chef Bot RAG** — un chatbot culinar! "
                         "Pot să-ți găsesc rețete, să explic tehnici culinare, să sugerez substituții "
                         "și să inventez rețete noi din ingredientele tale. Ce gătim azi?",
                 "suggestions": ["Ce pot face cu pui și usturoi?", "Explică-mi ce este braising", "Rețete vegane rapide", "Surprinde-mă!"],
             }
-
+ 
         if intent == "chitchat_thanks":
             responses = [
                 " Cu plăcere! Mai ai întrebări culinare?",
@@ -544,23 +543,22 @@ class RecipeChatbot:
                 "‍ La dispoziție! Spune-mi ce mai gătești!",
             ]
             return {"type": "text", "text": random.choice(responses), "suggestions": ["Mai vreau o rețetă", "Altă tehnică culinară"]}
-
+ 
         if intent == "chitchat_identity":
             return {
                 "type": "text",
-                "text": " Sunt **Chef Bot RAG** — un chatbot culinar construit fără niciun LLM! "
+                "text": " Sunt **Chef Bot RAG** — un chatbot culinar! "
                         "Funcționez prin:\n"
-                        "• **Detectare intenție** cu regex și keywords\n"
-                        "• **Retrieval RAG** cu BM25 + TF-IDF bigramic\n"
-                        "• **Baze de cunoștințe** hardcodate pentru tehnici și substituții\n"
-                        "• **Query expansion** cu sinonime de ingrediente\n\n"
-                        "Nu știu să generez text nou — doar să GĂSESC și să ORGANIZEZ informațiile din baza de date!",
+                        "• **Detectare intenție** semantică cu sentence-transformers\n"
+                        "• **Retrieval RAG** cu ChromaDB + BM25 hibrid\n"
+                        "• **Baze de cunoștințe** pentru tehnici și substituții\n"
+                        "• **Query expansion** cu sinonime de ingrediente\n\n",
                 "suggestions": ["Cum funcționează RAG?", "Ce rețete ai?"],
             }
-
+ 
         if intent == "chitchat_bye":
-            return {"type": "text", "text": " La revedere! Poftă bună la gătit! ️", "suggestions": []}
-
+            return {"type": "text", "text": " La revedere! Poftă bună la gătit!", "suggestions": []}
+ 
         # ── Help ──────────────────────────────────────────────────────────────
         if intent == "help":
             return {
@@ -576,7 +574,7 @@ class RecipeChatbot:
                     {"icon": "", "title": "Dau sfaturi generale de gătit", "example": "Dă-mi un sfat culinar"},
                 ],
             }
-
+ 
         # ── Find recipe by ingredients ────────────────────────────────────────
         if intent == "find_recipe":
             ings = self._extract_ingredients(message)
@@ -587,10 +585,9 @@ class RecipeChatbot:
                             "Încearcă: **'Ce pot face cu pui, usturoi și lămâie?'**",
                     "suggestions": ["Ce pot face cu pui și usturoi?", "Rețetă cu ouă și spanac"],
                 }
-            
-            # Translate ingredients to English for indexing compatibility
+ 
             translated_ings = [RO_TO_EN.get(i, i) for i in ings]
-            
+ 
             agent_logs = []
             if self.agent:
                 agent_res = self.agent.run_agentic_retrieval(translated_ings, filters={"cuisine": "Any", "difficulty": "Any"})
@@ -600,7 +597,7 @@ class RecipeChatbot:
                 query_str = " ".join(translated_ings)
                 recipes = self.rag.retrieve(query=query_str, top_k=3)
                 agent_logs = [f"Retrieval run for query: {query_str}"]
-
+ 
             if not recipes:
                 return {
                     "type": "text",
@@ -608,10 +605,10 @@ class RecipeChatbot:
                     "suggestions": ["Rețete cu pui", "Rețete vegetariene"],
                     "agent_logs": agent_logs
                 }
-            
+ 
             from recipe_generator import invent_recipes
             invented = invent_recipes(user_ingredients=translated_ings, retrieved_recipes=recipes, num_recipes=min(3, len(recipes)))
-            
+ 
             return {
                 "type": "recipes",
                 "text": f" Am adaptat **{len(invented)} rețete** pentru tine bazate pe ingredientele cerute:",
@@ -619,7 +616,7 @@ class RecipeChatbot:
                 "query_ingredients": ings,
                 "agent_logs": agent_logs
             }
-
+ 
         # ── Recipe info ───────────────────────────────────────────────────────
         if intent == "recipe_info":
             dish = self._extract_dish_name(message)
@@ -632,9 +629,9 @@ class RecipeChatbot:
                     "text": " Spune-mi ce rețetă cauți! Ex: **'Cum fac carbonara?'**",
                     "suggestions": ["Cum fac risotto?", "Rețeta de pad thai", "Cum fac shakshuka?"],
                 }
-            
+ 
             translated_dish = " ".join([RO_TO_EN.get(w, w) for w in dish.lower().split()])
-            
+ 
             recipes = self.rag.retrieve(query=translated_dish, top_k=1)
             if not recipes:
                 return {
@@ -643,19 +640,19 @@ class RecipeChatbot:
                             f"Încearcă să cauți cu ingredientele principale!",
                     "suggestions": [f"Ce pot face cu {dish}?", "Surprinde-mă!"],
                 }
-            
+ 
             from recipe_generator import invent_recipes
             base_recipe = recipes[0]
             invented = invent_recipes(user_ingredients=base_recipe.get("ingredients", [])[:3], retrieved_recipes=[base_recipe], num_recipes=1)
             full_rec = invented[0] if invented else base_recipe
-            
+ 
             return {
                 "type": "recipe_detail",
                 "text": f" Am găsit cea mai potrivită rețetă pentru **{dish}**:",
                 "recipe": full_rec,
                 "agent_logs": [f"Căutare după preparat: '{translated_dish}' matches '{base_recipe.get('title')}' with score {base_recipe.get('hybrid_score', 0):.2f}"]
             }
-
+ 
         # ── Technique info ────────────────────────────────────────────────────
         if intent == "technique_info":
             tech_key = self._extract_technique(message)
@@ -668,7 +665,6 @@ class RecipeChatbot:
                     "text": t["explanation"],
                     "suggestions": [f"Rețetă care folosește {t['ro']}", "Altă tehnică culinară"],
                 }
-            # Generic unknown technique
             return {
                 "type": "technique_list",
                 "text": " **Tehnici culinare disponibile** în baza mea de cunoștințe:",
@@ -678,7 +674,7 @@ class RecipeChatbot:
                 ],
                 "suggestions": ["Ce este braising?", "Explică-mi wok hei", "Ce este emulsionarea?"],
             }
-
+ 
         # ── Substitution ──────────────────────────────────────────────────────
         if intent == "substitution":
             target = self._extract_sub_target(message)
@@ -701,7 +697,7 @@ class RecipeChatbot:
                 ],
                 "suggestions": ["Înlocuitor pentru ouă", "Ce pun în loc de unt?", "Fără parmezan"],
             }
-
+ 
         # ── Dietary filter ────────────────────────────────────────────────────
         if intent == "dietary_filter":
             msg_lower = message.lower()
@@ -714,26 +710,26 @@ class RecipeChatbot:
                 tag, label = None, "fără gluten "
             else:
                 tag, label = "vegan", "sănătoase "
-
+ 
             ings = ["vegetable"] if tag == "vegan" else ["egg", "cheese"]
             recipes = self.rag.retrieve(query=" ".join(ings), top_k=10)
             if tag:
                 recipes = [r for r in recipes if tag in r.get("tags", [])]
             recipes = recipes[:3]
-            
+ 
             if not recipes:
                 return {"type": "text", "text": f" Nu am găsit rețete {label} cu aceste criterii.", "suggestions": ["Rețete vegane simple", "Surprinde-mă!"]}
-            
+ 
             from recipe_generator import invent_recipes
             invented = invent_recipes(user_ingredients=ings, retrieved_recipes=recipes, num_recipes=len(recipes))
-            
+ 
             return {
                 "type": "recipes",
                 "text": f" **Rețete {label}** din baza de date:",
                 "recipes": invented,
                 "agent_logs": [f"Filtrare dietă: '{tag or 'gluten-free'}' pe rezultate RAG"]
             }
-
+ 
         # ── Time filter ───────────────────────────────────────────────────────
         if intent == "time_filter":
             max_t = self._extract_time(message) or 30
@@ -745,17 +741,17 @@ class RecipeChatbot:
                     "text": f" Nu am găsit rețete sub {max_t} minute. Încearcă 30 sau 45 minute!",
                     "suggestions": ["Rețete sub 30 minute", "Ceva rapid cu ouă"],
                 }
-            
+ 
             from recipe_generator import invent_recipes
             invented = invent_recipes(user_ingredients=["quick"], retrieved_recipes=fast, num_recipes=len(fast))
-            
+ 
             return {
                 "type": "recipes",
                 "text": f" **Rețete rapide sub {max_t} minute:**",
                 "recipes": invented,
                 "agent_logs": [f"Filtrare timp: rețete sub {max_t} minute din vector index"]
             }
-
+ 
         # ── Cuisine filter ────────────────────────────────────────────────────
         if intent == "cuisine_filter":
             msg_lower = message.lower()
@@ -777,26 +773,26 @@ class RecipeChatbot:
                     "text": f" Nu am găsit rețete din bucătăria **{cuisine_en}** cu aceste criterii.",
                     "suggestions": ["Rețete italiene", "Surprinde-mă!"],
                 }
-            
+ 
             from recipe_generator import invent_recipes
             invented = invent_recipes(user_ingredients=["traditional"], retrieved_recipes=recipes, num_recipes=len(recipes))
-            
+ 
             return {
                 "type": "recipes",
                 "text": f" **Rețete din bucătăria {cuisine_en}:**",
                 "recipes": invented,
                 "agent_logs": [f"Filtrare bucătărie: '{cuisine_en}'"]
             }
-
+ 
         # ── Random ────────────────────────────────────────────────────────────
         if intent == "random_recipe":
             all_r = self.rag.recipes
             recipe = random.choice(all_r)
-            
+ 
             from recipe_generator import invent_recipes
             invented = invent_recipes(user_ingredients=recipe.get("ingredients", [])[:3], retrieved_recipes=[recipe], num_recipes=1)
             full_rec = invented[0] if invented else recipe
-            
+ 
             return {
                 "type": "recipe_detail",
                 "text": f" Iată surpriza zilei!",
@@ -804,7 +800,7 @@ class RecipeChatbot:
                 "suggestions": ["Altă surpriză!", "Rețete similare"],
                 "agent_logs": ["Rețetă aleatorie selectată din vector DB"]
             }
-
+ 
         # ── Unknown / fallback ────────────────────────────────────────────────
         tip = random.choice(COOKING_TIPS_GENERAL)
         return {
@@ -819,7 +815,7 @@ class RecipeChatbot:
                 "Ajutor",
             ],
         }
-
+ 
     # ── Helpers ───────────────────────────────────────────────────────────────
     def _recipe_summary(self, r: dict) -> dict:
         return {
@@ -833,7 +829,7 @@ class RecipeChatbot:
             "ingredients":  r.get("ingredients", [])[:6],
             "score":        round(r.get("hybrid_score", r.get("score", 0)), 3),
         }
-
+ 
     def _recipe_full(self, r: dict) -> dict:
         return {
             "title":        r.get("title", ""),
@@ -848,3 +844,4 @@ class RecipeChatbot:
             "description":  r.get("description", ""),
             "key_technique": r.get("key_technique", ""),
         }
+ 

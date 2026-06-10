@@ -3,7 +3,7 @@ from sentence_transformers import SentenceTransformer
 
 # 1. Încarcă modelul de embeddings local (on-premise)
 print("🔌 Se încarcă modelul local 'all-MiniLM-L6-v2'...")
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model=SentenceTransformer('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2',device='cuda')  # Asigură-te că modelul este descărcat și disponibil local
 print("✅ Model încărcat cu succes!")
 
 # 2. Transformă un text într-un vector (Embedding)
