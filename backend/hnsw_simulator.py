@@ -339,3 +339,44 @@ class HNSWSimulator:
             if n_id in self.graph:
                 if rid not in self.graph[n_id]["neighbors"]:
                     self.graph[n_id]["neighbors"].append(rid)
+
+    def find_shortest_path(self, start_id: str, end_id: str) -> List[Dict]:
+        """Find the shortest path of recipes connecting start_id and end_id in the HNSW graph (Layer 0)"""
+        start_id = str(start_id)
+        end_id = str(end_id)
+        
+        if start_id not in self.graph or end_id not in self.graph:
+            return []
+            
+        # BFS to find the shortest path
+        queue = [[start_id]]
+        visited = {start_id}
+        
+        while queue:
+            path = queue.pop(0)
+            node = path[-1]
+            
+            if node == end_id:
+                # Construct path response with details
+                result_path = []
+                for step_idx, n_id in enumerate(path):
+                    recipe = next((r for r in self.recipes if str(r["id"]) == n_id), None)
+                    if recipe:
+                        result_path.append({
+                            "id": n_id,
+                            "title": recipe.get("title", "Unknown"),
+                            "ingredients": recipe.get("ingredients", []),
+                            "cuisine": recipe.get("cuisine", "Global"),
+                            "step_index": step_idx
+                        })
+                return result_path
+                
+            neighbors = self.graph[node].get("neighbors", [])
+            for neighbor in neighbors:
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    new_path = list(path)
+                    new_path.append(neighbor)
+                    queue.append(new_path)
+                    
+        return []

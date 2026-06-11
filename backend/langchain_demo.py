@@ -1,15 +1,15 @@
 """
-langchain_demo.py - Utilizarea LangChain pentru RAG pe retete
+langchain_demo.py - Using LangChain for RAG on Recipes
 ===========================================================
-Acest script demonstreaza utilizarea componentelor din specificatia tehnica
-pentru a realiza indexarea vectoriala Chroma, cautarea hibrida (BM25 + Dense)
-si interogarea semantica pe setul de date local de retete.
+This script demonstrates the use of components from the technical specification
+to perform Chroma vector indexing, hybrid search (BM25 + Dense),
+and semantic querying on the local recipe dataset.
 """
 
 import os
 import sys
 
-# Adaugam directorul parinte in path pentru importuri
+# Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(__file__))
 
 from recipes_data import BASE_RECIPES, generate_variations
@@ -20,18 +20,18 @@ from langchain_community.retrievers import BM25Retriever
 from langchain.retrievers import EnsembleRetriever
 
 def main():
-    print("1. Se incarca retetele de baza...")
-    # Extindem retetele folosind generatorul intern de variatii din aplicatie
+    print("1. Loading base recipes...")
+    # Extend recipes using the internal variation generator from the application
     recipes = BASE_RECIPES + generate_variations()
-    print(f"   Am incarcat {len(recipes)} retete pentru indexare.")
+    print(f"   Loaded {len(recipes)} recipes for indexing.")
 
-    print("\n2. Conversia retetelor in documente LangChain...")
+    print("\n2. Converting recipes into LangChain documents...")
     docs = []
     for r in recipes:
-        # Formam textul de baza pentru embeddings si retrieval
-        content = f"Titlu: {r['title']}. Categorie/Bucatarie: {r['cuisine']}. Ingrediente: {', '.join(r['ingredients'])}. Preparare: {', '.join(r['steps'])}"
+        # Form the base text for embeddings and retrieval
+        content = f"Title: {r['title']}. Category/Cuisine: {r['cuisine']}. Ingredients: {', '.join(r['ingredients'])}. Preparation: {', '.join(r['steps'])}"
         
-        # Salvam metadatele pentru filtrare ulterioara
+        # Save metadata for later filtering
         metadata = {
             "id": r["id"],
             "title": r["title"],
@@ -40,50 +40,50 @@ def main():
             "time_minutes": r["time_minutes"]
         }
         docs.append(Document(page_content=content, metadata=metadata))
-    print(f"   Am creat {len(docs)} documente de tip LangChain Document.")
+    print(f"   Created {len(docs)} LangChain Document objects.")
 
-    print("\n3. Initializarea modelului on-premise de Embeddings (HuggingFace)...")
-    # Foloseste modelul local utilizat in restul aplicatiei (all-MiniLM-L6-v2)
+    print("\n3. Initializing the on-premise Embeddings model (HuggingFace)...")
+    # Uses the local model used in the rest of the application (all-MiniLM-L6-v2)
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2",
         model_kwargs={'device': 'cpu'}
     )
-    print("   Modelul local de embeddings a fost incarcat cu succes.")
+    print("   Local embeddings model loaded successfully.")
 
-    print("\n4. Indexarea documentelor culinare in baza de date vectoriala Chroma (In-Memory)...")
-    # Cream magazinul vectorial in-memory pentru demo
+    print("\n4. Indexing culinary documents in the Chroma vector database (In-Memory)...")
+    # Create the in-memory vector store for demo
     vectorstore = Chroma.from_documents(
         documents=docs,
         embedding=embeddings
     )
-    print("   Documentele au fost indexate vectorial in Chroma.")
+    print("   Documents have been vector-indexed in Chroma.")
 
-    print("\n5. Configurarea cautarii hibride (EnsembleRetriever)...")
-    # Configurare retriever rar (BM25 - cautare dupa cuvinte cheie)
+    print("\n5. Configuring hybrid search (EnsembleRetriever)...")
+    # Configure sparse retriever (BM25 - keyword search)
     bm25_retriever = BM25Retriever.from_documents(docs)
     bm25_retriever.k = 3
 
-    # Configurare retriever dens (Chroma - cautare dupa inteles/semantici)
+    # Configure dense retriever (Chroma - semantic/meaning search)
     dense_retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
-    # Combinam cele doua metode: 70% pondere vectoriala (semantica), 30% cuvinte cheie
+    # Combine both methods: 70% vector (semantic) weight, 30% keyword weight
     hybrid_retriever = EnsembleRetriever(
         retrievers=[dense_retriever, bm25_retriever],
         weights=[0.7, 0.3]
     )
-    print("   Retriever-ul Hibrid (Dense + Sparse) a fost configurat.")
+    print("   Hybrid Retriever (Dense + Sparse) has been configured.")
 
-    # Ruleaza o cautare de test cu ingrediente relevante
-    query = "pui si usturoi"
-    print(f"\n6. Executam o cautare hibrida pentru interogarea: '{query}'...")
+    # Run a test search with relevant ingredients
+    query = "chicken and garlic"
+    print(f"\n6. Executing a hybrid search for query: '{query}'...")
     results = hybrid_retriever.invoke(query)
 
-    print("\n================ REZULTATE RETRIEVED (Top 3) ================")
+    print("\n================ RETRIEVED RESULTS (Top 3) ================")
     for idx, doc in enumerate(results[:3]):
         meta = doc.metadata
-        print(f"\n[{idx + 1}] Reteta: {meta['title']} ({meta['cuisine']})")
-        print(f"    Dificultate: {meta['difficulty']} | Timp de gatire: {meta['time_minutes']} min")
-        print(f"    Ingrediente snippet: {doc.page_content[:150]}...")
+        print(f"\n[{idx + 1}] Recipe: {meta['title']} ({meta['cuisine']})")
+        print(f"    Difficulty: {meta['difficulty']} | Cooking time: {meta['time_minutes']} min")
+        print(f"    Ingredients snippet: {doc.page_content[:150]}...")
     print("=============================================================")
 
 if __name__ == "__main__":

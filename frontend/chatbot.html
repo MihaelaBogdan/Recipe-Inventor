@@ -547,7 +547,7 @@
 <body>
   <!-- ── Header ──────────────────────────────────────────────────────────── -->
   <div class="chatbot-header">
-    <span style="font-size: 28px;"></span>
+    <span style="font-size: 28px;">🍳</span>
     <h1>Recipe AI Chatbot</h1>
     <span class="status online">Ready</span>
   </div>
@@ -558,18 +558,18 @@
     <div class="chat-messages" id="chatMessages">
       <div class="message bot">
         <div class="message-bubble">
-           Salut! Sunt asistentul tău AI pentru rețete. Spune-mi ce ingrediente ai și o să găsesc rețete perfecte pentru tine!
-          <div class="message-meta">Acum</div>
+           Hi! I am your AI recipe assistant. Tell me what ingredients you have, and I will find the perfect recipes for you!
+          <div class="message-meta">Now</div>
         </div>
       </div>
       <div class="message bot">
         <div class="message-bubble">
-           Poți cere:
-          • "Ce pot face cu pui și lămâie?"
-          • "Rețete italiene rapide"
-          • "Ceva vegan cu broccoli"
-          • "Substitut pentru smântână"
-          <div class="message-meta">Acum</div>
+           You can ask for:
+          • "What can I make with chicken and lemon?"
+          • "Quick Italian recipes"
+          • "Something vegan with broccoli"
+          • "Substitute for sour cream"
+          <div class="message-meta">Now</div>
         </div>
       </div>
     </div>
@@ -593,44 +593,44 @@
       </div>
 
       <div class="sidebar-section">
-        <h3> Sugestii Rapide</h3>
-        <div class="suggested-question" onclick="askQuestion('Ce mâncări pot face cu pui, usturoi și lămâie?')">
-           Pui + Usturoi + Lămâie
+        <h3> Quick Suggestions</h3>
+        <div class="suggested-question" onclick="askQuestion('What dishes can I make with chicken, garlic, and lemon?')">
+           Chicken + Garlic + Lemon
         </div>
-        <div class="suggested-question" onclick="askQuestion('Rețete italiene cu paste și roșii')">
-           Paste Italiene
+        <div class="suggested-question" onclick="askQuestion('Italian recipes with pasta and tomatoes')">
+           Italian Pasta
         </div>
-        <div class="suggested-question" onclick="askQuestion('Rețete vegane cu broccoli și ciuperci')">
-           Broccoli Vegan
+        <div class="suggested-question" onclick="askQuestion('Vegan recipes with broccoli and mushrooms')">
+           Vegan Broccoli
         </div>
-        <div class="suggested-question" onclick="askQuestion('Rețete rapide sub 30 de minute')">
-           Rețete Rapide
+        <div class="suggested-question" onclick="askQuestion('Quick recipes under 30 minutes')">
+           Quick Recipes
         </div>
       </div>
 
       <div class="sidebar-section">
-        <h3> Bucătării Populare</h3>
-        <button class="quick-btn" onclick="filterByCuisine('Italian')"> Italiană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Thai')"> Thailandeză</button>
-        <button class="quick-btn" onclick="filterByCuisine('Indian')"> Indiană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Mexican')"> Mexicană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Japanese')"> Japoneză</button>
-        <button class="quick-btn" onclick="filterByCuisine('Chinese')"> Chineză</button>
+        <h3> Popular Cuisines</h3>
+        <button class="quick-btn" onclick="filterByCuisine('Italian')"> Italian</button>
+        <button class="quick-btn" onclick="filterByCuisine('Thai')"> Thai</button>
+        <button class="quick-btn" onclick="filterByCuisine('Indian')"> Indian</button>
+        <button class="quick-btn" onclick="filterByCuisine('Mexican')"> Mexican</button>
+        <button class="quick-btn" onclick="filterByCuisine('Japanese')"> Japanese</button>
+        <button class="quick-btn" onclick="filterByCuisine('Chinese')"> Chinese</button>
       </div>
 
       <div class="sidebar-section">
-        <h3>⏱️ Timp Disponibil</h3>
-        <button class="quick-btn" onclick="filterByTime(15)"> Sub 15 min</button>
-        <button class="quick-btn" onclick="filterByTime(30)"> Sub 30 min</button>
-        <button class="quick-btn" onclick="filterByTime(60)"> Sub 1 oră</button>
-        <button class="quick-btn" onclick="filterByTime(999)"> Orice timp</button>
+        <h3>⏱️ Available Time</h3>
+        <button class="quick-btn" onclick="filterByTime(15)"> Under 15 min</button>
+        <button class="quick-btn" onclick="filterByTime(30)"> Under 30 min</button>
+        <button class="quick-btn" onclick="filterByTime(60)"> Under 1 hour</button>
+        <button class="quick-btn" onclick="filterByTime(999)"> Any time</button>
       </div>
 
       <div class="sidebar-section">
-        <h3> Dificultate</h3>
-        <button class="quick-btn" onclick="filterByDifficulty('Easy')"> Ușor</button>
-        <button class="quick-btn" onclick="filterByDifficulty('Medium')"> Mediu</button>
-        <button class="quick-btn" onclick="filterByDifficulty('Hard')"> Dificil</button>
+        <h3> Difficulty</h3>
+        <button class="quick-btn" onclick="filterByDifficulty('Easy')"> Easy</button>
+        <button class="quick-btn" onclick="filterByDifficulty('Medium')"> Medium</button>
+        <button class="quick-btn" onclick="filterByDifficulty('Hard')"> Hard</button>
       </div>
     </div>
   </div>
@@ -638,7 +638,7 @@
   <!-- ── Input Area ──────────────────────────────────────────────────────── -->
   <div class="input-container">
     <div class="input-wrapper">
-      <textarea id="chatInput" placeholder="Spune-mi ce ingrediente ai..." rows="1"></textarea>
+      <textarea id="chatInput" placeholder="Tell me what ingredients you have..." rows="1"></textarea>
       <button id="sendBtn" onclick="sendMessage()"></button>
     </div>
   </div>
@@ -679,15 +679,15 @@
     function displayStats(stats) {
       statsBar.innerHTML = `
         <div class="stat-item">
-          <span class="stat-label">️ Rețete</span>
+          <span class="stat-label">️ Recipes</span>
           <span class="stat-value">${stats.total_recipes}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label"> Bucătării</span>
+          <span class="stat-label"> Cuisines</span>
           <span class="stat-value">${stats.cuisines}</span>
         </div>
         <div class="stat-item">
-          <span class="stat-label"> Cuvinte</span>
+          <span class="stat-label"> Words</span>
           <span class="stat-value">${stats.vocabulary_size}</span>
         </div>
         <div class="stat-item">
@@ -741,11 +741,11 @@
 
       return `
         <div class="recipe-card" style="margin-top: 10px; background: rgba(15,23,42,0.4); border: 1px solid rgba(224,231,255,0.1); border-radius: 12px; padding: 12px; font-size:12px; animation: slideIn 0.3s ease-out;">
-          <div class="title" style="font-weight:700; font-size:13px; color:#c7d2fe; margin-bottom:4px;">️ ${esc(recipe.title)}</div>
+          <div class="title" style="font-weight:700; font-size:13px; color:#c7d2fe; margin-bottom:4px;">🍴 ${esc(recipe.title)}</div>
           <div class="meta" style="display:flex; gap:10px; font-size:10px; color:#a5b4fc; margin-bottom:6px;">
             <span>⏱️ ${recipe.time_minutes || "?"} min</span>
-            <span> ${recipe.difficulty || "Med."}</span>
-            <span> ${recipe.cuisine || "?"}</span>
+            <span>🔥 ${recipe.difficulty || "Med."}</span>
+            <span>🌍 ${recipe.cuisine || "?"}</span>
           </div>
           
           <!-- Nutrition facts label inline -->
@@ -753,49 +753,49 @@
             <div class="nutrition-item"><span class="nutrition-val">${nutr.calories}</span><span class="nutrition-lbl">Kcal</span></div>
             <div class="nutrition-item"><span class="nutrition-val">${nutr.protein}</span><span class="nutrition-lbl">Prot</span></div>
             <div class="nutrition-item"><span class="nutrition-val">${nutr.carbs}</span><span class="nutrition-lbl">Carb</span></div>
-            <div class="nutrition-item"><span class="nutrition-val">${nutr.fat}</span><span class="nutrition-lbl">Lipd</span></div>
+            <div class="nutrition-item"><span class="nutrition-val">${nutr.fat}</span><span class="nutrition-lbl">Fat</span></div>
           </div>
 
           <!-- Collapsible Steps and Details -->
           <div style="margin-top: 8px; border-top:1px solid rgba(224,231,255,0.06); padding-top:4px;">
             <div class="toggle-header" onclick="this.nextElementSibling.classList.toggle('open'); this.classList.toggle('open');" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-size:10px; font-weight:600; color:#a5b4fc; text-transform:uppercase; padding:4px 0;">
-              <span>Arată pașii de preparare</span>
+              <span>Show preparation steps</span>
               <span class="toggle-icon">▼</span>
             </div>
             
             <div class="collapsible">
               <div style="margin-top: 6px;">
-                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Ingrediente:</strong>
+                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Ingredients:</strong>
                 <div>${ingHTML}</div>
               </div>
               
               <div style="margin-top: 8px;">
-                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Mod de preparare:</strong>
+                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Directions:</strong>
                 <div style="display:flex; flex-direction:column; gap:4px; margin-top:4px;">${stepsHTML}</div>
               </div>
 
               <!-- Flavor Profile percentages -->
               <div style="margin-top: 10px; border-top:1px solid rgba(224,231,255,0.06); padding-top:6px;">
-                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Profil de Arome:</strong>
+                <strong style="font-size:10px; color:#e0e7ff; display:block; margin-bottom:4px;">Flavor Profile:</strong>
                 <div class="flavor-profile-grid" style="padding:6px; gap:4px 8px; margin-top:4px;">
                   <div class="flavor-profile-item">
-                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Dulce</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.sweet}%</span></div>
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Sweet</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.sweet}%</span></div>
                     <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-sweet" style="width: ${flav.sweet}%"></div></div>
                   </div>
                   <div class="flavor-profile-item">
-                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Acru</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.sour}%</span></div>
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Sour</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.sour}%</span></div>
                     <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-sour" style="width: ${flav.sour}%"></div></div>
                   </div>
                   <div class="flavor-profile-item">
-                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Sărat</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.salty}%</span></div>
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Salty</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.salty}%</span></div>
                     <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-salty" style="width: ${flav.salty}%"></div></div>
                   </div>
                   <div class="flavor-profile-item">
-                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Iute</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.spicy}%</span></div>
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Spicy</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.spicy}%</span></div>
                     <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-spicy" style="width: ${flav.spicy}%"></div></div>
                   </div>
                   <div class="flavor-profile-item">
-                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Cremos</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.creamy}%</span></div>
+                    <div class="flavor-profile-header"><span class="flavor-profile-name" style="font-size:9px;">Creamy</span><span class="flavor-profile-pct" style="font-size:9px;">${flav.creamy}%</span></div>
                     <div class="flavor-bar-bg"><div class="flavor-bar-fill fill-creamy" style="width: ${flav.creamy}%"></div></div>
                   </div>
                   <div class="flavor-profile-item">
@@ -852,9 +852,9 @@
           response.agent_logs.forEach(log => {
             const line = document.createElement("div");
             line.className = "agent-terminal-line";
-            if (log.includes("") || log.includes("successful")) {
+            if (log.includes("successful")) {
               line.style.color = "#34d399";
-            } else if (log.includes("️") || log.includes("too low") || log.includes("Self-critique")) {
+            } else if (log.includes("too low") || log.includes("Self-critique")) {
               line.style.color = "#fbbf24";
             } else if (log.includes("Dropped") || log.includes("Dropping") || log.includes("Aborting")) {
               line.style.color = "#f87171";
@@ -878,7 +878,7 @@
           addMessage(response.text, "bot", false, false);
           
           if (response.tip) {
-            addMessage(` **Tip culinar:**<br/>${response.tip}`, "bot", false, true);
+            addMessage(` **Chef Tip:**<br/>${response.tip}`, "bot", false, true);
           }
         } 
         else if (response.type === "help" && response.capabilities) {
@@ -922,7 +922,7 @@
           addMessage(response.text, "bot", false, false);
           let pillsHtml = `<div class="suggestions-row-chat">`;
           response.techniques.forEach(t => {
-            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('Ce este tehnica ${esc(t.ro)}?')">${t.emoji} ${esc(t.ro)}</button>`;
+            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('What is the ${esc(t.key)} technique?')">${t.emoji} ${esc(t.key)}</button>`;
           });
           pillsHtml += `</div>`;
           addMessage(pillsHtml, "bot", false, true);
@@ -933,8 +933,8 @@
           response.substitutions.forEach(s => {
             subsHtml += `
               <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(224,231,255,0.1); border-radius:8px; padding:8px; font-size:11px;">
-                <strong style="color:#c7d2fe;"> ${esc(s.sub)}</strong> (Rată: ${esc(s.ratio)})<br/>
-                <span style="color:#cbd5e1; font-size:10px;">Excelent pentru: ${esc(s.best_for)}</span>
+                <strong style="color:#c7d2fe;">${esc(s.sub)}</strong> (Ratio: ${esc(s.ratio)})<br/>
+                <span style="color:#cbd5e1; font-size:10px;">Best for: ${esc(s.best_for)}</span>
               </div>
             `;
           });
@@ -945,7 +945,7 @@
           addMessage(response.text, "bot", false, false);
           let pillsHtml = `<div class="suggestions-row-chat">`;
           response.available.forEach(s => {
-            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('Ce pun in loc de ${esc(s.ro)}?')">${s.emoji} ${esc(s.ro)}</button>`;
+            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('What can I use instead of ${esc(s.key)}?')">${s.emoji} ${esc(s.key)}</button>`;
           });
           pillsHtml += `</div>`;
           addMessage(pillsHtml, "bot", false, true);
@@ -964,20 +964,20 @@
       } catch (error) {
         removeMessage(typingId);
         console.error(" Error:", error);
-        addMessage(` Eroare: ${error.message}. Încearcă din nou!`, "bot");
+        addMessage(` Error: ${error.message}. Please try again!`, "bot");
       }
     }
 
     // ── Parse Ingredients ──────────────────────────────────────────────────
     function parseIngredients(text) {
-      const stopwords = ["și", "sau", "din", "cu", "pe", "pentru", "ce", "pot", "face", "rețete", "mâncare", "cu", "care", "sub", "minute", "de", "rapid", "rapide", "ușor", "mediu", "dificil", "ceva", "broccoli", "vegan", "italiană", "ital", "thai", "indiană", "mexican", "japoneză"];
+      const stopwords = ["and", "or", "with", "for", "what", "can", "make", "recipes", "food", "under", "minutes", "quick", "easy", "medium", "hard", "something"];
       const words = text
         .toLowerCase()
         .split(/[,\s\?\!\.]+/)
         .filter(w => w.length > 1 && !stopwords.includes(w))
         .slice(0, 10);
 
-      return words.length > 0 ? words : ["rețete"];
+      return words.length > 0 ? words : ["recipes"];
     }
 
     // ── Add Message ────────────────────────────────────────────────────────
@@ -1034,19 +1034,19 @@
 
     function filterByCuisine(cuisine) {
       currentFilters.cuisine = cuisine;
-      chatInput.value = `Rețete ${cuisine.toLowerCase()}`;
+      chatInput.value = `${cuisine.toLowerCase()} recipes`;
       chatInput.focus();
     }
 
     function filterByTime(minutes) {
       currentFilters.maxTime = minutes;
-      chatInput.value = `Rețete rapide sub ${minutes} de minute`;
+      chatInput.value = `Quick recipes under ${minutes} minutes`;
       chatInput.focus();
     }
 
     function filterByDifficulty(level) {
       currentFilters.difficulty = level;
-      chatInput.value = `Rețete ${level.toLowerCase()}`;
+      chatInput.value = `${level.toLowerCase()} recipes`;
       chatInput.focus();
     }
 

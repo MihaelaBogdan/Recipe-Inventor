@@ -112,7 +112,7 @@ def chat(req: ChatRequest):
 def invent(req: InventRequest):
     cleaned = [i.strip().lower() for i in req.ingredients if i.strip()]
     if not cleaned:
-        raise HTTPException(status_code=400, detail="Adaugă cel puțin un ingredient.")
+        raise HTTPException(status_code=400, detail="Please add at least one ingredient.")
 
     filters = {
         "cuisine": req.cuisine,
@@ -191,7 +191,7 @@ def playground_similarity(req: SimilarityRequest):
     import numpy as np
     
     if not req.text1.strip() or not req.text2.strip():
-        raise HTTPException(status_code=400, detail="Ambii parametri text1 și text2 sunt obligatorii.")
+        raise HTTPException(status_code=400, detail="Both text1 and text2 parameters are required.")
         
     emb1 = ENGINE.encoder.encode([req.text1])[0]
     emb2 = ENGINE.encoder.encode([req.text2])[0]
@@ -452,7 +452,7 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
     
     t = req.text.strip()
     if not t:
-        t = "Ingrediente pentru retete"
+        t = "Ingredients for recipes"
         
     t0 = time.time()
     _ = ENGINE.encoder.encode([t])
@@ -465,10 +465,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 384,
             "size_mb": 120,
             "ram_mb": 200,
-            "multilingual": "Excelenta (RO/EN)",
+            "multilingual": "Excellent (RO/EN)",
             "latency_ms": local_latency,
             "throughput": int(1000.0 / (local_latency / 1000.0)) if local_latency > 0 else 0,
-            "applicability": "Echilibru optim: indexeaza baza de retete local in sub 3 secunde si suporta maparea automata a ingredientelor (ex: 'usturoi' -> 'garlic')."
+            "applicability": "Optimal balance: indexes the recipe database locally in under 3 seconds and supports automatic ingredient mapping (e.g. 'usturoi' -> 'garlic')."
         },
         {
             "name": "multilingual-e5-small",
@@ -476,10 +476,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 384,
             "size_mb": 130,
             "ram_mb": 220,
-            "multilingual": "Excelenta (RO)",
+            "multilingual": "Excellent (RO)",
             "latency_ms": local_latency * 1.4,
             "throughput": int(1000.0 / ((local_latency * 1.4) / 1000.0)) if local_latency > 0 else 0,
-            "applicability": "Performanta lingvistica ridicata pe romana, dar necesita prefixe de interogare ('query: ') care complica integrarea cu baza de date."
+            "applicability": "High linguistic performance on Romanian, but requires query prefixes ('query: ') which complicates integration with the database."
         },
         {
             "name": "bge-small-en-v1.5",
@@ -487,10 +487,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 384,
             "size_mb": 130,
             "ram_mb": 220,
-            "multilingual": "Redusa (EN)",
+            "multilingual": "Low (EN)",
             "latency_ms": local_latency * 1.3,
             "throughput": int(1000.0 / ((local_latency * 1.3) / 1000.0)) if local_latency > 0 else 0,
-            "applicability": "Foarte rapid pe CPU, dar suportul multilingual scazut determina esecul potrivirii automate a ingredientelor introduse in limba romana."
+            "applicability": "Very fast on CPU, but low multilingual support causing automatic ingredient mapping in Romanian to fail."
         },
         {
             "name": "multilingual-e5-base",
@@ -498,10 +498,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 768,
             "size_mb": 1100,
             "ram_mb": 1500,
-            "multilingual": "Superioara (RO)",
+            "multilingual": "Superior (RO)",
             "latency_ms": local_latency * 5.1,
             "throughput": int(1000.0 / ((local_latency * 5.1) / 1000.0)) if local_latency > 0 else 0,
-            "applicability": "Acuratete maxima pentru asocieri culinare fine, dar dimensiunea mare blocheaza chatul live pe hardware local standard (latenta > 400ms)."
+            "applicability": "Maximum accuracy for fine culinary associations, but large size blocks live chat on standard local hardware (latency > 400ms)."
         }
     ]
     return {"models": models}
@@ -528,6 +528,16 @@ def hnsw_simulate(req: HNSWSimulationRequest):
 
     result = HNSW_SIMULATOR.simulate_search(req.query, req.target_recipe_id)
     return result
+
+class HNSWPathfinderRequest(BaseModel):
+    start_recipe_id: str
+    end_recipe_id: str
+
+@app.post("/api/hnsw/pathfinder")
+def hnsw_pathfinder(req: HNSWPathfinderRequest):
+    """Find shortest path of flavor transitions between two recipes in the HNSW graph"""
+    path = HNSW_SIMULATOR.find_shortest_path(req.start_recipe_id, req.end_recipe_id)
+    return {"path": path}
 
 @app.get("/api/hnsw/graph-stats")
 def hnsw_graph_stats():
@@ -565,7 +575,7 @@ def hnsw_get_recipes(limit: int = 50):
 
 @app.get("/")
 def serve_app():
-    app_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "index-new.html")
+    app_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html")
     return FileResponse(app_path, media_type="text/html")
 
 FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")

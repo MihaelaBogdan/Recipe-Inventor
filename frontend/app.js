@@ -42,24 +42,65 @@ let tags = [];  // current ingredient tags
 window.createdRecipes = []; // dynamically track created recipes
 
 function updateHnswCustomRecipesDropdown() {
-  const querySelect = document.getElementById('hnswQuerySelect');
-  if (!querySelect) return;
+  updatePathfinderRecipeDropdowns();
+}
 
-  // Remove existing options that start with custom_
-  const toRemove = [];
-  for (let i = 0; i < querySelect.options.length; i++) {
-    if (querySelect.options[i].value.startsWith('custom_')) {
-      toRemove.push(querySelect.options[i]);
+async function updatePathfinderRecipeDropdowns() {
+  const startSelect = document.getElementById('pathfinderStartSelect');
+  const endSelect = document.getElementById('pathfinderEndSelect');
+  if (!startSelect || !endSelect) return;
+
+  // Clear existing options
+  startSelect.innerHTML = '';
+  endSelect.innerHTML = '';
+
+  // 1. Fetch preset recipes from backend (using /api/recipes)
+  let recipes = [];
+  try {
+    const res = await fetch(`${API}/api/recipes?limit=50`);
+    if (res.ok) {
+      const data = await res.json();
+      recipes = data.recipes || [];
     }
+  } catch (err) {
+    console.error("Failed to fetch recipes for pathfinder:", err);
   }
-  toRemove.forEach(opt => opt.remove());
 
-  // Add options for each custom recipe
+  // Fallback preset if empty
+  if (recipes.length === 0) {
+    recipes = [
+      { id: "111", title: "Cast Iron Pan-Seared Steak (Oven-Finished)" },
+      { id: "166", title: "Grilled Cheese Sandwich" },
+      { id: "158", title: "Strawberry Jam" },
+      { id: "310", title: "The Perfect Margarita" },
+      { id: "20", title: "Taco Lettuce Wraps" }
+    ];
+  }
+
+  // 2. Add preset recipes
+  recipes.forEach(r => {
+    const optStart = document.createElement('option');
+    optStart.value = r.id;
+    optStart.textContent = `${r.title} (${r.cuisine || 'Global'})`;
+    startSelect.appendChild(optStart);
+
+    const optEnd = document.createElement('option');
+    optEnd.value = r.id;
+    optEnd.textContent = `${r.title} (${r.cuisine || 'Global'})`;
+    endSelect.appendChild(optEnd);
+  });
+
+  // 3. Add custom created recipes from window.createdRecipes
   window.createdRecipes.forEach((recipe, i) => {
-    const opt = document.createElement('option');
-    opt.value = `custom_${i}`;
-    opt.textContent = `Rețetă creată: "${recipe.title.substring(0, 30)}${recipe.title.length > 30 ? '...' : ''}"`;
-    querySelect.appendChild(opt);
+    const optStart = document.createElement('option');
+    optStart.value = recipe.id || `invented_${i}`;
+    optStart.textContent = `Created Recipe: "${recipe.title.substring(0, 30)}..."`;
+    startSelect.appendChild(optStart);
+
+    const optEnd = document.createElement('option');
+    optEnd.value = recipe.id || `invented_${i}`;
+    optEnd.textContent = `Created Recipe: "${recipe.title.substring(0, 30)}..."`;
+    endSelect.appendChild(optEnd);
   });
 }
 
@@ -127,7 +168,7 @@ function renderTags() {
     btn.className = 'tag-remove';
     btn.type = 'button';
     btn.textContent = '';
-    btn.setAttribute('aria-label', `Elimină ${tag}`);
+    btn.setAttribute('aria-label', `Remove ${tag}`);
     btn.addEventListener('click', () => removeTag(tag));
     chip.appendChild(btn);
     tagContainer.insertBefore(chip, ingredientInput);
@@ -302,8 +343,8 @@ function bindEvents() {
           }
         }
       } catch (error) {
-        console.error('Eroare detectie obiecte:', error);
-        if (fridgeUploadStatus) fridgeUploadStatus.textContent = 'Eroare la procesarea imaginii.';
+        console.error('Object detection error:', error);
+        if (fridgeUploadStatus) fridgeUploadStatus.textContent = 'Error processing image.';
       }
     });
   }
@@ -318,7 +359,7 @@ function bindEvents() {
         });
         if (fridgePreviewContainer) fridgePreviewContainer.style.display = 'none';
         if (fridgeUploadInput) fridgeUploadInput.value = '';
-        if (fridgeUploadStatus) fridgeUploadStatus.textContent = 'Nicio imagine selectata';
+        if (fridgeUploadStatus) fridgeUploadStatus.textContent = 'No image selected';
         detectedIngredients = [];
       }
     });
@@ -332,9 +373,9 @@ async function handleInvent() {
   if (pending) { addTag(pending); ingredientInput.value = ''; }
 
   if (tags.length === 0) {
-    ingredientInput.placeholder = ' Adaugă măcar un ingredient!';
+    ingredientInput.placeholder = ' Add at least one ingredient!';
     ingredientInput.focus();
-    setTimeout(() => { ingredientInput.placeholder = 'Ex: pui, usturoi, lămâie… apasă Enter'; }, 2500);
+    setTimeout(() => { ingredientInput.placeholder = 'E.g.: chicken, garlic, lemon… press Enter'; }, 2500);
     return;
   }
 
@@ -361,14 +402,14 @@ async function handleInvent() {
     });
 
     if (!res.ok) {
-      const err = await res.json().catch(() => ({ detail: 'Eroare necunoscută.' }));
+      const err = await res.json().catch(() => ({ detail: 'Unknown error.' }));
       throw new Error(err.detail || `HTTP ${res.status}`);
     }
 
     const data = await res.json();
     showResults(data);
   } catch (err) {
-    showError(err.message || 'Nu m-am putut conecta la server. Verifică că backend-ul rulează.');
+    showError(err.message || 'Could not connect to the server. Make sure the backend is running.');
   }
 }
 
@@ -441,8 +482,8 @@ function showResults(data) {
   resultsSection.classList.remove('hidden');
 
   resultsMeta.textContent =
-    `${data.recipes.length} rețete inventate • bazate pe ${data.retrieved_count} rețete similare ` +
-    `din baza de date de ${data.total_db?.toLocaleString('ro') ?? '300+'} intrări`;
+    `${data.recipes.length} invented recipes • based on ${data.retrieved_count} similar recipes ` +
+    `from a database of ${data.total_db?.toLocaleString('en') ?? '300+'} entries`;
 
   // Print agent thinking logs, then show cards
   printLogsToTerminal(data.agent_logs, () => {
@@ -536,7 +577,7 @@ function buildCard(recipe, idx, userIngredients) {
     <div class="flavor-profile-grid">
       <div class="flavor-profile-item">
         <div class="flavor-profile-header">
-          <span class="flavor-profile-name">Dulce</span>
+          <span class="flavor-profile-name">Sweet</span>
           <span class="flavor-profile-pct">${flav.sweet}%</span>
         </div>
         <div class="flavor-bar-bg">
@@ -545,7 +586,7 @@ function buildCard(recipe, idx, userIngredients) {
       </div>
       <div class="flavor-profile-item">
         <div class="flavor-profile-header">
-          <span class="flavor-profile-name">Acru</span>
+          <span class="flavor-profile-name">Sour</span>
           <span class="flavor-profile-pct">${flav.sour}%</span>
         </div>
         <div class="flavor-bar-bg">
@@ -554,7 +595,7 @@ function buildCard(recipe, idx, userIngredients) {
       </div>
       <div class="flavor-profile-item">
         <div class="flavor-profile-header">
-          <span class="flavor-profile-name">Sărat</span>
+          <span class="flavor-profile-name">Salty</span>
           <span class="flavor-profile-pct">${flav.salty}%</span>
         </div>
         <div class="flavor-bar-bg">
@@ -615,7 +656,7 @@ function buildCard(recipe, idx, userIngredients) {
         <span class="badge badge-cuisine"> ${esc(recipe.cuisine)}</span>
         <span class="badge ${diffClass}">${diffEmoji} ${esc(recipe.difficulty)}</span>
         <span class="badge badge-time">⏱ ${recipe.time_minutes} min</span>
-        <span class="badge badge-servings"> ${recipe.servings} porții</span>
+        <span class="badge badge-servings"> ${recipe.servings} servings</span>
       </div>
 
       <!-- Nutrition label -->
@@ -624,7 +665,7 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Ingredients -->
       <div class="card-section">
         <div class="section-header">
-          <span> Ingrediente (${recipe.ingredients?.length ?? 0})</span>
+          <span> Ingredients (${recipe.ingredients?.length ?? 0})</span>
         </div>
         <div class="ingredients-list">${ingHTML}</div>
       </div>
@@ -632,7 +673,7 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Steps -->
       <div class="card-section">
         <div class="section-header toggle-header" data-target="steps-${idx}">
-          <span> Pași de preparare</span>
+          <span> Preparation Steps</span>
           <span class="toggle-icon">▼</span>
         </div>
         <div class="collapsible open" id="steps-${idx}">
@@ -643,7 +684,7 @@ function buildCard(recipe, idx, userIngredients) {
                 <div class="steps-list">${extraHTML}</div>
               </div>
               <button class="show-more-btn" id="show-more-${idx}" type="button">
-                + Arată toți ${steps.length} pașii
+                + Show all ${steps.length} steps
               </button>` : ''}
           </div>
         </div>
@@ -652,7 +693,7 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Explanation -->
       <div class="card-section">
         <div class="section-header toggle-header" data-target="expl-${idx}">
-          <span> De ce funcționează?</span>
+          <span> Why does it work?</span>
           <span class="toggle-icon">▼</span>
         </div>
         <div class="collapsible open" id="expl-${idx}">
@@ -664,11 +705,11 @@ function buildCard(recipe, idx, userIngredients) {
       <!-- Culinary Analysis -->
       <div class="card-section">
         <div class="section-header toggle-header" data-target="analysis-${idx}">
-          <span>‍ Analiză Culinară & Sommelier</span>
+          <span>‍ Culinary Analysis & Sommelier</span>
           <span class="toggle-icon">▼</span>
         </div>
         <div class="collapsible" id="analysis-${idx}">
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Scor profil de arome echilibrat:</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px;">Balanced flavor profile score:</div>
           ${flavorGridHTML}
           ${platingHTML}
           ${pairingHTML}
@@ -692,14 +733,14 @@ function buildCard(recipe, idx, userIngredients) {
 
       <!-- Inspired by -->
       <p class="inspired-by">
-         Inspirat din: <em>${esc(recipe.inspired_by || '—')}</em>
-        ${recipe.key_technique ? `· Tehnică cheie: <em>${esc(recipe.key_technique)}</em>` : ''}
+         Inspired by: <em>${esc(recipe.inspired_by || '—')}</em>
+        ${recipe.key_technique ? `· Key technique: <em>${esc(recipe.key_technique)}</em>` : ''}
       </p>
 
       <!-- Shopping List Button -->
       <div class="card-section" style="margin-top: 20px; display: flex; gap: 8px;">
         <button class="btn-invent" onclick="addToShoppingList(${idx})" style="flex: 1; padding: 10px 16px;">
-           Adaugă la Shopping
+           Add to Shopping
         </button>
       </div>
 
@@ -728,8 +769,8 @@ function buildCard(recipe, idx, userIngredients) {
       showMoreBtn.addEventListener('click', () => {
         const open = extraEl.classList.toggle('open');
         showMoreBtn.textContent = open
-          ? `− Ascunde pașii extra`
-          : `+ Arată toți ${steps.length} pașii`;
+          ? `− Hide extra steps`
+          : `+ Show all ${steps.length} steps`;
       });
     }
   });
@@ -765,7 +806,7 @@ function showLoading() {
 
   inventBtn.disabled = true;
   btnLoader.classList.remove('hidden');
-  inventBtn.querySelector('.btn-text').textContent = 'Se procesează…';
+  inventBtn.querySelector('.btn-text').textContent = 'Processing…';
 }
 
 function showInputPanel() {
@@ -776,7 +817,7 @@ function showInputPanel() {
 
   inventBtn.disabled = false;
   btnLoader.classList.add('hidden');
-  inventBtn.querySelector('.btn-text').textContent = 'Inventează Rețete!';
+  inventBtn.querySelector('.btn-text').textContent = 'Invent Recipes!';
 }
 
 function showError(msg) {
@@ -788,7 +829,7 @@ function showError(msg) {
 
   inventBtn.disabled = false;
   btnLoader.classList.add('hidden');
-  inventBtn.querySelector('.btn-text').textContent = 'Inventează Rețete!';
+  inventBtn.querySelector('.btn-text').textContent = 'Invent Recipes!';
 }
 
 // ── RAG Playground ────────────────────────────────────────────────────────
@@ -884,10 +925,10 @@ function initPlayground() {
       const isHidden = promptInspectorContainer.style.display === 'none' || promptInspectorContainer.style.display === '';
       if (isHidden) {
         promptInspectorContainer.style.display = 'block';
-        togglePromptInspectorBtn.textContent = 'Ascunde Prompt-ul RAG Augmented';
+        togglePromptInspectorBtn.textContent = 'Hide RAG Augmented Prompt';
       } else {
         promptInspectorContainer.style.display = 'none';
-        togglePromptInspectorBtn.textContent = 'Vizualizează Prompt-ul RAG Augmented trimis la LLM';
+        togglePromptInspectorBtn.textContent = 'View the RAG Augmented Prompt sent to LLM';
       }
     });
   }
@@ -931,7 +972,7 @@ function initPlayground() {
       if (data.recipes.length === 0) {
         playResultsGrid.innerHTML = `
           <div style="text-align: center; padding: 20px; color: var(--text-muted); font-style: italic;">
-            Nicio rețetă nu a trecut pragul de relevanță setat sau filtrele selectate.
+            No recipe passed the set relevance threshold or the selected filters.
           </div>
         `;
       } else {
@@ -944,8 +985,8 @@ function initPlayground() {
                 <span style="background: rgba(6,182,212,0.15); color: var(--cyan); font-size: 0.8rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; border: 1px solid rgba(6,182,212,0.25);">Score: ${r.retrieval_score.toFixed(3)}</span>
               </div>
             </div>
-            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">${esc(r.description || 'Nicio descriere disponibilă.')}</div>
-            <div style="font-size: 0.8rem; color: var(--text-muted);"><span style="color: var(--text-dim); font-weight: 600;">Ingrediente:</span> ${esc(r.ingredients.join(', '))}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">${esc(r.description || 'No description available.')}</div>
+            <div style="font-size: 0.8rem; color: var(--text-muted);"><span style="color: var(--text-dim); font-weight: 600;">Ingredients:</span> ${esc(r.ingredients.join(', '))}</div>
             <div style="display: flex; gap: 16px; font-size: 0.75rem; border-top: 1px solid rgba(255,255,255,0.04); padding-top: 8px; margin-top: 4px; flex-wrap: wrap;">
               <span style="color: var(--cyan); display: flex; align-items: center; gap: 4px;"> Dense (Semantic): <strong>${r.semantic_score.toFixed(3)}</strong></span>
               <span style="color: var(--rose-lt); display: flex; align-items: center; gap: 4px;"> Sparse (BM25): <strong>${r.bm25_score.toFixed(3)}</strong></span>
@@ -957,29 +998,29 @@ function initPlayground() {
 
       if (promptInspectorCode && data.recipes) {
         let contextText = data.recipes.map((r, i) => {
-          return `DOCUMENT [${i+1}]:\nTitlu: ${r.title}\nCuisine: ${r.cuisine}\nIngrediente: ${r.ingredients.join(', ')}\nDescriere: ${r.description || 'Fără descriere.'}`;
+          return `DOCUMENT [${i+1}]:\nTitle: ${r.title}\nCuisine: ${r.cuisine}\nIngredients: ${r.ingredients.join(', ')}\nDescription: ${r.description || 'No description.'}`;
         }).join('\n\n');
 
         let promptStr = `SYSTEM INSTRUCTIONS:
-Ești un asistent culinar inteligent și experimentat. Sarcina ta este să creezi rețete noi sau să răspunzi la întrebări pe baza documentelor culinare puse la dispoziție în CONTEXT. Fii factual și nu inventa detalii în afara contextului.
+You are an intelligent and experienced culinary assistant. Your task is to create new recipes or answer questions based on the culinary documents provided in the CONTEXT. Be factual and do not invent details beyond the context.
 
-CONTEXT DE RETRIEVAL (Din Vector Database):
+RETRIEVAL CONTEXT (From Vector Database):
 ${contextText}
 
 USER QUERY:
 "${query}"
 
-RESPONSE (Generat factual pe baza documentelor furnizate):`;
+RESPONSE (Generated factually based on the provided documents):`;
         promptInspectorCode.textContent = promptStr;
       }
 
       playResultsContainer.style.display = 'block';
     } catch (e) {
       console.error(e);
-      alert('Eroare la realizarea retrieval-ului.');
+      alert('Error performing retrieval.');
     } finally {
       playSearchBtn.disabled = false;
-      playSearchBtn.textContent = ' Rulează Retrieval';
+      playSearchBtn.textContent = ' Run Retrieval';
     }
   });
 
@@ -1020,7 +1061,7 @@ RESPONSE (Generat factual pe baza documentelor furnizate):`;
       benchmarkResults.style.display = 'block';
     } catch (e) {
       console.error(e);
-      alert('Eroare la rularea benchmark-ului.');
+      alert('Error running the benchmark.');
     } finally {
       runBenchmarkBtn.disabled = false;
       benchmarkLoader.classList.add('hidden');
@@ -1174,42 +1215,42 @@ for hits in results:
       let detailsHtml = '';
       if (selectedDb === 'chromadb') {
         detailsHtml = `
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW (Hierarchical Navigable Small World)</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine Similarity (1 - CosSim)</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Metadate:</strong><span>SQLite local pe disc</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Inventare Rețete:</strong><span>Căutare semantică rapidă pe ingrediente</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algorithm:</strong><span>HNSW (Hierarchical Navigable Small World)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distance:</strong><span>Cosine Similarity (1 - CosSim)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Metadata:</strong><span>Local SQLite on disk</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Recipe Invention:</strong><span>Fast semantic search on ingredients</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            ChromaDB este perfect pentru a inventa rețete rapid la nivel local. Permite stocarea simplă a setului de date culinare și căutarea semantică direct pe disc (în baza SQLite a metadatelor), fiind excelent pentru prototipuri rapide de generare de rețete pe baza ingredientelor pe care le ai deja în frigider.
+            ChromaDB is perfect for inventing recipes quickly at the local level. It allows simple storage of the culinary dataset and semantic search directly on disk (via the SQLite metadata base), making it excellent for rapid recipe generation prototypes based on the ingredients you already have in your fridge.
           </div>
         `;
       } else if (selectedDb === 'qdrant') {
         detailsHtml = `
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW cu Payload Filtering</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine, L2, Dot Product</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Filtrare Alergii:</strong><span>Filtre dure direct în graful HNSW</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Stocare:</strong><span>În memorie sau fișiere mapate (mmap)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algorithm:</strong><span>HNSW with Payload Filtering</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distance:</strong><span>Cosine, L2, Dot Product</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Allergy Filtering:</strong><span>Hard filters directly in the HNSW graph</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Storage:</strong><span>In-memory or memory-mapped files (mmap)</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            Pentru a inventa rețete adaptate nevoilor tale, filtrarea pe payload din Qdrant este ideală. Poți căuta semantic rețete similare cu ingredientele tale și, în același timp, să aplici filtre dure pentru alergii (ex. 'fără lactate', 'vegan') sau timp de preparare, asigurând că sugestiile inventate respectă restricțiile dietetice în timp real.
+            For inventing recipes tailored to your needs, Qdrant's payload filtering is ideal. You can semantically search for recipes similar to your ingredients while simultaneously applying hard filters for allergies (e.g., 'dairy-free', 'vegan') or preparation time, ensuring invented suggestions respect dietary restrictions in real time.
           </div>
         `;
       } else if (selectedDb === 'pgvector') {
         detailsHtml = `
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW (v0.5.0+) sau IVFFlat (clustere)</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine (<=>), L2 (<->), IP (<#>)</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Cumpărături:</strong><span>JOIN direct cu listele utilizatorilor</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algorithm:</strong><span>HNSW (v0.5.0+) or IVFFlat (clusters)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distance:</strong><span>Cosine (<=>), L2 (<->), IP (<#>)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Shopping:</strong><span>Direct JOIN with user lists</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Index:</strong><span>CREATE INDEX USING hnsw</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            pgvector este ideal dacă ai deja baza de date a utilizatorilor într-un PostgreSQL clasic. Poți corela istoricul de cumpărături, listele de ingrediente disponibile ale utilizatorilor și rețetele inventate folosind query-uri SQL native și JOIN-uri simple, combinând datele relaționale cu similitudinea vectorială.
+            pgvector is ideal if you already have your user database in a classic PostgreSQL. You can correlate purchase history, users' available ingredient lists, and invented recipes using native SQL queries and simple JOINs, combining relational data with vector similarity.
           </div>
         `;
       } else {
         detailsHtml = `
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW, IVF-Flat, ScaNN, IVF-PQ</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine, L2, IP, Jaccard</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Producție:</strong><span>Pregătit pentru milioane de rețete</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Scalare:</strong><span>Distribuită orizontal (Sharding)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algorithm:</strong><span>HNSW, IVF-Flat, ScaNN, IVF-PQ</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distance:</strong><span>Cosine, L2, IP, Jaccard</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Production:</strong><span>Ready for millions of recipes</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Scaling:</strong><span>Horizontally distributed (Sharding)</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            Milvus este excelent dacă dorești să scalezi sistemul de inventat rețete la milioane de utilizatori și milioane de variante culinare. Permite sharding-ul distribuit și optimizarea memoriei prin cuantizare, asigurând că latența de căutare semantică rămâne sub câteva milisecunde chiar și pentru un volum gigantic de date culinare globale.
+            Milvus is excellent if you want to scale the recipe invention system to millions of users and millions of culinary variants. It enables distributed sharding and memory optimization through quantization, ensuring that semantic search latency remains under a few milliseconds even for a gigantic volume of global culinary data.
           </div>
         `;
       }
@@ -1277,7 +1318,7 @@ for hits in results:
         }
       } catch (e) {
         console.error(e);
-        alert('Eroare la interogarea bazei de date vectoriale local-first.');
+        alert('Error querying the local-first vector database.');
       } finally {
         runDbQueryBtn.disabled = false;
         runDbQueryBtn.innerHTML = originalText;
@@ -1288,17 +1329,17 @@ for hits in results:
   // ── Embedding models benchmarking ──────────────────────────────────────────
   if (runModelBenchBtn) {
     runModelBenchBtn.addEventListener('click', async () => {
-      const text = modelBenchText ? modelBenchText.value.trim() : 'Ingrediente proaspete';
+      const text = modelBenchText ? modelBenchText.value.trim() : 'Fresh ingredients';
       
       runModelBenchBtn.disabled = true;
       const originalText = runModelBenchBtn.innerHTML;
-      runModelBenchBtn.innerHTML = '<span> Se codifică...</span>';
+      runModelBenchBtn.innerHTML = '<span> Encoding...</span>';
       
       if (modelBenchResults) {
         modelBenchResults.innerHTML = `
           <div style="text-align: center; padding: 20px;">
             <div class="spinner-sm" style="margin: 0 auto 12px; width: 24px; height: 24px;"></div>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Se calculează latența de codificare locală...</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Calculating local encoding latency...</p>
           </div>
         `;
       }
@@ -1320,19 +1361,19 @@ for hits in results:
             const pct = Math.min(100, (m.throughput / maxThroughput) * 100);
             
             let barColor = 'var(--cyan)';
-            let statusText = 'Rapid';
+            let statusText = 'Fast';
             if (m.active) {
               barColor = 'var(--emerald)';
-              statusText = 'Local Activ (Rapid)';
+              statusText = 'Local Active (Fast)';
             } else if (m.throughput < 50) {
               barColor = 'var(--amber)';
-              statusText = 'Moderat (Necesită GPU)';
+              statusText = 'Moderate (Requires GPU)';
             } else if (m.throughput > 150) {
               barColor = 'var(--cyan)';
-              statusText = 'Rapid';
+              statusText = 'Fast';
             } else {
               barColor = 'var(--violet-lt)';
-              statusText = 'Mediu';
+              statusText = 'Medium';
             }
             
             const badgeClass = m.active 
@@ -1366,7 +1407,7 @@ for hits in results:
                 <div style="margin-top: 4px;">
                   <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
                     <span style="color: var(--text-muted);">Throughput: <strong style="color: #fff;">${m.throughput} vectors/sec</strong></span>
-                    <span style="color: ${barColor};">Latență: <strong>${m.latency_ms.toFixed(1)} ms</strong></span>
+                    <span style="color: ${barColor};">Latency: <strong>${m.latency_ms.toFixed(1)} ms</strong></span>
                   </div>
                   <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
                     <div style="width: ${pct}%; height: 100%; background: ${barColor}; transition: width 0.8s ease;"></div>
@@ -1381,7 +1422,7 @@ for hits in results:
         if (modelBenchResults) {
           modelBenchResults.innerHTML = `
             <div style="text-align: center; padding: 20px; color: var(--rose-lt); font-style: italic;">
-              Eroare la rularea testului de model embedding benchmark.
+              Error running the embedding model benchmark test.
             </div>
           `;
         }
@@ -1396,40 +1437,40 @@ for hits in results:
   function initThematicExplorer() {
     const thematicRecipes = {
       sarmale: {
-        title: "Sarmale Românești cu Mămăligă",
-        desc: "Savuroase, tradiționale, învelite în varză acră și servite cu mămăligă caldă.",
+        title: "Romanian Cabbage Rolls with Polenta",
+        desc: "Savory, traditional, wrapped in sour cabbage and served with warm polenta.",
         vector: [0.8, 0.3, -0.9, 0.6, -0.9],
-        ingredients: ["carne tocata", "varza acra", "orez", "ceapa", "mamaliga"]
+        ingredients: ["ground meat", "sour cabbage", "rice", "onion", "polenta"]
       },
       tort: {
-        title: "Tort de Ciocolată cu Cireșe",
-        desc: "Un desert fin, cremos, intens îndulcit și plin de cacao.",
+        title: "Chocolate Cherry Cake",
+        desc: "A fine, creamy dessert, intensely sweet and full of cocoa.",
         vector: [-0.6, -0.8, 1.0, 0.1, 0.2],
-        ingredients: ["ciocolata", "frisca", "cirese", "faina", "zahar"]
+        ingredients: ["chocolate", "whipped cream", "cherries", "flour", "sugar"]
       },
       cezar: {
-        title: "Salată Cezar cu Pui",
-        desc: "O salată proaspătă cu salată romană, crutoane, pui la grătar și dressing cremos.",
+        title: "Caesar Salad with Chicken",
+        desc: "A fresh salad with romaine lettuce, croutons, grilled chicken, and creamy dressing.",
         vector: [0.5, 0.1, -0.7, -0.4, 0.5],
-        ingredients: ["salata romana", "piept de pui", "parmezan", "crutoane", "dressing"]
+        ingredients: ["romaine lettuce", "chicken breast", "parmesan", "croutons", "dressing"]
       },
       carbonara: {
-        title: "Spaghete Carbonara",
-        desc: "Un clasic italian bogat în grăsimi aromate, gălbenuș de ou și pecorino.",
+        title: "Spaghetti Carbonara",
+        desc: "An Italian classic rich in aromatic fats, egg yolk, and pecorino.",
         vector: [0.7, 0.2, -0.8, 0.4, 0.6],
-        ingredients: ["spaghete", "guanciale", "galbenus ou", "pecorino", "piper"]
+        ingredients: ["spaghetti", "guanciale", "egg yolk", "pecorino", "pepper"]
       },
       somon: {
-        title: "Somon la Grătar cu Broccoli",
-        desc: "O masă sănătoasă, bogată în grăsimi bune și proteine, cu legume gătite la abur.",
+        title: "Grilled Salmon with Broccoli",
+        desc: "A healthy meal, rich in good fats and protein, with steamed vegetables.",
         vector: [0.9, 0.0, -0.9, -0.6, 0.4],
-        ingredients: ["somon", "broccoli", "lamaie", "ulei de masline"]
+        ingredients: ["salmon", "broccoli", "lemon", "olive oil"]
       },
       curry: {
-        title: "Curry de Pui Indian",
-        desc: "O explozie de mirodenii asiatice într-un sos dens de roșii și lapte de cocos.",
+        title: "Indian Chicken Curry",
+        desc: "An explosion of Asian spices in a dense tomato and coconut milk sauce.",
         vector: [0.8, 0.9, -0.4, 0.8, 0.9],
-        ingredients: ["piept de pui", "garam masala", "ghimbir", "lapte de cocos", "curry"]
+        ingredients: ["chicken breast", "garam masala", "ginger", "coconut milk", "curry"]
       }
     };
 
@@ -1646,15 +1687,15 @@ for hits in results:
       // Semantic explanation
       let expl = "";
       if (similarity > 0.6) {
-        expl = `Asemănare semantică puternică! Ambele rețete împart caracteristici culinare majore. În spațiul vectorial dens, acestea sunt amplasate foarte aproape datorită ingredientelor de bază comune și a profilului de aromă similar (de exemplu, ambele fiind feluri de mâncare sărate, calde, bogate în proteine).`;
+        expl = `Strong semantic similarity! Both recipes share major culinary characteristics. In the dense vector space, they are placed very close together due to common base ingredients and a similar flavor profile (e.g., both being savory, warm, protein-rich dishes).`;
       } else if (similarity > 0.1) {
-        expl = `Similitudine moderată. Preparatele au unele corelații (de exemplu, sunt ambele rețete sărate de origine internațională), dar diferă semnificativ prin ingredientele cheie și modul de gătire (unul este uscat, celălalt sos/supă, sau folosesc condimente foarte diferite).`;
+        expl = `Moderate similarity. The dishes have some correlations (e.g., both are savory international recipes), but differ significantly in key ingredients and cooking method (one is dry, the other is a sauce/soup, or they use very different spices).`;
       } else {
-        expl = `Similitudine foarte mică sau negativă! Cele două rețete reprezintă concepte culinare opuse în spațiul vectorial. De exemplu, una este un fel principal tradițional și sărat (sarmale), iar cealaltă este un desert dulce internațional (tort de ciocolată). Un algoritm RAG va ști că o interogare pentru una dintre ele nu trebuie să returneze cealaltă.`;
+        expl = `Very low or negative similarity! The two recipes represent opposite culinary concepts in the vector space. For example, one is a traditional savory main course, and the other is a sweet international dessert. A RAG algorithm will know that a query for one should not return the other.`;
       }
-      thematicExplanation.innerHTML = `<strong>Analiză semantică:</strong> ${expl} <br><br>
+      thematicExplanation.innerHTML = `<strong>Semantic Analysis:</strong> ${expl} <br><br>
         <span style="color: var(--text-muted); font-size: 0.8rem;">
-          Notă: Modelele reale folosesc 384 de astfel de dimensiuni abstracte (nu doar 5 dimensiuni umane). Fiecare dimensiune captează asocieri subtile de limbaj și concepte (ex: 'grătar' cu 'cărbuni', 'somon' cu 'pește').
+          Note: Real models use 384 such abstract dimensions (not just 5 human dimensions). Each dimension captures subtle language associations and concepts (e.g.: 'grill' with 'charcoal', 'salmon' with 'fish').
         </span>`;
     }
 
@@ -1784,467 +1825,192 @@ for hits in results:
 
   initThematicExplorer();
 
-  // ── HNSW Graph Search Simulator ──────────────────────────────────────────
-  function initHnswSimulator() {
-    const svg = document.getElementById('hnswSvg');
-    if (svg) {
-      svg.setAttribute('viewBox', '0 0 500 260');
-    }
+  // ── HNSW Flavor Bridge Pathfinder ─────────────────────────────────────────
+  function initHnswPathfinder() {
+    const startSelect = document.getElementById('pathfinderStartSelect');
+    const endSelect   = document.getElementById('pathfinderEndSelect');
+    const buildBtn    = document.getElementById('pathfinderBuildBtn');
+    const status      = document.getElementById('pathfinderStatus');
+    const container   = document.getElementById('pathfinderVisualContainer');
+    const actionsBox  = document.getElementById('pathfinderActionsBox');
+    const fuseBtn     = document.getElementById('pathfinderFuseBtn');
 
-    const querySelect = document.getElementById('hnswQuerySelect');
-    const queryInput  = document.getElementById('hnswQueryInput');
-    const startBtn    = document.getElementById('hnswStartBtn');
-    const nextBtn     = document.getElementById('hnswNextBtn');
-    const resetBtn    = document.getElementById('hnswResetBtn');
-    const statusText  = document.getElementById('hnswStatusText');
+    // Inspector elements
+    const inspectorBox        = document.getElementById('pathfinderInspectorBox');
+    const inspectorTitle      = document.getElementById('pathfinderInspectorTitle');
+    const inspectorIngredients = document.getElementById('pathfinderInspectorIngredients');
 
-    // Detail Box elements
-    const detailBox        = document.getElementById('hnswNodeDetailBox');
-    const detailTitle      = document.getElementById('hnswNodeDetailTitle');
-    const detailIngredients = document.getElementById('hnswNodeDetailIngredients');
-    const sendToCreatorBtn = document.getElementById('hnswSendToCreatorBtn');
-    const sendToChatBtn    = document.getElementById('hnswSendToChatBtn');
+    if (!startSelect || !endSelect || !buildBtn) return;
 
-    if (!querySelect || !startBtn) return;
+    // Load initial dropdown list of recipes
+    updatePathfinderRecipeDropdowns();
 
-    let hnswRealPath = [];
-    let hnswCurrentStep = -1;
-    let uniqueNodeIds = [];
-    let xMap = {};
-    let selectedStepForActions = null;
+    let pathfinderPath = [];
 
-    const queryMap = {
-      desert: "ceva dulce și cald",
-      peste: "pește ușor cu legume",
-      paste: "spaghete italienești cremoase",
-      traditional: "mâncare românească tradițională"
-    };
+    buildBtn.addEventListener('click', async () => {
+      const startId = startSelect.value;
+      const endId = endSelect.value;
 
-    function showHnswNodeDetails(step) {
-      if (!step || !step.recipe_title) return;
-      selectedStepForActions = step;
-      if (detailBox) detailBox.style.display = 'block';
-      if (detailTitle) detailTitle.textContent = step.recipe_title;
-      
-      const ingredients = step.ingredients || [];
-      if (detailIngredients) {
-        detailIngredients.textContent = ingredients.length > 0 ? ingredients.join(', ') : '—';
+      if (startId === endId) {
+        status.innerHTML = `<span style="color: var(--amber);">⚠️ Please choose two distinct recipes!</span>`;
+        return;
       }
-    }
 
-    // Dynamic actions for clicked recipe node
-    if (sendToCreatorBtn) {
-      sendToCreatorBtn.addEventListener('click', () => {
-        if (!selectedStepForActions || !selectedStepForActions.ingredients) return;
-        
-        // Switch to Creator tab
+      status.innerHTML = `🔄 Searching for the optimal path in the HNSW graph (Layer 0)...`;
+      buildBtn.disabled = true;
+      startSelect.disabled = true;
+      endSelect.disabled = true;
+      if (actionsBox) actionsBox.style.display = 'none';
+      if (inspectorBox) inspectorBox.style.display = 'none';
+
+      try {
+        const response = await fetch(`${API}/api/hnsw/pathfinder`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ start_recipe_id: startId, end_recipe_id: endId })
+        });
+
+        if (!response.ok) throw new Error('Pathfinder failed');
+        const data = await response.json();
+        pathfinderPath = data.path || [];
+
+        if (pathfinderPath.length === 0) {
+          status.innerHTML = `<span style="color: var(--amber);">⚠️ Could not find a link in the graph between these recipes. The graph is fragmented.</span>`;
+          container.innerHTML = `<div style="color: var(--text-muted); font-size: 0.85rem; text-align: center;">No path available.</div>`;
+          return;
+        }
+
+        status.innerHTML = `<strong>Culinary Bridge Found!</strong><br>
+          The path contains <strong>${pathfinderPath.length} steps</strong> linking flavor profiles directly.
+          Click on any card to see its ingredients.`;
+
+        // Render the visual timeline chain
+        container.innerHTML = '';
+        pathfinderPath.forEach((step, idx) => {
+          const card = document.createElement('div');
+          card.className = 'glass-card';
+          card.style.cssText = `
+            padding: 12px 18px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            width: 90%;
+            font-weight: 600;
+            font-size: 0.88rem;
+            color: #fff;
+            transition: all 0.2s ease;
+          `;
+          
+          if (idx === 0) {
+            card.style.borderColor = 'var(--emerald)';
+            card.style.background = 'rgba(16, 185, 129, 0.08)';
+            card.innerHTML = `<span style="font-size:0.7rem; color:var(--emerald); display:block; text-transform:uppercase; margin-bottom:2px;">🏁 START</span> ${step.title}`;
+          } else if (idx === pathfinderPath.length - 1) {
+            card.style.borderColor = 'var(--cyan)';
+            card.style.background = 'rgba(6, 182, 212, 0.08)';
+            card.innerHTML = `<span style="font-size:0.7rem; color:var(--cyan); display:block; text-transform:uppercase; margin-bottom:2px;">🎯 TARGET</span> ${step.title}`;
+          } else {
+            card.innerHTML = `<span style="font-size:0.7rem; color:var(--text-dim); display:block; text-transform:uppercase; margin-bottom:2px;">🔗 INTERMEDIATE BRIDGE</span> ${step.title}`;
+          }
+
+          card.addEventListener('mouseover', () => {
+            card.style.transform = 'translateY(-2px)';
+            card.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
+          });
+          card.addEventListener('mouseout', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = 'none';
+          });
+
+          card.addEventListener('click', () => {
+            if (inspectorBox) inspectorBox.style.display = 'block';
+            if (inspectorTitle) inspectorTitle.textContent = step.title;
+            if (inspectorIngredients) {
+              inspectorIngredients.textContent = step.ingredients && step.ingredients.length > 0
+                ? step.ingredients.join(', ')
+                : '—';
+            }
+            
+            container.querySelectorAll('.glass-card').forEach(el => {
+              el.style.boxShadow = 'none';
+            });
+            card.style.boxShadow = '0 0 10px var(--cyan)';
+          });
+
+          container.appendChild(card);
+
+          if (idx < pathfinderPath.length - 1) {
+            const arrow = document.createElement('div');
+            arrow.style.cssText = `
+              color: var(--cyan);
+              font-size: 1.1rem;
+              line-height: 1;
+              margin: 2px 0;
+            `;
+            arrow.textContent = '⬇️';
+            container.appendChild(arrow);
+          }
+        });
+
+        if (actionsBox) actionsBox.style.display = 'block';
+
+      } catch (err) {
+        console.error("Pathfinder failed:", err);
+        status.innerHTML = `<span style="color: #f87171;">❌ Error searching for the path on the server.</span>`;
+      } finally {
+        buildBtn.disabled = false;
+        startSelect.disabled = false;
+        endSelect.disabled = false;
+      }
+    });
+
+    if (fuseBtn) {
+      fuseBtn.addEventListener('click', () => {
+        if (pathfinderPath.length === 0) return;
+
+        const allIngs = new Set();
+        pathfinderPath.forEach(step => {
+          if (step.ingredients && Array.isArray(step.ingredients)) {
+            step.ingredients.slice(0, 4).forEach(ing => allIngs.add(ing.toLowerCase().trim()));
+          }
+        });
+
         const creatorTabBtn = document.querySelector('.tab-button[data-tab="creator"]');
         if (creatorTabBtn) {
           creatorTabBtn.click();
         }
-        
-        // Populate Creator ingredients tags
+
         if (typeof tags !== 'undefined' && Array.isArray(tags)) {
           tags.length = 0;
           const tagsUl = document.getElementById('tagsList');
           if (tagsUl) tagsUl.innerHTML = '';
-          
-          selectedStepForActions.ingredients.slice(0, 6).forEach(ing => {
-            if (ing && ing.trim()) {
-              addTag(ing.trim());
-            }
+
+          Array.from(allIngs).slice(0, 8).forEach(ing => {
+            if (ing) addTag(ing);
           });
         }
-        
-        // Visual notification
-        showNotification(`✅ Ingredientele din "${selectedStepForActions.recipe_title}" au fost trimise la Creator!`);
-      });
-    }
 
-    if (sendToChatBtn) {
-      sendToChatBtn.addEventListener('click', () => {
-        if (!selectedStepForActions) return;
-        
-        // Switch to Chatbot tab
-        const chatbotTabBtn = document.querySelector('.tab-button[data-tab="chatbot"]');
-        if (chatbotTabBtn) {
-          chatbotTabBtn.click();
-        }
-        
-        // Send postMessage to chatbot iframe
-        const iframe = document.getElementById('chatbotIframe');
-        if (iframe && iframe.contentWindow) {
-          iframe.contentWindow.postMessage({
-            action: 'suggestRecipe',
-            query: `Cum prepar rețeta de "${selectedStepForActions.recipe_title}"?`
-          }, '*');
-        }
-      });
-    }
-
-    function showNotification(msg) {
-      const notif = document.createElement('div');
-      notif.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, var(--emerald), var(--cyan));
-        color: white;
-        padding: 14px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        z-index: 10000;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        animation: slideIn 0.3s ease-out;
-      `;
-      notif.textContent = msg;
-      document.body.appendChild(notif);
-      setTimeout(() => notif.remove(), 3000);
-    }
-
-    function getLayerY(layer) {
-      const yMap = {
-        4: 40,
-        3: 85,
-        2: 130,
-        1: 175,
-        0: 220
-      };
-      return yMap[layer] || 220;
-    }
-
-    function drawRealPath() {
-      const svgNodes = document.getElementById('hnswNodes');
-      const svgLinks = document.getElementById('hnswLinks');
-      if (!svgNodes || !svgLinks) return;
-
-      svgNodes.innerHTML = '';
-      svgLinks.innerHTML = '';
-
-      if (hnswRealPath.length === 0) return;
-
-      // Draw horizontal dashed lines
-      const layersInPath = Array.from(new Set(hnswRealPath.map(p => p.layer))).sort().reverse();
-      layersInPath.forEach(L => {
-        const y = getLayerY(L);
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', '10');
-        line.setAttribute('y1', y);
-        line.setAttribute('x2', '490');
-        line.setAttribute('y2', y);
-        line.setAttribute('stroke', 'rgba(255,255,255,0.06)');
-        line.setAttribute('stroke-width', '1');
-        line.setAttribute('stroke-dasharray', '5,5');
-        svgLinks.appendChild(line);
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', '15');
-        text.setAttribute('y', y - 10);
-        text.setAttribute('font-size', '8px');
-        text.setAttribute('fill', 'rgba(255,255,255,0.25)');
-        text.setAttribute('font-weight', 'bold');
-        text.textContent = `LAYER ${L}`;
-        svgNodes.appendChild(text);
-      });
-
-      // Draw links up to currentStep
-      for (let i = 0; i < hnswCurrentStep; i++) {
-        const current = hnswRealPath[i];
-        const next = hnswRealPath[i + 1];
-        if (!current || !next) continue;
-
-        const x1 = xMap[current.node];
-        const y1 = getLayerY(current.layer);
-        const x2 = xMap[next.node];
-        const y2 = getLayerY(next.layer);
-
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', x1);
-        line.setAttribute('y1', y1);
-        line.setAttribute('x2', x2);
-        line.setAttribute('y2', y2);
-
-        if (current.node === next.node) {
-          line.setAttribute('stroke', 'var(--amber)');
-          line.setAttribute('stroke-width', '2');
-          line.setAttribute('stroke-dasharray', '3,3');
-        } else {
-          line.setAttribute('stroke', 'var(--cyan)');
-          line.setAttribute('stroke-width', '2.5');
-        }
-        svgLinks.appendChild(line);
-      }
-
-      // Draw all nodes visited up to currentStep
-      hnswRealPath.forEach((step, idx) => {
-        if (idx > hnswCurrentStep) return;
-
-        const x = xMap[step.node];
-        const y = getLayerY(step.layer);
-
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        g.style.cursor = 'pointer';
-        g.addEventListener('click', () => {
-          showHnswNodeDetails(step);
-        });
-
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', x);
-        circle.setAttribute('cy', y);
-        circle.setAttribute('r', '13');
-
-        const isCurrent = (idx === hnswCurrentStep);
-        const isLast = (isCurrent && idx === hnswRealPath.length - 1);
-
-        let fill = 'rgba(6, 182, 212, 0.15)';
-        let stroke = 'var(--cyan)';
-        let strokeWidth = '1.8';
-
-        if (isLast) {
-          fill = 'rgba(16, 185, 129, 0.2)';
-          stroke = 'var(--emerald)';
-          strokeWidth = '2.5';
-        } else if (isCurrent) {
-          fill = 'rgba(245, 158, 11, 0.25)';
-          stroke = 'var(--amber)';
-          strokeWidth = '2.5';
-        }
-
-        circle.setAttribute('fill', fill);
-        circle.setAttribute('stroke', stroke);
-        circle.setAttribute('stroke-width', strokeWidth);
-        g.appendChild(circle);
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', x);
-        text.setAttribute('y', y + 3);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-size', '7px');
-        text.setAttribute('fill', '#fff');
-        text.setAttribute('font-weight', 'bold');
-        text.textContent = step.recipe_title ? step.recipe_title.substring(0, 5) : step.node;
-        g.appendChild(text);
-
-        const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-        titleEl.textContent = `${step.recipe_title} (Layer ${step.layer}, Sim: ${step.similarity.toFixed(3)})`;
-        g.appendChild(titleEl);
-
-        svgNodes.appendChild(g);
-      });
-    }
-
-    function runMockHnswSimulation(queryText) {
-      const val = querySelect.value;
-      let mockPath = [];
-
-      if (val === 'desert') {
-        mockPath = [
-          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.200 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 1, similarity: 0.200 },
-          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 1, similarity: 0.350 },
-          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 0, similarity: 0.350 },
-          { node: 'papanasi', recipe_title: 'Papanași', ingredients: ['brânză de vaci', 'făină', 'ouă', 'smântână', 'gem de afine'], layer: 0, similarity: 0.880 }
-        ];
-      } else if (val === 'peste') {
-        mockPath = [
-          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.100 },
-          { node: 'somon', recipe_title: 'Somon la Grătar', ingredients: ['somon', 'lămâie', 'ulei de măsline', 'usturoi'], layer: 2, similarity: 0.780 },
-          { node: 'somon', recipe_title: 'Somon la Grătar', ingredients: ['somon', 'lămâie', 'ulei de măsline', 'usturoi'], layer: 1, similarity: 0.780 },
-          { node: 'somon', recipe_title: 'Somon la Grătar', ingredients: ['somon', 'lămâie', 'ulei de măsline', 'usturoi'], layer: 0, similarity: 0.840 }
-        ];
-      } else if (val === 'paste') {
-        mockPath = [
-          { node: 'somon', recipe_title: 'Somon', ingredients: ['somon', 'lămâie'], layer: 2, similarity: 0.150 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.250 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 1, similarity: 0.250 },
-          { node: 'carbonara', recipe_title: 'Carbonara', ingredients: ['paste', 'gălbenuș de ou', 'pecorino romano', 'guanciale'], layer: 1, similarity: 0.820 },
-          { node: 'carbonara', recipe_title: 'Carbonara', ingredients: ['paste', 'gălbenuș de ou', 'pecorino romano', 'guanciale'], layer: 0, similarity: 0.860 }
-        ];
-      } else {
-        mockPath = [
-          { node: 'somon', recipe_title: 'Somon', ingredients: ['somon', 'lămâie'], layer: 2, similarity: 0.080 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.380 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 1, similarity: 0.380 },
-          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 1, similarity: 0.810 },
-          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 0, similarity: 0.890 }
-        ];
-      }
-
-      hnswRealPath = mockPath;
-      hnswCurrentStep = 0;
-
-      uniqueNodeIds = Array.from(new Set(hnswRealPath.map(p => p.node)));
-      xMap = {};
-      const margin = 50;
-      const width = 400;
-      const spacing = uniqueNodeIds.length > 1 ? width / (uniqueNodeIds.length - 1) : width;
-      uniqueNodeIds.forEach((nodeId, idx) => {
-        xMap[nodeId] = margin + idx * spacing;
-      });
-
-      const startStep = hnswRealPath[0];
-      statusText.innerHTML = `<strong>Inițializare HNSW (Simulare Locală de Rezervă)</strong><br>
-        <strong>Interogare:</strong> "${queryText}"<br>
-        <strong>Entry Point:</strong> ${startStep.recipe_title} (Layer ${startStep.layer})<br>
-        <strong>Similitudine inițială:</strong> ${startStep.similarity.toFixed(3)}<br>
-        Apasă 'Pasul Următor' pentru a urmări salturile prin graful ierarhic.
-        <div style="margin-top: 10px; padding: 10px; background: rgba(6,182,212,0.08); border-left: 3px solid var(--cyan); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
-          <strong>Cum funcționează:</strong> Serverul este temporar indisponibil sau nu a putut returna simularea. Rulăm o simulare locală simplificată pentru a înțelege algoritmul.
-        </div>`;
-
-      nextBtn.disabled = false;
-      showHnswNodeDetails(startStep);
-      drawRealPath();
-    }
-
-    startBtn.addEventListener('click', async () => {
-      let queryText = "";
-      let targetRecipeId = null;
-      
-      const customVal = queryInput ? queryInput.value.trim() : "";
-      if (customVal) {
-        queryText = customVal;
-      } else {
-        const val = querySelect.value;
-        if (val.startsWith('custom_')) {
-          const customIdx = parseInt(val.split('_')[1]);
-          const recipe = window.createdRecipes[customIdx];
-          queryText = recipe ? recipe.title : "pui";
-          targetRecipeId = recipe ? recipe.id : null;
-        } else {
-          queryText = queryMap[val] || val;
-        }
-      }
-
-      statusText.innerHTML = `🔄 Se calculează graful HNSW real pe server...`;
-      startBtn.disabled = true;
-      querySelect.disabled = true;
-      if (queryInput) queryInput.disabled = true;
-
-      try {
-        const response = await fetch(`${API}/api/hnsw/simulate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: queryText, target_recipe_id: targetRecipeId })
-        });
-
-        if (!response.ok) throw new Error('Simulation failed');
-        const data = await response.json();
-
-        hnswRealPath = data.path || [];
-        hnswCurrentStep = 0;
-
-        if (hnswRealPath.length === 0) {
-          throw new Error("Nu s-au returnat pași de căutare.");
-        }
-
-        uniqueNodeIds = Array.from(new Set(hnswRealPath.map(p => p.node)));
-        xMap = {};
-        const margin = 45;
-        const width = 410;
-        const spacing = uniqueNodeIds.length > 1 ? width / (uniqueNodeIds.length - 1) : width;
-        uniqueNodeIds.forEach((nodeId, idx) => {
-          xMap[nodeId] = margin + idx * spacing;
-        });
-
-        const startStep = hnswRealPath[0];
-        statusText.innerHTML = `<strong>Inițializare HNSW Reală pe Server</strong><br>
-          <strong>Interogare:</strong> "${queryText}"<br>
-          <strong>Entry Point:</strong> ${startStep.recipe_title} (Layer ${startStep.layer})<br>
-          <strong>Similitudine inițială:</strong> ${startStep.similarity.toFixed(3)}<br>
-          Apasă 'Pasul Următor' pentru a urmări salturile reale prin graful ierarhic.
-          <div style="margin-top: 10px; padding: 10px; background: rgba(6,182,212,0.08); border-left: 3px solid var(--cyan); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
-            <strong>Cum funcționează:</strong> Am trimis textul interogării la backend. Algoritmul HNSW a localizat un punct de pornire aleatoriu pe cel mai înalt strat disponibil (Layer ${startStep.layer}) și este pregătit să exploreze legăturile.
-          </div>`;
-
-        nextBtn.disabled = false;
-        showHnswNodeDetails(startStep);
-        drawRealPath();
-
-      } catch (err) {
-        console.warn("HNSW real simulation failed, falling back to mock:", err);
-        runMockHnswSimulation(queryText);
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (hnswCurrentStep === -1 || hnswCurrentStep >= hnswRealPath.length - 1) return;
-
-      hnswCurrentStep++;
-      const current = hnswRealPath[hnswCurrentStep];
-      const prev = hnswRealPath[hnswCurrentStep - 1];
-
-      let targetName = "";
-      const customVal = queryInput ? queryInput.value.trim() : "";
-      if (customVal) {
-        targetName = customVal;
-      } else {
-        let targetVal = querySelect.value;
-        if (targetVal.startsWith('custom_')) {
-          const customIdx = parseInt(targetVal.split('_')[1]);
-          const recipe = window.createdRecipes[customIdx];
-          targetName = recipe ? recipe.title : "rețetă";
-        } else {
-          targetName = queryMap[targetVal] || targetVal;
-        }
-      }
-
-      const isLast = (hnswCurrentStep === hnswRealPath.length - 1);
-
-      if (current.node === prev.node) {
-        statusText.innerHTML = `Coborâre de nivel la <strong>Layer ${current.layer}</strong>:<br>
-          La rețeta <strong>${current.recipe_title}</strong><br>
-          <strong>Similitudine:</strong> ${current.similarity.toFixed(3)}<br>
-          Apasă 'Pasul Următor' pentru a explora legăturile mai fine din acest strat.
-          <div style="margin-top: 10px; padding: 10px; background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
-            <strong>Cum funcționează:</strong> În Layer ${prev.layer}, niciun vecin direct nu a adus o potrivire mai bună pentru "${targetName}". De aceea, algoritmul "coboară vertical" în Layer ${current.layer} pe aceeași rețetă pentru a accesa conexiuni locale mai detaliate.
-          </div>`;
-      } else {
-        statusText.innerHTML = `Săritură în <strong>Layer ${current.layer}</strong>:<br>
-          De la <strong>${prev.recipe_title}</strong> la <strong>${current.recipe_title}</strong><br>
-          <strong>Similitudine nouă:</strong> ${current.similarity.toFixed(3)} (Creștere de la ${prev.similarity.toFixed(3)})<br>
-          ${isLast ? "Căutare finalizată!" : "Apasă din nou 'Pasul Următor'."}
-          <div style="margin-top: 10px; padding: 10px; background: rgba(16,185,129,0.08); border-left: 3px solid var(--emerald); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
-            <strong>Cum funcționează:</strong> Algoritmul a evaluat vecinii din Layer ${current.layer} și a găsit o rețetă care seamănă mai mult cu "${targetName}". A urmat legătura din graf și a făcut un salt la ea.
-          </div>`;
-      }
-
-      if (isLast) {
-        nextBtn.disabled = true;
-        statusText.innerHTML += `
-          <div style="margin-top: 10px; padding: 12px; background: rgba(168,85,247,0.08); border-left: 3px solid var(--violet-lt); border-radius: 4px; font-size: 0.8rem; line-height: 1.45; color: var(--text-dim);">
-            <strong>🎉 Căutare finalizată cu succes!</strong><br>
-            Am găsit rețeta <strong>${current.recipe_title}</strong> (Similitudine: ${current.similarity.toFixed(3)}) prin analizarea a doar <strong>${uniqueNodeIds.length} rețete distincte</strong>, în loc de scanarea liniară a tuturor celor 250+ rețete din baza de date. Acesta este avantajul indexului HNSW!
-          </div>
+        const notif = document.createElement('div');
+        notif.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, var(--emerald), var(--cyan));
+          color: white;
+          padding: 14px 20px;
+          border-radius: 8px;
+          font-weight: 600;
+          z-index: 10000;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+          animation: slideIn 0.3s ease-out;
         `;
-      }
-
-      showHnswNodeDetails(current);
-      drawRealPath();
-    });
-
-    resetBtn.addEventListener('click', () => {
-      hnswRealPath = [];
-      hnswCurrentStep = -1;
-      uniqueNodeIds = [];
-      xMap = {};
-      selectedStepForActions = null;
-      
-      querySelect.disabled = false;
-      if (queryInput) {
-        queryInput.disabled = false;
-        queryInput.value = "";
-      }
-      startBtn.disabled = false;
-      nextBtn.disabled = true;
-      statusText.innerHTML = "Apasă 'Inițializează Căutare' pentru a plasa punctul de intrare.";
-      if (detailBox) detailBox.style.display = 'none';
-      
-      const svgNodes = document.getElementById('hnswNodes');
-      const svgLinks = document.getElementById('hnswLinks');
-      if (svgNodes) svgNodes.innerHTML = '';
-      if (svgLinks) svgLinks.innerHTML = '';
-    });
+        notif.textContent = `✅ ${allIngs.size} ingredients merged from HNSW bridge sent to Creator!`;
+        document.body.appendChild(notif);
+        setTimeout(() => notif.remove(), 3000);
+      });
+    }
   }
 
   // ── RAG vs Pure LLM Showdown ─────────────────────────────────────────────
@@ -2257,19 +2023,19 @@ for hits in results:
 
     const database = {
       pui_dacian: {
-        query: "Cum se prepară 'Pui Dacian cu Sos Secret' în aplicația noastră?",
-        llm: "Puiul Dacian cu Sos Secret este o reteta straveche preparata din piept de pui fript pe jar, uns cu miere si mirodenii din padurile Carpatilor. Sosul secret este facut din vin alb dacic, miere de albine salbatice, piper pisat, untura si putin otet de mere fermentat cu usturoi. Totul se fierbe in ceaun pana cand scade si capata o culoare aramie.",
-        rag: "[Căutare Vectorială: 'Pui Dacian cu Sos Secret']\n[ChromaDB a găsit 1 document relevant, Scor: 0.912]\n[Injectare rețetă ID 83 în Contextul Prompt-ului]\n\nConform rețetei din baza de date:\nIngrediente principale: piept de pui, ciuperci champignon, unt, smântână de gătit, vin alb sec, usturoi, cimbru.\nPreparare: Pieptul de pui se prăjește în unt cu usturoi, apoi se adaugă ciupercile tăiate felii. Se stinge totul cu vin alb sec și se adaugă smântâna lichidă. Se reduce sosul la foc mic cu cimbru. Sosul secret este emulsia naturală de unt, smântână și reducerea de vin cu ciuperci."
+        query: "How do you prepare 'Dacian Chicken with Secret Sauce' in our app?",
+        llm: "Dacian Chicken with Secret Sauce is an ancient recipe prepared from chicken breast grilled on embers, brushed with honey and spices from the Carpathian forests. The secret sauce is made from Dacian white wine, wild bee honey, crushed pepper, lard, and a bit of apple cider vinegar fermented with garlic. Everything is simmered in a cauldron until it reduces and turns a coppery color.",
+        rag: "[Vector Search: 'Dacian Chicken with Secret Sauce']\n[ChromaDB found 1 relevant document, Score: 0.912]\n[Injecting recipe ID 83 into the Prompt Context]\n\nAccording to the recipe in the database:\nMain ingredients: chicken breast, champignon mushrooms, butter, cooking cream, dry white wine, garlic, thyme.\nPreparation: The chicken breast is fried in butter with garlic, then sliced mushrooms are added. Everything is deglazed with dry white wine and cooking cream is added. The sauce is reduced over low heat with thyme. The secret sauce is the natural emulsion of butter, cream, and the wine reduction with mushrooms."
       },
       albinuta: {
-        query: "Care sunt ingredientele exacte pentru Prăjitura 'Albinuța' din baza de date?",
-        llm: "Prăjitura Albinuța tradițională se prepară din: foi pufoase de pandișpan cu vanilie, o cremă aromată de mascarpone cu frișcă lichidă și miere de albine, jeleu de fructe de pădure la mijloc, acoperită cu fulgi mari de nucă de cocos și fistic mărunțit pentru decor.",
-        rag: "[Căutare Vectorială: 'Prăjitura Albinuța']\n[ChromaDB a găsit 1 document relevant, Scor: 0.887]\n[Injectare rețetă ID 142 în Contextul Prompt-ului]\n\nIngredientele oficiale stocate sunt:\nFoi pe fundul tăvii: făină de grâu, miere naturală de albine (3 linguri), unt topit, zahăr pudră, ouă întregi, bicarbonat de sodiu stins cu lămâie.\nCremă fină de griș: lapte dulce, griș de grâu (4 linguri), unt la temperatura camerei, zahăr pudră, coajă și suc de lămâie.\nStrat intermediar: gem acrișor de prune românești."
+        query: "What are the exact ingredients for 'Bee Cake' from the database?",
+        llm: "The traditional Bee Cake is prepared from: fluffy vanilla sponge cake layers, a flavorful mascarpone cream with liquid whipping cream and bee honey, forest fruit jelly in the middle, topped with large coconut flakes and crushed pistachio for decoration.",
+        rag: "[Vector Search: 'Bee Cake']\n[ChromaDB found 1 relevant document, Score: 0.887]\n[Injecting recipe ID 142 into the Prompt Context]\n\nThe official stored ingredients are:\nBottom layers: wheat flour, natural bee honey (3 tablespoons), melted butter, powdered sugar, whole eggs, baking soda quenched with lemon.\nFine semolina cream: sweet milk, wheat semolina (4 tablespoons), room temperature butter, powdered sugar, lemon zest and juice.\nIntermediate layer: sour Romanian plum jam."
       },
       somon_carpati: {
-        query: "Cum gătesc rețeta de 'Somon în Coajă de Pâine a Carpaților'?",
-        llm: "Aceasta este o rețetă montană dacică. Somonul proaspăt pescuit din râurile Carpaților se condimentează cu sare de salină, se învelește într-un aluat dospit din făină de secară și semințe de in, se unge cu gălbenuș de ou și se coace direct în spuză sau în cuptor cu lemne timp de 45 de minute până pâinea devine crocantă.",
-        rag: "[Căutare Vectorială: 'Somon în Coajă de Pâine a Carpaților']\n[ChromaDB a găsit 1 document relevant, Scor: 0.945]\n[Injectare rețetă ID 208 în Contextul Prompt-ului]\n\nConform bazei de date culinare:\nSomonul se unge cu muștar de Dijon amestecat cu miere. Crusta (coaja de pâine) este realizată din crutoane de pâine albă mărunțite, amestecate cu mărar proaspăt tocat, parmezan ras și ulei de măsline. Peștele se coace pe tavă timp de 12-15 minute la 200 de grade până când crusta este aurie. Nu se folosește aluat de pâine."
+        query: "How do I cook the 'Salmon in Carpathian Bread Crust' recipe?",
+        llm: "This is a Dacian mountain recipe. Fresh salmon caught from Carpathian rivers is seasoned with salt mine salt, wrapped in a leavened dough made from rye flour and flax seeds, brushed with egg yolk, and baked directly in embers or a wood-fired oven for 45 minutes until the bread becomes crispy.",
+        rag: "[Vector Search: 'Salmon in Carpathian Bread Crust']\n[ChromaDB found 1 relevant document, Score: 0.945]\n[Injecting recipe ID 208 into the Prompt Context]\n\nAccording to the culinary database:\nThe salmon is brushed with Dijon mustard mixed with honey. The crust (bread coat) is made from crushed white bread croutons, mixed with freshly chopped dill, grated Parmesan, and olive oil. The fish is baked on a tray for 12-15 minutes at 200 degrees until the crust is golden. No bread dough is used."
       }
     };
 
@@ -2301,8 +2067,8 @@ for hits in results:
 
       if (!data) return;
 
-      llmConsole.textContent = "Se generează răspunsul LLM simplu...";
-      ragConsole.textContent = "Se interoghează baza de date vectorială și se augmentează promptul...";
+      llmConsole.textContent = "Generating the plain LLM response...";
+      ragConsole.textContent = "Querying the vector database and augmenting the prompt...";
 
       typingTimerLlm = typeEffect(llmConsole, data.llm, 12);
       typingTimerRag = typeEffect(ragConsole, data.rag, 10);
@@ -2341,31 +2107,31 @@ for hits in results:
     const cy = originalHeight / 2;
 
     const galaxyIngredients = [
-      { name: "chicken", label: "pui", category: "protein", color: "#ec4899", desc: "Proteina centrala versatila, compatibila cu profiluri aromatice ierboase, usturoiate si citrice.", companions: [{ name: "garlic", score: 0.88 }, { name: "rosemary", score: 0.85 }, { name: "lemon", score: 0.82 }, { name: "butter", score: 0.79 }] },
-      { name: "beef", label: "vita", category: "protein", color: "#ec4899", desc: "Carne rosie cu gust bogat, ideala pentru fripturi lente, burgeri sau sosuri consistente.", companions: [{ name: "onion", score: 0.84 }, { name: "garlic", score: 0.82 }, { name: "butter", score: 0.78 }, { name: "rosemary", score: 0.75 }] },
-      { name: "shrimp", label: "creveti", category: "protein", color: "#ec4899", desc: "Fructe de mare delicate cu timp rapid de gatire, excelente cu sosuri acidulate si ierburi aromate.", companions: [{ name: "garlic", score: 0.91 }, { name: "lemon", score: 0.88 }, { name: "butter", score: 0.85 }, { name: "cilantro", score: 0.78 }] },
-      { name: "salmon", label: "somon", category: "protein", color: "#ec4899", desc: "Peste gras bogat in acizi grasi Omega-3, cu gust pregnant, perfect pentru coacere sau grill.", companions: [{ name: "lemon", score: 0.90 }, { name: "butter", score: 0.84 }, { name: "garlic", score: 0.81 }, { name: "basil", score: 0.76 }] },
-      { name: "tofu", label: "tofu", category: "protein", color: "#ec4899", desc: "Proteina vegetala din soia, absoarbe excelent marinadele si sosurile cu arome picante sau asiatice.", companions: [{ name: "ginger", score: 0.89 }, { name: "garlic", score: 0.85 }, { name: "onion", score: 0.78 }, { name: "chili", score: 0.76 }] },
+      { name: "chicken", label: "chicken", category: "protein", color: "#ec4899", desc: "Versatile central protein, compatible with herbal, garlicky, and citric aromatic profiles.", companions: [{ name: "garlic", score: 0.88 }, { name: "rosemary", score: 0.85 }, { name: "lemon", score: 0.82 }, { name: "butter", score: 0.79 }] },
+      { name: "beef", label: "beef", category: "protein", color: "#ec4899", desc: "Red meat with rich flavor, ideal for slow roasts, burgers, or hearty sauces.", companions: [{ name: "onion", score: 0.84 }, { name: "garlic", score: 0.82 }, { name: "butter", score: 0.78 }, { name: "rosemary", score: 0.75 }] },
+      { name: "shrimp", label: "shrimp", category: "protein", color: "#ec4899", desc: "Delicate seafood with quick cooking time, excellent with tangy sauces and aromatic herbs.", companions: [{ name: "garlic", score: 0.91 }, { name: "lemon", score: 0.88 }, { name: "butter", score: 0.85 }, { name: "cilantro", score: 0.78 }] },
+      { name: "salmon", label: "salmon", category: "protein", color: "#ec4899", desc: "Fatty fish rich in Omega-3 fatty acids, with a pronounced flavor, perfect for baking or grilling.", companions: [{ name: "lemon", score: 0.90 }, { name: "butter", score: 0.84 }, { name: "garlic", score: 0.81 }, { name: "basil", score: 0.76 }] },
+      { name: "tofu", label: "tofu", category: "protein", color: "#ec4899", desc: "Plant-based soy protein, excellently absorbs marinades and sauces with spicy or Asian flavors.", companions: [{ name: "ginger", score: 0.89 }, { name: "garlic", score: 0.85 }, { name: "onion", score: 0.78 }, { name: "chili", score: 0.76 }] },
       
-      { name: "garlic", label: "usturoi", category: "vegetable", color: "#10b981", desc: "Ingredient aromatic fundamental, utilizat universal pentru a potenta gustul preparatelor sarate.", companions: [{ name: "olive oil", score: 0.94 }, { name: "onion", score: 0.89 }, { name: "chicken", score: 0.88 }, { name: "tomato", score: 0.85 }] },
-      { name: "onion", label: "ceapa", category: "vegetable", color: "#10b981", desc: "Baza oricarui sos sau mancare gatita, ofera dulceata prin caramelizare sau iutime in stare cruda.", companions: [{ name: "garlic", score: 0.89 }, { name: "beef", score: 0.84 }, { name: "tomato", score: 0.82 }, { name: "butter", score: 0.80 }] },
-      { name: "tomato", label: "rosii", category: "vegetable", color: "#10b981", desc: "Fruct zemos si acidulat, baza multor sosuri clasice, supe si salate proaspete de vara.", companions: [{ name: "basil", score: 0.95 }, { name: "olive oil", score: 0.91 }, { name: "garlic", score: 0.85 }, { name: "cheese", score: 0.83 }] },
-      { name: "basil", label: "busuioc", category: "vegetable", color: "#10b981", desc: "Iarba aromatica proaspata si dulceaga, specifica bucatariei mediteraneene si sosului pesto.", companions: [{ name: "tomato", score: 0.95 }, { name: "olive oil", score: 0.92 }, { name: "cheese", score: 0.84 }, { name: "garlic", score: 0.81 }] },
-      { name: "rosemary", label: "rozmarin", category: "vegetable", color: "#10b981", desc: "Iarba aromatica cu frunze aciculare si aroma puternica de pin, potrivita pentru fripturi la cuptor.", companions: [{ name: "garlic", score: 0.86 }, { name: "chicken", score: 0.85 }, { name: "butter", score: 0.81 }, { name: "beef", score: 0.75 }] },
-      { name: "ginger", label: "ghimbir", category: "vegetable", color: "#10b981", desc: "Radacina picanta si proaspata, ideala in bucataria asiatica, ceaiuri, dulciuri sau sosuri curry.", companions: [{ name: "garlic", score: 0.89 }, { name: "tofu", score: 0.89 }, { name: "honey", score: 0.84 }, { name: "chili", score: 0.81 }] },
-      { name: "lemon", label: "lamaie", category: "vegetable", color: "#10b981", desc: "Fruct citric folosit pentru aroma si aciditate.", companions: [{ name: "salmon", score: 0.90 }, { name: "shrimp", score: 0.88 }, { name: "chicken", score: 0.82 }, { name: "honey", score: 0.80 }] },
-      { name: "cilantro", label: "coriandru", category: "vegetable", color: "#10b981", desc: "Iarba aromatica proaspata si citrica, esentiala in bucataria mexicana si asiatica.", companions: [{ name: "shrimp", score: 0.78 }, { name: "chili", score: 0.77 }, { name: "onion", score: 0.75 }, { name: "garlic", score: 0.72 }] },
+      { name: "garlic", label: "garlic", category: "vegetable", color: "#10b981", desc: "Fundamental aromatic ingredient, universally used to enhance the flavor of savory dishes.", companions: [{ name: "olive oil", score: 0.94 }, { name: "onion", score: 0.89 }, { name: "chicken", score: 0.88 }, { name: "tomato", score: 0.85 }] },
+      { name: "onion", label: "onion", category: "vegetable", color: "#10b981", desc: "Base of any sauce or cooked dish, offers sweetness through caramelization or pungency when raw.", companions: [{ name: "garlic", score: 0.89 }, { name: "beef", score: 0.84 }, { name: "tomato", score: 0.82 }, { name: "butter", score: 0.80 }] },
+      { name: "tomato", label: "tomato", category: "vegetable", color: "#10b981", desc: "Juicy and tangy fruit, the base of many classic sauces, soups, and fresh summer salads.", companions: [{ name: "basil", score: 0.95 }, { name: "olive oil", score: 0.91 }, { name: "garlic", score: 0.85 }, { name: "cheese", score: 0.83 }] },
+      { name: "basil", label: "basil", category: "vegetable", color: "#10b981", desc: "Fresh and slightly sweet aromatic herb, specific to Mediterranean cuisine and pesto sauce.", companions: [{ name: "tomato", score: 0.95 }, { name: "olive oil", score: 0.92 }, { name: "cheese", score: 0.84 }, { name: "garlic", score: 0.81 }] },
+      { name: "rosemary", label: "rosemary", category: "vegetable", color: "#10b981", desc: "Aromatic herb with needle-like leaves and a strong pine aroma, suitable for oven roasts.", companions: [{ name: "garlic", score: 0.86 }, { name: "chicken", score: 0.85 }, { name: "butter", score: 0.81 }, { name: "beef", score: 0.75 }] },
+      { name: "ginger", label: "ginger", category: "vegetable", color: "#10b981", desc: "Spicy and fresh root, ideal in Asian cuisine, teas, sweets, or curry sauces.", companions: [{ name: "garlic", score: 0.89 }, { name: "tofu", score: 0.89 }, { name: "honey", score: 0.84 }, { name: "chili", score: 0.81 }] },
+      { name: "lemon", label: "lemon", category: "vegetable", color: "#10b981", desc: "Citrus fruit used for flavor and acidity.", companions: [{ name: "salmon", score: 0.90 }, { name: "shrimp", score: 0.88 }, { name: "chicken", score: 0.82 }, { name: "honey", score: 0.80 }] },
+      { name: "cilantro", label: "cilantro", category: "vegetable", color: "#10b981", desc: "Fresh and citric aromatic herb, essential in Mexican and Asian cuisine.", companions: [{ name: "shrimp", score: 0.78 }, { name: "chili", score: 0.77 }, { name: "onion", score: 0.75 }, { name: "garlic", score: 0.72 }] },
       
-      { name: "butter", label: "unt", category: "dairy", color: "#06b6d4", desc: "Grasime bogata obtinuta din lapte, adauga textura cremoasa si savoare de neegalat preparatelor.", companions: [{ name: "garlic", score: 0.86 }, { name: "shrimp", score: 0.85 }, { name: "chicken", score: 0.79 }, { name: "onion", score: 0.80 }] },
-      { name: "cheese", label: "branza", category: "dairy", color: "#06b6d4", desc: "Produs lactat variat, de la fin si cremos la maturat si sarat, perfect pentru gratinat.", companions: [{ name: "basil", score: 0.84 }, { name: "tomato", score: 0.83 }, { name: "olive oil", score: 0.79 }, { name: "garlic", score: 0.71 }] },
-      { name: "cream", label: "smantana", category: "dairy", color: "#06b6d4", desc: "Smantana grasa fermentata sau dulce, ideala pentru sosuri catifelate sau echilibrarea condimentelor.", companions: [{ name: "chicken", score: 0.78 }, { name: "butter", score: 0.76 }, { name: "vanilla", score: 0.74 }, { name: "chocolate", score: 0.72 }] },
-      { name: "olive oil", label: "ulei de masline", category: "dairy", color: "#06b6d4", desc: "Ulei vegetal sanatos, baza sosurilor reci si a calirii legumelor in bucataria mediteraneana.", companions: [{ name: "garlic", score: 0.94 }, { name: "basil", score: 0.92 }, { name: "tomato", score: 0.91 }, { name: "cheese", score: 0.79 }] },
+      { name: "butter", label: "butter", category: "dairy", color: "#06b6d4", desc: "Rich fat obtained from milk, adds creamy texture and unmatched flavor to dishes.", companions: [{ name: "garlic", score: 0.86 }, { name: "shrimp", score: 0.85 }, { name: "chicken", score: 0.79 }, { name: "onion", score: 0.80 }] },
+      { name: "cheese", label: "cheese", category: "dairy", color: "#06b6d4", desc: "Varied dairy product, from fine and creamy to aged and salty, perfect for gratinating.", companions: [{ name: "basil", score: 0.84 }, { name: "tomato", score: 0.83 }, { name: "olive oil", score: 0.79 }, { name: "garlic", score: 0.71 }] },
+      { name: "cream", label: "cream", category: "dairy", color: "#06b6d4", desc: "Heavy fermented or sweet cream, ideal for velvety sauces or balancing spices.", companions: [{ name: "chicken", score: 0.78 }, { name: "butter", score: 0.76 }, { name: "vanilla", score: 0.74 }, { name: "chocolate", score: 0.72 }] },
+      { name: "olive oil", label: "olive oil", category: "dairy", color: "#06b6d4", desc: "Healthy vegetable oil, base for cold sauces and sautéing vegetables in Mediterranean cuisine.", companions: [{ name: "garlic", score: 0.94 }, { name: "basil", score: 0.92 }, { name: "tomato", score: 0.91 }, { name: "cheese", score: 0.79 }] },
 
-      { name: "honey", label: "miere", category: "spice", color: "#f59e0b", desc: "Indulcitor natural cu note florale.", companions: [{ name: "lemon", score: 0.80 }, { name: "ginger", score: 0.84 }, { name: "cinnamon", score: 0.79 }, { name: "chicken", score: 0.78 }] },
-      { name: "cinnamon", label: "scortisoara", category: "spice", color: "#f59e0b", desc: "Condiment cald cu aroma dulce-lemnoasa.", companions: [{ name: "honey", score: 0.79 }, { name: "vanilla", score: 0.82 }, { name: "chocolate", score: 0.75 }, { name: "butter", score: 0.70 }] },
-      { name: "vanilla", label: "vanilie", category: "spice", color: "#f59e0b", desc: "Aroma exotica dulce si delicata.", companions: [{ name: "chocolate", score: 0.88 }, { name: "cinnamon", score: 0.82 }, { name: "cream", score: 0.74 }, { name: "honey", score: 0.71 }] },
-      { name: "chocolate", label: "ciocolata", category: "spice", color: "#f59e0b", desc: "Derivat bogat si dulce din cacao.", companions: [{ name: "vanilla", score: 0.88 }, { name: "chili", score: 0.80 }, { name: "cinnamon", score: 0.75 }, { name: "cream", score: 0.72 }] },
-      { name: "chili", label: "chili", category: "spice", color: "#f59e0b", desc: "Ardei iute, adauga caldura si intensitate.", companions: [{ name: "chocolate", score: 0.80 }, { name: "ginger", score: 0.81 }, { name: "garlic", score: 0.78 }, { name: "cilantro", score: 0.77 }] }
+      { name: "honey", label: "honey", category: "spice", color: "#f59e0b", desc: "Natural sweetener with floral notes.", companions: [{ name: "lemon", score: 0.80 }, { name: "ginger", score: 0.84 }, { name: "cinnamon", score: 0.79 }, { name: "chicken", score: 0.78 }] },
+      { name: "cinnamon", label: "cinnamon", category: "spice", color: "#f59e0b", desc: "Warm spice with a sweet-woody aroma.", companions: [{ name: "honey", score: 0.79 }, { name: "vanilla", score: 0.82 }, { name: "chocolate", score: 0.75 }, { name: "butter", score: 0.70 }] },
+      { name: "vanilla", label: "vanilla", category: "spice", color: "#f59e0b", desc: "Exotic sweet and delicate aroma.", companions: [{ name: "chocolate", score: 0.88 }, { name: "cinnamon", score: 0.82 }, { name: "cream", score: 0.74 }, { name: "honey", score: 0.71 }] },
+      { name: "chocolate", label: "chocolate", category: "spice", color: "#f59e0b", desc: "Rich and sweet cocoa derivative.", companions: [{ name: "vanilla", score: 0.88 }, { name: "chili", score: 0.80 }, { name: "cinnamon", score: 0.75 }, { name: "cream", score: 0.72 }] },
+      { name: "chili", label: "chili", category: "spice", color: "#f59e0b", desc: "Hot pepper, adds warmth and intensity.", companions: [{ name: "chocolate", score: 0.80 }, { name: "ginger", score: 0.81 }, { name: "garlic", score: 0.78 }, { name: "cilantro", score: 0.77 }] }
     ];
 
     let activeSeedName = "chicken";
@@ -2638,7 +2404,7 @@ for hits in results:
       });
 
       const allIngs = [seedNode.label, ...companionsLabels].join(', ');
-      const promptText = `Propune o reteta inventiva care sa combine armonios urmatoarele ingrediente: ${allIngs}. Explica profilul de aroma rezultat.`;
+      const promptText = `Suggest an inventive recipe that harmoniously combines the following ingredients: ${allIngs}. Explain the resulting flavor profile.`;
 
       // Switch tab to Chatbot first
       const chatbotTabBtn = document.querySelector('.tab-button[data-tab="chatbot"]');
@@ -2683,7 +2449,7 @@ for hits in results:
     draw();
   }
 
-  initHnswSimulator();
+  initHnswPathfinder();
   initShowdown();
   initThematicExplorer();
   initCulinaryGalaxy();
@@ -2696,7 +2462,7 @@ let hnswResults = [];
 async function searchHNSW() {
   const query = document.getElementById('hnswQueryInput').value.trim();
   if (!query) {
-    alert('Introduceți o interogare!');
+    alert('Enter a query!');
     return;
   }
 
@@ -2705,7 +2471,7 @@ async function searchHNSW() {
   const statsDiv = document.getElementById('hnswStats');
   const sendBtn = document.getElementById('hnswSendCreatorBtn');
 
-  statusDiv.textContent = '🔄 Se caută cu HNSW...';
+  statusDiv.textContent = '🔄 Searching with HNSW...';
   resultsDiv.innerHTML = '';
   selectedHNSWRecipe = null;
   sendBtn.disabled = true;
@@ -2739,11 +2505,11 @@ async function searchHNSW() {
     statsDiv.style.display = 'grid';
     statsDiv.innerHTML = `
       <div style="background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.2); padding: 16px; border-radius: var(--radius-sm);">
-        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Total Pași</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Total Steps</div>
         <div style="font-size: 1.3rem; font-weight: 700; color: var(--violet-lt);">${data.total_steps}</div>
       </div>
       <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.2); padding: 16px; border-radius: var(--radius-sm);">
-        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Noduri Vizitate</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Visited Nodes</div>
         <div style="font-size: 1.3rem; font-weight: 700; color: var(--cyan);">${data.visited_nodes.length}</div>
       </div>
       <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: var(--radius-sm);">
@@ -2752,9 +2518,9 @@ async function searchHNSW() {
       </div>
     `;
 
-    statusDiv.textContent = `✅ Găsite ${hnswResults.length} rețete în ${data.total_steps} pași`;
+    statusDiv.textContent = `✅ Found ${hnswResults.length} recipes in ${data.total_steps} steps`;
   } catch (error) {
-    statusDiv.textContent = `❌ Eroare: ${error.message}`;
+    statusDiv.textContent = `❌ Error: ${error.message}`;
     statusDiv.style.color = 'var(--amber)';
   }
 }
@@ -2818,7 +2584,7 @@ async function sendHNSWResultToCreator() {
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       animation: slideIn 0.3s ease-out;
     `;
-    notif.textContent = `✅ ${ingredients.length} ingrediente din "${recipeName}" adăugate`;
+    notif.textContent = `✅ ${ingredients.length} ingredients from "${recipeName}" added`;
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
 
@@ -2834,7 +2600,7 @@ window.addEventListener('message', (event) => {
   const data = event.data;
   if (data && data.type === 'HNSW_ADD_INGREDIENTS') {
     const ingredients = data.ingredients || [];
-    const recipeName = data.recipe || 'Rețetă';
+    const recipeName = data.recipe || 'Recipe';
 
     // Switch to Creator tab
     const creatorTabBtn = document.querySelector('.tab-button[data-tab="creator"]');
@@ -2873,7 +2639,7 @@ window.addEventListener('message', (event) => {
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         animation: slideIn 0.3s ease-out;
       `;
-      notif.textContent = `✅ ${ingredients.length} ingrediente din "${recipeName}" adăugate în Creator`;
+      notif.textContent = `✅ ${ingredients.length} ingredients from "${recipeName}" added to Creator`;
       document.body.appendChild(notif);
       setTimeout(() => notif.remove(), 3000);
 

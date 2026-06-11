@@ -1,9 +1,10 @@
 import re
 
-with open("frontend/index-new.html", "r") as f:
+with open("frontend/index.html", "r") as f:
     content = f.read()
 
 replacements = {
+    # Header & Tab titles
     "🍳 AI Recipe Inventor PRO — RAG Engine": "🍳 AI Recipe Agent PRO — Iterative RAG",
     "Motor RAG · TF-IDF · Chatbot · Shopping · Fără LLM": "Agentic RAG · Dense Retrieval · Semantic Search",
     "rețete indexate": "recipes indexed",
@@ -13,12 +14,16 @@ replacements = {
     "💬 Chatbot": "💬 Chatbot",
     "🛒 Shopping List": "🛒 Shopping List",
     "ℹ️ About": "ℹ️ About",
+    
+    # Creator Tab
     "Ce ai în bucătărie?": "What's in your kitchen?",
     "Adaugă ingredientele disponibile și generăm rețete creative pentru tine.": "Add your available ingredients and let the Agent build recipes for you.",
     "Ingrediente": "Ingredients",
     "Ex: pui, usturoi, lămâie… apasă Enter": "E.g. chicken, garlic, lemon... press Enter",
     "Apasă <kbd>Enter</kbd> sau <kbd>,</kbd> după fiecare ingredient.": "Press <kbd>Enter</kbd> or <kbd>,</kbd> after each ingredient.",
     "✕ Șterge tot": "✕ Clear all",
+    "Clear all": "Clear all",
+    "Șterge toate": "Clear all",
     "Încearcă:": "Try:",
     "Bucătărie": "Cuisine",
     "🌍 Orice": "🌍 Any",
@@ -41,9 +46,29 @@ replacements = {
     "Rețetele Tale": "Your Recipes",
     "← Caută din nou": "← Search again",
     "← Încearcă din nou": "← Try again",
+    
+    # Advanced Params in Creator
+    "️ Parametri RAG Avansați (Strategie, Prag, MMR)": "⚙️ Advanced RAG Parameters (Strategy, Threshold, MMR)",
+    "Pondere Semantică: ": "Semantic Weight (Alpha): ",
+    "Prag Auto-Corecție Agent: ": "Agent Self-Correction Threshold: ",
+    "Pui & Lămâie": "Chicken & Lemon",
+    "Ouă & Spanac": "Eggs & Spinach",
+    "Clasic Italian": "Classic Italian",
+    "Franțuzesc": "French Style",
+    "Vegan Indian": "Vegan Indian",
+    "pui,usturoi,lămâie,rozmarin": "chicken,garlic,lemon,rosemary",
+    "ouă,spanac,feta,usturoi": "eggs,spinach,feta,garlic",
+    "pastă,roșii,mozzarella,busuioc": "pasta,tomato,mozzarella,basil",
+    "vită,vin roșu,ciuperci,cimbru": "beef,red wine,mushroom,thyme",
+    "linte,ceapă,turmeric,ghimbir": "lentils,onion,turmeric,ginger",
+
+    # Chatbot Tab
+    "Chatbot RAG Conversațional": "Conversational RAG Chatbot",
     "Vorbește cu asistentul tău AI. Spune-i ce ai în cămară și primești rețete potrivite!": "Talk to your AI Assistant. Tell it what you have and get recipes!",
+    
+    # Shopping List Tab
     "🛒 Lista de Cumpărături": "🛒 Shopping List",
-    "Ingrediente necesare pentru rețetele tale": "Ingredients needed for your recipes",
+    "Ingredients necesare pentru rețetele tale": "Ingredients needed for your recipes",
     "📋 Export": "📋 Export",
     "🗑️ Șterge": "🗑️ Clear",
     "Lista goală": "Empty List",
@@ -52,13 +77,93 @@ replacements = {
     "Budget estimat": "Est. Budget",
     "Adaugă ingredient...": "Add ingredient...",
     "🔄 Substituții Disponibile (RAG)": "🔄 Available Substitutes (RAG)",
-    "Ingrediente alternative bazate pe rețetele din bază:": "Alternative ingredients based on vector search:",
+    "Ingredients alternative bazate pe rețetele din bază:": "Alternative ingredients based on vector search:",
+    
+    # RAG Playground Tab
+    "RAG Playground & Benchmarking Arena": "RAG Playground & Benchmarking Arena",
+    "Testează și compară tehnologiile RAG on-premise. Ajustează ponderile de căutare hibridă, setează praguri dinamice, rulează analize comparative între modele de embeddings și baze de date, și evaluează acuratețea algoritmilor de retrieval în timp real.": "Test and compare on-premises RAG setups. Adjust hybrid weight parameters, set dynamic thresholds, run benchmark comparisons between embedding models, and evaluate retrieval accuracy in real time.",
+    "Căutare...": "Search...",
+    "Metodă Retrieval": "Retrieval Method",
+    "Pondere Semantică (Alpha): ": "Semantic Weight (Alpha): ",
+    "(Elimină rețetele slab relevante)": "(Filters out low relevance results)",
+    "Activează Diversificare MMR": "Enable MMR Diversification",
+    "Filtre active: ": "Active filters: ",
+    "Niciunul (Căutare generală)": "None (General search)",
+    " Rulează Retrieval": " Run Retrieval",
+    "Vizualizează Prompt-ul RAG Augmented trimis la LLM": "View the RAG Augmented Prompt sent to the LLM",
+    "Evaluare Acuratețe Retrieval (Test Bench)": "Retrieval Accuracy Evaluation (Test Bench)",
+    "Evaluează acuratețea pe 5 interogări standard folosind setul de date local. Calculează Precision, Recall și Mean Reciprocal Rank (MRR).": "Evaluate retrieval accuracy on 5 baseline queries using the local dataset. Calculates Precision, Recall, and Mean Reciprocal Rank (MRR).",
+    " Rulează Suita de Teste": " Run Test Suite",
+    "Se evaluează performanța BM25 vs Semantică vs Hibrid...": "Evaluating performance: BM25 vs Semantic vs Hybrid...",
+    
+    # Vector Databases Tab
+    "Vector Database Explorer": "Vector Database Explorer",
+    "Explorează în detaliu cum funcționează baza de date vectorială a sistemului RAG: compară modele de embeddings on-premise, \n          vizualizează coordonatele semantice ale rețetelor pe o hartă radar 5D, urmărește pas cu pas algoritmul HNSW de navigare \n          în grafuri și interoghează live motorul vectorial pentru a vedea codul SDK și datele brute returnate.": "Explore in detail how the RAG system's vector database operates: compare on-premise embedding models, visualize recipe semantic coordinates on a 5D radar map, trace the HNSW graph search path step-by-step, and query the vector engine to view SDK code and raw JSON payloads.",
+    "Modele de Embeddings On-Premise (Benchmarker Live)": "On-Premise Embedding Models (Live Benchmarker)",
+    "Generează un vector în timp real și compară viteza de throughput (vectori/sec) a modelului local activ cu estimările altor modele.": "Encode a vector in real time and compare the throughput speed (vectors/sec) of the active local model with other estimated models.",
+    "Scrie ceva pentru codificare...": "Type something to encode...",
+    "Apasă pe 'Run Benchmark' pentru a calcula latența locală!": "Click 'Run Benchmark' to calculate local CPU latency!",
+    "pui, usturoi, lămâie, rozmarin": "chicken, garlic, lemon, rosemary",
+    "Rețetă de Pornire (Start Recipe)": "Starting Recipe",
+    "Rețetă de Sosire (End Target)": "Target Recipe",
+    "▶ Construiește Puntea Culinară": "▶ Build Flavor Bridge",
+    "Alege două rețete diferite pentru a le uni gusturile.": "Choose two different recipes to bridge their flavor profiles.",
+    "Rețetă pe Traseu:": "Recipe on Path:",
+    "Puntea culinară va fi reprezentată grafic aici...": "The flavor bridge path will be displayed here...",
+    "⚡ Inventează Rețetă Fusion din Punte": "⚡ Invent Fusion Recipe from Bridge",
+    "🔍 HNSW Navigator - Căutare Inteligentă în Grafuri Culinare": "🔍 HNSW Navigator - Intelligent Search in Culinary Graphs",
+    "Navighează prin structura ierarhică HNSW pentru a găsi rețete relevante. Selectează una din rezultate și trimite ingredientele direct la Creator pentru a inventa variații noi.": "Navigate through the hierarchical HNSW structure to find relevant recipes. Select a result and send its ingredients directly to the Creator to invent new variations.",
+    "Definește Interogare": "Define Query",
+    "Ce caut?": "What to search?",
+    "Ex: pui cu legume, paste carbonara, somon...": "E.g. chicken with vegetables, pasta carbonara, salmon...",
+    "▶ Caută cu HNSW": "▶ Search with HNSW",
+    "Așteptând interogare...": "Waiting for query...",
+    "Rezultate HNSW (Top-5)": "HNSW Results (Top-5)",
+    "Rezultatele vor apărea aici...": "Results will appear here...",
+    "→ Trimite la Creator": "→ Send to Creator",
+    "Selectează o rețetă pentru a activa": "Select a recipe to activate",
+
+    # Galaxy Tab
+    "Galaxie Ingrediente": "Ingredient Galaxy",
+    "Galaxia Interactivă a Ingredientslor": "Interactive Ingredient Galaxy",
+    "Galaxia Interactivă a Ingredientelor": "Interactive Ingredient Galaxy",
+    "Vizualizați asocierile aromatice și sinergia dintre ingrediente. Selectați un ingredient central pentru a-i vedea sateliții culinari (ingrediente compatibile) și trimiteți combinația direct în Creator sau Chatbot pentru a inventa o rețetă nouă.": "Visualize flavor pairings and synergies between ingredients. Select a seed ingredient to view its culinary satellites (compatible ingredients) and send the combination directly to the Creator or Chatbot to invent a new recipe.",
+    "Proteine": "Proteins",
+    "Legume & Ierburi": "Vegetables & Herbs",
+    "Lactate & Grăsimi": "Dairy & Fats",
+    "Condimente & Dulci": "Spices & Sweet",
+    "Sfat: Faceți click pe nodurile din galaxie pentru a schimba centrul aromatic": "Tip: Click on nodes in the galaxy to change the aromatic center",
+    "Ingredient Central": "Seed Ingredient",
+    "Combinații Recomandate & Sinergie": "Recommended Pairings & Synergy",
+    "Compatibilitate Aromatică:": "Aromatic Compatibility:",
+    "Pui": "Chicken",
+    "Proteina centrala versatila, compatibila cu profiluri aromatice ierboase, usturoiate si citrice.": "A versatile protein, compatible with herbaceous, garlicky, and citrus flavor profiles.",
+    "Trimite în Creator": "Send to Creator",
+    "Întreabă Chatbot": "Ask Chatbot",
+    
+    # About Section
     "ℹ️ Despre AI Recipe Inventor PRO": "ℹ️ About AI Recipe Agent PRO",
-    "AI Recipe Inventor PRO · RAG cu TF-IDF · Chatbot · Shopping List · Fără LLM · Made with ❤️": "AI Recipe Agent PRO · ChromaDB Dense Retrieval · Iterative Agent · Made with ❤️"
+    "ℹ️ Despre AI Recipe Agent PRO": "ℹ️ About AI Recipe Agent PRO",
+    "Tehnologie RAG": "RAG Technology",
+    "Statistici": "Statistics",
+    "Features PRO": "PRO Features",
+    "Obiective de Cercetare & Analiză RAG": "RAG Research & Analysis Objectives",
+    "Pentru proiectele curente, aplicația servește ca platformă practică de testare și comparare a diferitelor tehnologii și abordări RAG on-premise:": "For the current projects, the application serves as a practical playground to test and compare different on-premise RAG technologies and approaches:",
+    "RAG Retrieval & Embeddings": "RAG Retrieval & Embeddings",
+    "Compararea performanței dintre Sparse Retrieval (BM25) și Dense Semantic Search utilizând modele locale de embeddings (cum ar fi <code>all-MiniLM-L6-v2</code>).": "Comparing the performance between Sparse Retrieval (BM25) and Dense Semantic Search using local embedding models (such as <code>all-MiniLM-L6-v2</code>).",
+    "Prag Dinamic de Relevanță": "Dynamic Relevance Threshold",
+    "Stabilirea unui threshold dinamic pentru relevanță (Confidence Score), permițând Agentului determinist să ia decizii de re-căutare și auto-corecție.": "Establishing a dynamic threshold for relevance (Confidence Score), allowing the deterministic Agent to make search rewrite and self-correction decisions.",
+    "Diversificare & Reranking": "Diversity & Reranking",
+    "Evaluarea impactului algoritmului de re-ranking (cum ar fi MMR) pentru îmbunătățirea relevanței și diversității recomandărilor de rețete.": "Evaluating the impact of the re-ranking algorithm (such as MMR) to improve the relevance and diversity of recipe recommendations.",
+    "Baze de Date Vectoriale On-Prem": "On-Premise Vector Databases",
+    "Rularea exclusiv locală a bazei de date ChromaDB, păstrând toate datele securizate pe infrastructură on-premises fără conexiuni externe.": "Running ChromaDB entirely locally, keeping all data secure on-premises without external connections.",
+    "\"Scopul este de a rămâne într-o zonă suficient de practică și relevantă, fără a depinde de complexitatea unui proiect comercial în această etapă.\"": "\"The goal is to remain in a practical and relevant scope, without depending on the complexity of a commercial project at this stage.\"",
+    "AI Recipe Inventor PRO · RAG cu TF-IDF · Chatbot · Shopping List · Fără LLM · Made with ❤️": "AI Recipe Agent PRO · ChromaDB Dense Retrieval · Iterative Agent · Made with ❤️",
+    "AI Recipe Agent PRO · RAG cu TF-IDF · Chatbot · Shopping List · Fără LLM · Made with ❤️": "AI Recipe Agent PRO · ChromaDB Dense Retrieval · Iterative Agent · Made with ❤️"
 }
 
 for ro, en in replacements.items():
     content = content.replace(ro, en)
 
-with open("frontend/index-new.html", "w") as f:
+with open("frontend/index.html", "w") as f:
     f.write(content)

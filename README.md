@@ -18,7 +18,6 @@ Proiect_RAG/
 │   └── requirements.txt      # Dependențe Python (ChromaDB, SentenceTransformers, FastAPI, etc.)
 ├── frontend/
 │   ├── index.html            # UI-ul principal premium în stil Glassmorphism Dark
-│   ├── index-new.html        # UI alternativ pentru testarea noilor implementări
 │   ├── style.css             # Design vizual premium, culori HSL, carduri de sticlă și animații
 │   ├── app.js                # Controleri JS, bindings pentru benchmark-uri, simulator DB și API-uri
 │   └── chatbot.html          # Interfață separată pentru modul chatbot dedicat
