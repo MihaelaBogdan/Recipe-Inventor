@@ -13,15 +13,40 @@ from sentence_transformers import SentenceTransformer
 SYNONYMS = {
     "chicken": ["poultry", "breast", "thighs"],
     "beef": ["meat", "steak", "ground beef"],
-    "tomato": ["tomatoes", "cherry tomatoes", "passata"],
-    "pasta": ["spaghetti", "penne", "noodles", "linguine"],
-    "cheese": ["parmesan", "feta", "mozzarella", "cheddar"],
+    "tomato": ["tomatoes", "cherry tomatoes", "passata", "sauce"],
+    "pasta": ["spaghetti", "penne", "noodles", "linguine", "macaroni", "bucatini"],
+    "cheese": ["parmesan", "feta", "mozzarella", "cheddar", "pecorino"],
     "egg": ["eggs", "yolk"],
+    
+    # Romanian-English translations for shopping list items and recipe ingredients
+    "pui": ["chicken", "poultry", "thighs", "breast"],
+    "usturoi": ["garlic", "cloves"],
+    "sare": ["salt"],
+    "piper": ["pepper", "black pepper"],
+    "ulei": ["oil", "vegetable oil", "olive oil"],
+    "ceapa": ["onion", "onions"],
+    "chimen": ["cumin"],
+    "chili": ["chili", "powder"],
+    "rosii": ["tomato", "tomatoes", "sauce"],
+    "sos": ["sauce", "tomato"],
+    "macaroane": ["macaroni", "elbow"],
+    "paste": ["pasta", "spaghetti", "bucatini"]
 }
 
 NORMALIZATIONS = {
     "tomatoes": "tomato", "potatoes": "potato", "onions": "onion",
     "mushrooms": "mushroom", "eggs": "egg", "lemons": "lemon",
+    
+    # Romanian character normalization and common plurals
+    "ceapă": "ceapa",
+    "cepe": "ceapa",
+    "roșii": "rosii",
+    "roșie": "rosii",
+    "sare": "sare",
+    "tăiței": "paste",
+    "piper": "piper",
+    "paste": "paste",
+    "macaroane": "macaroane"
 }
 
 class BM25:
