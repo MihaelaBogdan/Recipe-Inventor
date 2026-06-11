@@ -20,7 +20,7 @@ from object_detector import DETECTOR
 from hnsw_simulator import HNSWSimulator
 
 app = FastAPI(
-    title="AI Recipe Agent PRO",
+    title="Recipe Inventor",
     description="Agentic RAG with Dense Retrieval and Semantic Search",
     version="3.0.0",
 )

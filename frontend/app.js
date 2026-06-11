@@ -2087,6 +2087,10 @@ for hits in results:
 
     const ctx = canvas.getContext('2d');
     const select = document.getElementById('galaxySeedSelect');
+    if (!select) {
+      console.error("galaxySeedSelect not found");
+      return;
+    }
     const selectedTitle = document.getElementById('galaxySelectedTitle');
     const selectedDesc = document.getElementById('galaxySelectedDesc');
     const list = document.getElementById('galaxyCompanionsList');
@@ -2351,7 +2355,20 @@ for hits in results:
         const tooltipY = mouseY - 45;
         
         ctx.beginPath();
-        ctx.roundRect(tooltipX, tooltipY, 150, 36, 6);
+        // Fallback for older browsers instead of roundRect
+        const r = 6;
+        const w = 150;
+        const h = 36;
+        ctx.moveTo(tooltipX + r, tooltipY);
+        ctx.lineTo(tooltipX + w - r, tooltipY);
+        ctx.arcTo(tooltipX + w, tooltipY, tooltipX + w, tooltipY + r, r);
+        ctx.lineTo(tooltipX + w, tooltipY + h - r);
+        ctx.arcTo(tooltipX + w, tooltipY + h, tooltipX + w - r, tooltipY + h, r);
+        ctx.lineTo(tooltipX + r, tooltipY + h);
+        ctx.arcTo(tooltipX, tooltipY + h, tooltipX, tooltipY + h - r, r);
+        ctx.lineTo(tooltipX, tooltipY + r);
+        ctx.arcTo(tooltipX, tooltipY, tooltipX + r, tooltipY, r);
+        ctx.closePath();
         ctx.fill();
         ctx.stroke();
 
@@ -2658,6 +2675,62 @@ window.addEventListener('message', (event) => {
     }
   }
 });
+
+// ── Shopping List + Vector Search ────────────────────────────────────────
+async function findRecipesFromShoppingList() {
+  if (!shoppingItems || Object.keys(shoppingItems).length === 0) {
+    alert('Add ingredients to your shopping list first!');
+    return;
+  }
+
+  const ingredients = Object.keys(shoppingItems).join(', ');
+  const container = document.getElementById('shoppingRecipesList');
+  container.innerHTML = '<div style="text-align: center; padding: 20px;"><div class="spinner" style="margin: 0 auto 12px;"></div><p style="color: var(--text-muted);">Searching for recipes...</p></div>';
+
+  try {
+    const response = await fetch(`${API}/api/playground/retrieve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: ingredients,
+        method: 'hybrid',
+        alpha: 0.7,
+        threshold: 0.0,
+        use_mmr: false,
+        mmr_lambda: 0.5,
+        cuisine: 'Any',
+        difficulty: 'Any',
+        max_time: null,
+        top_k: 5
+      })
+    });
+
+    if (!response.ok) throw new Error('Search failed');
+    const data = await response.json();
+
+    if (data.recipes.length === 0) {
+      container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">No recipes found for these ingredients</div>';
+      return;
+    }
+
+    container.innerHTML = data.recipes.map((r, idx) => `
+      <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+          <div>
+            <h4 style="font-weight: 600; color: #fff; margin: 0; margin-bottom: 4px;">${r.title}</h4>
+            <div style="font-size: 0.8rem; color: var(--text-muted);">${r.cuisine} · ${r.difficulty}</div>
+          </div>
+          <div style="background: rgba(6, 182, 212, 0.2); color: var(--cyan); font-size: 0.8rem; font-weight: 600; padding: 3px 8px; border-radius: 4px;">
+            ${(r.retrieval_score * 100).toFixed(0)}%
+          </div>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">${r.ingredients.slice(0, 3).join(', ')}...</div>
+      </div>
+    `).join('');
+  } catch (error) {
+    container.innerHTML = `<div style="color: var(--rose-lt); padding: 20px;">Error: ${error.message}</div>`;
+  }
+}
 
 // ── Boot ──────────────────────────────────────────────────────────────────
 init();

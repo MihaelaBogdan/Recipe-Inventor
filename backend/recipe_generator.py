@@ -112,12 +112,12 @@ COOKING_TIPS: dict[str, list[str]] = {
     "Japanese":      ["Quality ingredients matter above all—use the best you can find.", "Taste constantly and adjust with small amounts—precision is everything in Japanese cooking."],
     "Vietnamese":    ["Char your aromatics directly over a flame for deeper, more complex broth.", "Finish with a squeeze of lime and fresh herbs right before eating."],
     "Mediterranean": ["Use the best olive oil you can afford—it's often the star ingredient.", "Fresh herbs added at the end preserve aromatic oils and vibrant colour."],
-    "French":        ["Don't rush caramelisation—patience creates extraordinary depth.", "Deglaze pans to capture every flavorful bit of fond (caramelised bits) on the surface."],
-    "Mexican":       ["Char tomatoes and chilies on a dry skillet for authentic smoky depth.", "Fresh lime squeezed at the table is not optional—it brightens everything."],
-    "American":      ["Season in layers throughout, not only at the end.", "Let braised meats rest 10 minutes before serving—they reabsorb juices."],
-    "Korean":        ["Let proteins sit undisturbed when searing for maximum caramelisation.", "Finish with a drizzle of sesame oil off the heat—it loses aroma when cooked."],
-    "Middle Eastern":["Toast whole spices before grinding to unlock their full aromatic potential.", "A squeeze of lemon right before serving brightens the entire dish instantly."],
-    "International": ["Build flavours in layers for the most complex result.", "Taste and adjust throughout—seasoning is an ongoing process, not a final step."],
+    "French":        [],
+    "Mexican":       [],
+    "American":      [],
+    "Korean":        [],
+    "Middle Eastern":[],
+    "International": [],
 }
 
 
