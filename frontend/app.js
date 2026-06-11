@@ -1318,6 +1318,10 @@ for hits in results:
                   <div> Multilingual support: <strong style="color: #fff;">${esc(m.multilingual)}</strong></div>
                 </div>
 
+                <div style="margin-top: 6px; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid rgba(255,255,255,0.04); font-size: 0.76rem; color: var(--text-muted); line-height: 1.4;">
+                  <strong style="color: var(--violet-lt);">Impact Proiect:</strong> ${esc(m.applicability)}
+                </div>
+
                 <div style="margin-top: 4px;">
                   <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
                     <span style="color: var(--text-muted);">Throughput: <strong style="color: #fff;">${m.throughput} vectors/sec</strong></span>

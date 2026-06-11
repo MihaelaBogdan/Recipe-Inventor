@@ -432,14 +432,15 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
     
     models = [
         {
-            "name": "all-MiniLM-L6-v2 (Activ)",
+            "name": "paraphrase-multilingual-L12 (Activ)",
             "active": True,
             "dimensions": 384,
-            "size_mb": 90,
-            "ram_mb": 150,
-            "multilingual": "Redusă (EN)",
+            "size_mb": 120,
+            "ram_mb": 200,
+            "multilingual": "Excelenta (RO/EN)",
             "latency_ms": local_latency,
-            "throughput": int(1000.0 / (local_latency / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / (local_latency / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Echilibru optim: indexeaza baza de retete local in sub 3 secunde si suporta maparea automata a ingredientelor (ex: 'usturoi' -> 'garlic')."
         },
         {
             "name": "multilingual-e5-small",
@@ -447,9 +448,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 384,
             "size_mb": 130,
             "ram_mb": 220,
-            "multilingual": "Excelentă (RO)",
+            "multilingual": "Excelenta (RO)",
             "latency_ms": local_latency * 1.4,
-            "throughput": int(1000.0 / ((local_latency * 1.4) / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / ((local_latency * 1.4) / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Performanta lingvistica ridicata pe romana, dar necesita prefixe de interogare ('query: ') care complica integrarea cu baza de date."
         },
         {
             "name": "bge-small-en-v1.5",
@@ -457,9 +459,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 384,
             "size_mb": 130,
             "ram_mb": 220,
-            "multilingual": "Redusă (EN)",
+            "multilingual": "Redusa (EN)",
             "latency_ms": local_latency * 1.3,
-            "throughput": int(1000.0 / ((local_latency * 1.3) / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / ((local_latency * 1.3) / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Foarte rapid pe CPU, dar suportul multilingual scazut determina esecul potrivirii automate a ingredientelor introduse in limba romana."
         },
         {
             "name": "multilingual-e5-base",
@@ -467,9 +470,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 768,
             "size_mb": 1100,
             "ram_mb": 1500,
-            "multilingual": "Superioară (RO)",
+            "multilingual": "Superioara (RO)",
             "latency_ms": local_latency * 5.1,
-            "throughput": int(1000.0 / ((local_latency * 5.1) / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / ((local_latency * 5.1) / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Acuratete maxima pentru asocieri culinare fine, dar dimensiunea mare blocheaza chatul live pe hardware local standard (latenta > 400ms)."
         }
     ]
     return {"models": models}
