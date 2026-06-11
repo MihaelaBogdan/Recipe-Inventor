@@ -1404,18 +1404,8 @@ for hits in results:
     const recipeBSelect = document.getElementById('thematicRecipeB');
     const thematicSimVal = document.getElementById('thematicSimVal');
     const thematicExplanation = document.getElementById('thematicExplanation');
-    const vectorDimGrid = document.getElementById('vectorDimGrid');
 
     if (!recipeASelect || !recipeBSelect) return;
-
-    // Dimensions labels & metadata
-    const dimensions = [
-      { name: "Proteine & Structură (Sărat vs Dulce)", desc: "Savuros, carne/pește vs texturi ușoare/zahăr" },
-      { name: "Intensitate Condimente & Mirodenii", desc: "Cantitatea de piper, ierburi aromatice, ghimbir, chili" },
-      { name: "Dulceață & Profil Desert", desc: "Zahăr, ciocolată, fructe dulci, vanilie" },
-      { name: "Umiditate & Densitate Sos", desc: "Sosuri abundente, supe, tocănițe vs preparate uscate/grătar" },
-      { name: "Origine & Caracter Exotic", desc: "Rețete globale, asiatice/mediteraneene vs preparate pur tradiționale" }
-    ];
 
     function updateThematicComparison() {
       const keyA = recipeASelect.value;
@@ -1448,6 +1438,178 @@ for hits in results:
         thematicSimVal.style.color = "var(--red)";
       }
 
+      // Draw radar chart on canvas
+      const canvas = document.getElementById('thematicRadarCanvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          const devicePixelRatio = window.devicePixelRatio || 1;
+          const displayWidth = 300;
+          const displayHeight = 260;
+          
+          canvas.width = displayWidth * devicePixelRatio;
+          canvas.height = displayHeight * devicePixelRatio;
+          canvas.style.width = displayWidth + "px";
+          canvas.style.height = displayHeight + "px";
+          
+          ctx.scale(devicePixelRatio, devicePixelRatio);
+          ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+          const centerX = displayWidth / 2;
+          const centerY = displayHeight / 2 + 10;
+          const maxRadius = 80;
+
+          // 1. Draw grid rings (concentric pentagons representing -1.0, 0.0, 1.0)
+          // R-factor mapping: -1.0 -> 0.1, 0.0 -> 0.55, 1.0 -> 1.0
+          const gridRings = [0.1, 0.55, 1.0];
+          
+          ctx.lineWidth = 1;
+          gridRings.forEach(ring => {
+            ctx.beginPath();
+            for (let j = 0; j < 5; j++) {
+              const angle = (j * 2 * Math.PI / 5) - Math.PI / 2;
+              const x = centerX + Math.cos(angle) * maxRadius * ring;
+              const y = centerY + Math.sin(angle) * maxRadius * ring;
+              if (j === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            if (ring === 0.55) {
+              // Zero value line - dashed
+              ctx.strokeStyle = "rgba(255, 255, 255, 0.18)";
+              ctx.setLineDash([3, 3]);
+            } else {
+              ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+              ctx.setLineDash([]);
+            }
+            ctx.stroke();
+          });
+          ctx.setLineDash([]); // Reset line dash
+
+          // 2. Draw 5 radial axis lines
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.12)";
+          for (let j = 0; j < 5; j++) {
+            const angle = (j * 2 * Math.PI / 5) - Math.PI / 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + Math.cos(angle) * maxRadius, centerY + Math.sin(angle) * maxRadius);
+            ctx.stroke();
+          }
+
+          // 3. Draw grid labels along the vertical axis (shifted slightly to the left)
+          ctx.font = "8px sans-serif";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          ctx.fillText("-1.0", centerX - 4, centerY - maxRadius * 0.1);
+          ctx.fillText("0.0", centerX - 4, centerY - maxRadius * 0.55);
+          ctx.fillText("+1.0", centerX - 4, centerY - maxRadius * 1.0);
+
+          // 4. Draw axis labels in Romanian
+          const axisLabels = ["PROTEINE", "CONDIMENTE", "DESERT", "SOS", "EXOTIC"];
+          ctx.font = "bold 9px sans-serif";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+          
+          for (let j = 0; j < 5; j++) {
+            const angle = (j * 2 * Math.PI / 5) - Math.PI / 2;
+            const x = centerX + Math.cos(angle) * (maxRadius + 14);
+            const y = centerY + Math.sin(angle) * (maxRadius + 10);
+            
+            // Adjust alignment depending on quadrant
+            if (Math.abs(Math.cos(angle)) < 0.1) {
+              ctx.textAlign = "center";
+            } else if (Math.cos(angle) > 0) {
+              ctx.textAlign = "left";
+            } else {
+              ctx.textAlign = "right";
+            }
+            
+            if (Math.abs(Math.sin(angle)) < 0.1) {
+              ctx.textBaseline = "middle";
+            } else if (Math.sin(angle) > 0) {
+              ctx.textBaseline = "top";
+            } else {
+              ctx.textBaseline = "bottom";
+            }
+            
+            ctx.fillText(axisLabels[j], x, y);
+          }
+
+          // Helper to draw recipe radar polygon
+          function drawRecipeRadar(vector, fillColor, strokeColor) {
+            ctx.beginPath();
+            for (let j = 0; j < 5; j++) {
+              const val = vector[j];
+              const rFactor = 0.1 + ((val + 1) / 2) * 0.9;
+              const angle = (j * 2 * Math.PI / 5) - Math.PI / 2;
+              const x = centerX + Math.cos(angle) * maxRadius * rFactor;
+              const y = centerY + Math.sin(angle) * maxRadius * rFactor;
+              if (j === 0) ctx.moveTo(x, y);
+              else ctx.lineTo(x, y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw vertex dots
+            for (let j = 0; j < 5; j++) {
+              const val = vector[j];
+              const rFactor = 0.1 + ((val + 1) / 2) * 0.9;
+              const angle = (j * 2 * Math.PI / 5) - Math.PI / 2;
+              const x = centerX + Math.cos(angle) * maxRadius * rFactor;
+              const y = centerY + Math.sin(angle) * maxRadius * rFactor;
+              
+              ctx.beginPath();
+              ctx.arc(x, y, 3, 0, 2 * Math.PI);
+              ctx.fillStyle = strokeColor;
+              ctx.fill();
+              ctx.strokeStyle = "#ffffff";
+              ctx.lineWidth = 1;
+              ctx.stroke();
+            }
+          }
+
+          // 5. Draw Recipe A (purple / violet-lt)
+          drawRecipeRadar(rA.vector, "rgba(168, 85, 247, 0.18)", "rgba(168, 85, 247, 0.85)");
+
+          // 6. Draw Recipe B (cyan)
+          drawRecipeRadar(rB.vector, "rgba(6, 182, 212, 0.18)", "rgba(6, 182, 212, 0.85)");
+
+          // 7. Draw Legend
+          ctx.font = "9px sans-serif";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+
+          const titleA = rA.title.split(' ').slice(0, 2).join(' ');
+          const titleB = rB.title.split(' ').slice(0, 2).join(' ');
+
+          // Recipe A Legend
+          ctx.beginPath();
+          ctx.arc(15, 15, 4, 0, 2 * Math.PI);
+          ctx.fillStyle = "rgba(168, 85, 247, 0.25)";
+          ctx.fill();
+          ctx.strokeStyle = "rgba(168, 85, 247, 0.85)";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+          ctx.fillText(titleA, 24, 15);
+
+          // Recipe B Legend
+          ctx.beginPath();
+          ctx.arc(165, 15, 4, 0, 2 * Math.PI);
+          ctx.fillStyle = "rgba(6, 182, 212, 0.25)";
+          ctx.fill();
+          ctx.strokeStyle = "rgba(6, 182, 212, 0.85)";
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+          ctx.fillText(titleB, 174, 15);
+        }
+      }
+
       // Semantic explanation
       let expl = "";
       if (similarity > 0.6) {
@@ -1461,58 +1623,124 @@ for hits in results:
         <span style="color: var(--text-muted); font-size: 0.8rem;">
           Notă: Modelele reale folosesc 384 de astfel de dimensiuni abstracte (nu doar 5 dimensiuni umane). Fiecare dimensiune captează asocieri subtile de limbaj și concepte (ex: 'grătar' cu 'cărbuni', 'somon' cu 'pește').
         </span>`;
+    }
 
-      // Render the comparison table / progress bars
-      let gridHtml = `
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; font-weight: 700; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 12px;">
-          <div>Dimensiune Conceptuală</div>
-          <div style="text-align: center;">${rA.title.split(' ')[0]}</div>
-          <div style="text-align: center;">${rB.title.split(' ')[0]}</div>
-        </div>
-      `;
+    // Interactive Dragging on Radar Map
+    const canvas = document.getElementById('thematicRadarCanvas');
+    let draggedPoint = null;
 
-      for (let i = 0; i < 5; i++) {
-        const valA = rA.vector[i];
-        const valB = rB.vector[i];
+    function getVertexUnderMouse(mx, my) {
+      const keyA = recipeASelect.value;
+      const keyB = recipeBSelect.value;
+      const rA = thematicRecipes[keyA];
+      const rB = thematicRecipes[keyB];
+      if (!rA || !rB) return null;
 
-        // Format to percentage
-        const pctA = Math.round((valA + 1) * 50); // Map -1..1 to 0..100%
-        const pctB = Math.round((valB + 1) * 50);
+      const centerX = 150;
+      const centerY = 130;
+      const maxRadius = 80;
+      const threshold = 9; // hit radius in CSS pixels
 
-        const colorA = valA > 0 ? "var(--cyan)" : "var(--amber)";
-        const colorB = valB > 0 ? "var(--cyan)" : "var(--amber)";
+      // Check Recipe B first (so it's on top of A if overlapping)
+      const keys = [
+        { key: keyB, r: rB },
+        { key: keyA, r: rA }
+      ];
 
-        gridHtml += `
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.85rem;">
-            <div>
-              <div style="font-weight: 600; color: #fff;">${dimensions[i].name}</div>
-              <div style="font-size: 0.72rem; color: var(--text-muted);">${dimensions[i].desc}</div>
-            </div>
-            
-            <!-- Recipe A Bar -->
-            <div style="padding: 0 4px;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 2px;">
-                <span style="color: ${colorA}; font-weight: bold;">${valA > 0 ? '+' : ''}${valA.toFixed(1)}</span>
-              </div>
-              <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
-                <div style="width: ${pctA}%; height: 100%; background: ${colorA};"></div>
-              </div>
-            </div>
+      for (const item of keys) {
+        for (let j = 0; j < 5; j++) {
+          const val = item.r.vector[j];
+          const rFactor = 0.1 + ((val + 1) / 2) * 0.9;
+          const angle = (j * 2 * Math.PI / 5) - Math.PI / 2;
+          const x = centerX + Math.cos(angle) * maxRadius * rFactor;
+          const y = centerY + Math.sin(angle) * maxRadius * rFactor;
 
-            <!-- Recipe B Bar -->
-            <div style="padding: 0 4px;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 2px;">
-                <span style="color: ${colorB}; font-weight: bold;">${valB > 0 ? '+' : ''}${valB.toFixed(1)}</span>
-              </div>
-              <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
-                <div style="width: ${pctB}%; height: 100%; background: ${colorB};"></div>
-              </div>
-            </div>
-          </div>
-        `;
+          const dist = Math.hypot(mx - x, my - y);
+          if (dist <= threshold) {
+            return { recipeKey: item.key, dimIndex: j };
+          }
+        }
+      }
+      return null;
+    }
+
+    if (canvas) {
+      function handleStart(e) {
+        const rect = canvas.getBoundingClientRect();
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        if (e.touches && e.touches.length > 0) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+          // Prevent screen scroll when interacting with the chart
+          e.preventDefault();
+        }
+        const mx = clientX - rect.left;
+        const my = clientY - rect.top;
+
+        draggedPoint = getVertexUnderMouse(mx, my);
       }
 
-      vectorDimGrid.innerHTML = gridHtml;
+      function handleMove(e) {
+        const rect = canvas.getBoundingClientRect();
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+        if (e.touches && e.touches.length > 0) {
+          clientX = e.touches[0].clientX;
+          clientY = e.touches[0].clientY;
+          e.preventDefault();
+        }
+        const mx = clientX - rect.left;
+        const my = clientY - rect.top;
+
+        if (draggedPoint) {
+          const centerX = 150;
+          const centerY = 130;
+          const maxRadius = 80;
+
+          const dx = mx - centerX;
+          const dy = my - centerY;
+
+          const j = draggedPoint.dimIndex;
+          const angle = (j * 2 * Math.PI / 5) - Math.PI / 2;
+
+          // Unit vector for the corresponding axis
+          const ux = Math.cos(angle);
+          const uy = Math.sin(angle);
+
+          // Project vector onto axis unit vector
+          const projection = dx * ux + dy * uy;
+          let rFactor = projection / maxRadius;
+
+          // Clamp factor to valid bounds
+          rFactor = Math.max(0.1, Math.min(1.0, rFactor));
+
+          // Map factor back to [-1.0, 1.0] range
+          const v = ((rFactor - 0.1) / 0.9) * 2 - 1;
+
+          // Update vector value in memory
+          thematicRecipes[draggedPoint.recipeKey].vector[j] = parseFloat(v.toFixed(3));
+
+          // Re-render and recalculate live stats
+          updateThematicComparison();
+        } else {
+          // Dynamic cursor pointer visual feedback
+          const hovered = getVertexUnderMouse(mx, my);
+          canvas.style.cursor = hovered ? 'pointer' : 'default';
+        }
+      }
+
+      function handleEnd() {
+        draggedPoint = null;
+      }
+
+      canvas.addEventListener('mousedown', handleStart);
+      canvas.addEventListener('mousemove', handleMove);
+      window.addEventListener('mouseup', handleEnd);
+
+      canvas.addEventListener('touchstart', handleStart, { passive: false });
+      canvas.addEventListener('touchmove', handleMove, { passive: false });
+      window.addEventListener('touchend', handleEnd);
     }
 
     recipeASelect.addEventListener('change', updateThematicComparison);
@@ -1525,25 +1753,50 @@ for hits in results:
 
   // ── HNSW Graph Search Simulator ──────────────────────────────────────────
   function initHnswSimulator() {
+    const svg = document.getElementById('hnswSvg');
+    if (svg) {
+      svg.setAttribute('viewBox', '0 0 500 260');
+    }
+
     const graphNodes = {
-      mamaliga:  { id: 'mamaliga',  label: 'Mămăligă',  x: 250, y: 130, val: [0.0, 0.0, -0.3, -0.2, -0.9] },
-      sarmale:   { id: 'sarmale',   label: 'Sarmale',   x: 170, y: 190, val: [0.8, 0.3, -0.9, 0.6, -0.9] },
-      papanasi:  { id: 'papanasi',  label: 'Papanași',  x: 80,  y: 130, val: [-0.4, -0.6, 0.8, 0.3, -0.9] },
-      carbonara: { id: 'carbonara', label: 'Spaghete',  x: 250, y: 50,  val: [0.7, 0.2, -0.8, 0.4, 0.6] },
-      somon:     { id: 'somon',     label: 'Somon',     x: 420, y: 130, val: [0.9, 0.0, -0.9, -0.6, 0.4] },
-      curry:     { id: 'curry',     label: 'Curry Pui', x: 330, y: 190, val: [0.8, 0.9, -0.4, 0.8, 0.9] }
+      mamaliga:  { id: 'mamaliga',  label: 'Mămăligă',  x: 180, val: [0.0, 0.0, -0.3, -0.2, -0.9] },
+      somon:     { id: 'somon',     label: 'Somon',     x: 320, val: [0.9, 0.0, -0.9, -0.6, 0.4] },
+      sarmale:   { id: 'sarmale',   label: 'Sarmale',   x: 100, val: [0.8, 0.3, -0.9, 0.6, -0.9] },
+      carbonara: { id: 'carbonara', label: 'Spaghete',  x: 400, val: [0.7, 0.2, -0.8, 0.4, 0.6] },
+      papanasi:  { id: 'papanasi',  label: 'Papanași',  x: 40,  val: [-0.4, -0.6, 0.8, 0.3, -0.9] },
+      curry:     { id: 'curry',     label: 'Curry Pui', x: 460, val: [0.8, 0.9, -0.4, 0.8, 0.9] }
     };
 
-    const graphLinks = [
-      { source: 'mamaliga', target: 'sarmale' },
-      { source: 'mamaliga', target: 'somon' },
-      { source: 'mamaliga', target: 'carbonara' },
-      { source: 'sarmale', target: 'papanasi' },
-      { source: 'sarmale', target: 'curry' },
-      { source: 'somon', target: 'curry' },
-      { source: 'carbonara', target: 'somon' },
-      { source: 'carbonara', target: 'papanasi' }
-    ];
+    const layers = {
+      2: {
+        nodes: ['mamaliga', 'somon'],
+        links: [
+          { source: 'mamaliga', target: 'somon' }
+        ]
+      },
+      1: {
+        nodes: ['mamaliga', 'somon', 'sarmale', 'carbonara'],
+        links: [
+          { source: 'mamaliga', target: 'sarmale' },
+          { source: 'mamaliga', target: 'somon' },
+          { source: 'mamaliga', target: 'carbonara' },
+          { source: 'carbonara', target: 'somon' }
+        ]
+      },
+      0: {
+        nodes: ['mamaliga', 'sarmale', 'papanasi', 'carbonara', 'somon', 'curry'],
+        links: [
+          { source: 'mamaliga', target: 'sarmale' },
+          { source: 'mamaliga', target: 'somon' },
+          { source: 'mamaliga', target: 'carbonara' },
+          { source: 'sarmale', target: 'papanasi' },
+          { source: 'sarmale', target: 'curry' },
+          { source: 'somon', target: 'curry' },
+          { source: 'carbonara', target: 'somon' },
+          { source: 'carbonara', target: 'papanasi' }
+        ]
+      }
+    };
 
     const targets = {
       desert:      { name: "'ceva dulce și cald'", vector: [-0.5, -0.7, 0.9, 0.2, -0.8] },
@@ -1560,8 +1813,10 @@ for hits in results:
 
     if (!querySelect || !startBtn) return;
 
+    let currentLayer = 2;
     let currentNode = null;
-    let visitedLinks = [];
+    let visitedLinks = []; // list of { source, target, layer }
+    let verticalTransitions = []; // list of { nodeId, fromLayer, toLayer }
     let isFinished = false;
 
     function getCosineSimilarity(v1, v2) {
@@ -1576,7 +1831,7 @@ for hits in results:
       return n1 > 0 && n2 > 0 ? (dot / (Math.sqrt(n1) * Math.sqrt(n2))) : 0;
     }
 
-    function drawGraph(activeNodeId, finishedNodeId) {
+    function drawGraph() {
       const svgNodes = document.getElementById('hnswNodes');
       const svgLinks = document.getElementById('hnswLinks');
       if (!svgNodes || !svgLinks) return;
@@ -1584,79 +1839,164 @@ for hits in results:
       svgNodes.innerHTML = '';
       svgLinks.innerHTML = '';
 
-      // Draw links
-      graphLinks.forEach(link => {
-        const sNode = graphNodes[link.source];
-        const tNode = graphNodes[link.target];
-        const isVisited = visitedLinks.some(vl => 
-          (vl.source === link.source && vl.target === link.target) ||
-          (vl.source === link.target && vl.target === link.source)
-        );
-
+      // 1. Draw horizontal layer dividers
+      [85, 165].forEach(y => {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', sNode.x);
-        line.setAttribute('y1', sNode.y);
-        line.setAttribute('x2', tNode.x);
-        line.setAttribute('y2', tNode.y);
-        line.setAttribute('stroke', isVisited ? 'var(--cyan)' : 'rgba(255,255,255,0.08)');
-        line.setAttribute('stroke-width', isVisited ? '3' : '1.5');
-        if (isVisited) {
-          line.setAttribute('stroke-dasharray', 'none');
-        } else {
-          line.setAttribute('stroke-dasharray', '3,3');
-        }
+        line.setAttribute('x1', '10');
+        line.setAttribute('y1', y);
+        line.setAttribute('x2', '490');
+        line.setAttribute('y2', y);
+        line.setAttribute('stroke', 'rgba(255,255,255,0.06)');
+        line.setAttribute('stroke-width', '1');
+        line.setAttribute('stroke-dasharray', '5,5');
         svgLinks.appendChild(line);
       });
 
-      // Draw nodes
-      Object.values(graphNodes).forEach(node => {
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circle.setAttribute('cx', node.x);
-        circle.setAttribute('cy', node.y);
-        circle.setAttribute('r', '20');
-        
-        let fill = 'rgba(255,255,255,0.05)';
-        let stroke = 'var(--border)';
-        let strokeWidth = '1.5';
+      // 2. Draw vertical projection lines connecting identical nodes across layers
+      const nodesAcrossLayers = [
+        { id: 'mamaliga', x: 180, startL: 2, endL: 0 },
+        { id: 'somon', x: 320, startL: 2, endL: 0 },
+        { id: 'sarmale', x: 100, startL: 1, endL: 0 },
+        { id: 'carbonara', x: 400, startL: 1, endL: 0 }
+      ];
 
-        if (node.id === finishedNodeId) {
-          fill = 'rgba(16,185,129,0.2)';
-          stroke = 'var(--emerald)';
-          strokeWidth = '3';
-        } else if (node.id === activeNodeId) {
-          fill = 'rgba(245,158,11,0.2)';
-          stroke = 'var(--amber)';
-          strokeWidth = '3';
-        } else if (visitedLinks.some(vl => vl.source === node.id || vl.target === node.id)) {
-          fill = 'rgba(6,182,212,0.1)';
-          stroke = 'var(--cyan)';
-          strokeWidth = '2';
-        }
+      nodesAcrossLayers.forEach(node => {
+        const yStart = 50 + (2 - node.startL) * 80;
+        const yEnd = 50 + (2 - node.endL) * 80;
 
-        circle.setAttribute('fill', fill);
-        circle.setAttribute('stroke', stroke);
-        circle.setAttribute('stroke-width', strokeWidth);
-        g.appendChild(circle);
+        // Check if this vertical path was active in transition history
+        const isActive = verticalTransitions.some(t => 
+          t.nodeId === node.id && 
+          ((t.fromLayer === 2 && t.toLayer === 1 && yStart <= 50 && yEnd >= 130) ||
+           (t.fromLayer === 1 && t.toLayer === 0 && yStart <= 130 && yEnd >= 210))
+        );
 
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', node.x);
+        line.setAttribute('y1', yStart);
+        line.setAttribute('x2', node.x);
+        line.setAttribute('y2', yEnd);
+        line.setAttribute('stroke', isActive ? 'var(--amber)' : 'rgba(255,255,255,0.06)');
+        line.setAttribute('stroke-width', isActive ? '2' : '1');
+        line.setAttribute('stroke-dasharray', isActive ? 'none' : '2,4');
+        svgLinks.appendChild(line);
+      });
+
+      // 3. Draw horizontal active/visited links for each layer
+      [2, 1, 0].forEach(L => {
+        const y = 50 + (2 - L) * 80;
+        layers[L].links.forEach(link => {
+          const sNode = graphNodes[link.source];
+          const tNode = graphNodes[link.target];
+          
+          const isVisited = visitedLinks.some(vl => 
+            vl.layer === L && 
+            ((vl.source === link.source && vl.target === link.target) ||
+             (vl.source === link.target && vl.target === link.source))
+          );
+
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', sNode.x);
+          line.setAttribute('y1', y);
+          line.setAttribute('x2', tNode.x);
+          line.setAttribute('y2', y);
+          line.setAttribute('stroke', isVisited ? 'var(--cyan)' : 'rgba(255,255,255,0.08)');
+          line.setAttribute('stroke-width', isVisited ? '2.5' : '1.2');
+          if (isVisited) {
+            line.setAttribute('stroke-dasharray', 'none');
+          } else {
+            line.setAttribute('stroke-dasharray', '3,3');
+          }
+          svgLinks.appendChild(line);
+        });
+      });
+
+      // 4. Draw Layer Info Text Labels in SVG
+      const layersLabels = [
+        { text: "LAYER 2: Entry Layer (Sparse Hops)", y: 22 },
+        { text: "LAYER 1: Express Layer (Medium Hops)", y: 102 },
+        { text: "LAYER 0: Base Layer (All Recipes)", y: 182 }
+      ];
+
+      const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      layersLabels.forEach(lbl => {
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', node.x);
-        text.setAttribute('y', node.y + 4);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('font-size', '9px');
-        text.setAttribute('fill', '#fff');
+        text.setAttribute('x', '15');
+        text.setAttribute('y', lbl.y);
+        text.setAttribute('font-size', '8px');
+        text.setAttribute('fill', 'rgba(255,255,255,0.3)');
         text.setAttribute('font-weight', 'bold');
-        text.textContent = node.label;
-        g.appendChild(text);
+        text.textContent = lbl.text;
+        labelGroup.appendChild(text);
+      });
+      svgNodes.appendChild(labelGroup);
 
-        svgNodes.appendChild(g);
+      // 5. Draw nodes for each layer
+      [2, 1, 0].forEach(L => {
+        const y = 50 + (2 - L) * 80;
+        layers[L].nodes.forEach(nId => {
+          const node = graphNodes[nId];
+          const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', node.x);
+          circle.setAttribute('cy', y);
+          circle.setAttribute('r', '14');
+          
+          let fill = 'rgba(255,255,255,0.03)';
+          let stroke = 'var(--border)';
+          let strokeWidth = '1';
+
+          const isActive = (currentNode === nId && currentLayer === L && !isFinished);
+          const isFinishedNode = (isFinished && currentNode === nId && L === 0);
+          
+          const wasVisited = (currentNode === nId && currentLayer === L) ||
+                             visitedLinks.some(vl => (vl.source === nId || vl.target === nId) && vl.layer === L) || 
+                             verticalTransitions.some(vt => vt.nodeId === nId && (vt.fromLayer === L || vt.toLayer === L));
+
+          if (isFinishedNode) {
+            fill = 'rgba(16,185,129,0.2)';
+            stroke = 'var(--emerald)';
+            strokeWidth = '2.5';
+          } else if (isActive) {
+            fill = 'rgba(245,158,11,0.25)';
+            stroke = 'var(--amber)';
+            strokeWidth = '2.5';
+          } else if (wasVisited) {
+            fill = 'rgba(6,182,212,0.15)';
+            stroke = 'var(--cyan)';
+            strokeWidth = '1.8';
+          }
+
+          circle.setAttribute('fill', fill);
+          circle.setAttribute('stroke', stroke);
+          circle.setAttribute('stroke-width', strokeWidth);
+          g.appendChild(circle);
+
+          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          text.setAttribute('x', node.x);
+          text.setAttribute('y', y + 3);
+          text.setAttribute('text-anchor', 'middle');
+          text.setAttribute('font-size', '7.5px');
+          text.setAttribute('fill', '#fff');
+          text.setAttribute('font-weight', 'bold');
+          text.textContent = node.label.substring(0, 5);
+          g.appendChild(text);
+
+          const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+          titleEl.textContent = `${node.label} (Layer ${L})`;
+          g.appendChild(titleEl);
+
+          svgNodes.appendChild(g);
+        });
       });
     }
 
     startBtn.addEventListener('click', () => {
+      currentLayer = 2;
       currentNode = 'mamaliga';
       visitedLinks = [];
+      verticalTransitions = [];
       isFinished = false;
       querySelect.disabled = true;
       startBtn.disabled = true;
@@ -1665,12 +2005,13 @@ for hits in results:
       const targetQuery = targets[querySelect.value];
       const startSim = getCosineSimilarity(graphNodes.mamaliga.val, targetQuery.vector);
 
-      statusText.innerHTML = `Căutarea HNSW a fost inițializată.<br>
+      statusText.innerHTML = `Indexul HNSW a fost inițializat.<br>
         <strong>Nod Curent:</strong> Mămăligă (Punct de intrare)<br>
+        <strong>Strat Curent:</strong> Layer 2 (Top sparse)<br>
         <strong>Similitudine inițială:</strong> ${startSim.toFixed(3)}<br>
-        Apasă 'Pasul Următor' pentru a evalua vecinii.`;
+        Apasă 'Pasul Următor' pentru a evalua vecinii din acest strat.`;
       
-      drawGraph(currentNode, null);
+      drawGraph();
     });
 
     nextBtn.addEventListener('click', () => {
@@ -1680,9 +2021,9 @@ for hits in results:
       const targetQuery = targets[targetVal];
       const curSim = getCosineSimilarity(graphNodes[currentNode].val, targetQuery.vector);
 
-      // Find neighbors
+      // Find neighbors of currentNode in the currentLayer
       const neighbors = [];
-      graphLinks.forEach(link => {
+      layers[currentLayer].links.forEach(link => {
         if (link.source === currentNode) neighbors.push(link.target);
         else if (link.target === currentNode) neighbors.push(link.source);
       });
@@ -1699,45 +2040,61 @@ for hits in results:
       });
 
       if (bestNeighbor) {
-        visitedLinks.push({ source: currentNode, target: bestNeighbor });
-        const oldNodeLabel = graphNodes[currentNode].label;
+        // We found a better neighbor in the current layer: HOP
+        visitedLinks.push({ source: currentNode, target: bestNeighbor, layer: currentLayer });
+        const oldLabel = graphNodes[currentNode].label;
         currentNode = bestNeighbor;
-        const newNodeLabel = graphNodes[currentNode].label;
+        const newLabel = graphNodes[currentNode].label;
 
-        statusText.innerHTML = `Săritură efectuată în graf:<br>
-          <strong>De la:</strong> ${oldNodeLabel} -> <strong>La:</strong> ${newNodeLabel}<br>
+        statusText.innerHTML = `Săritură în <strong>Layer ${currentLayer}</strong>:<br>
+          De la <strong>${oldLabel}</strong> la <strong>${newLabel}</strong><br>
           <strong>Similitudine nouă:</strong> ${bestSim.toFixed(3)} (Mai bună)<br>
           Apasă din nou 'Pasul Următor'.`;
 
-        drawGraph(currentNode, null);
+        drawGraph();
       } else {
-        // Stop, we reached local minimum
-        isFinished = true;
-        nextBtn.disabled = true;
-        const finalLabel = graphNodes[currentNode].label;
-        
-        statusText.innerHTML = `Căutarea HNSW s-a finalizat!<br>
-          <strong>Nod Final:</strong> ${finalLabel}<br>
-          <strong>Similitudine maximă locală:</strong> ${curSim.toFixed(3)}<br>
-          Algoritmul s-a oprit deoarece niciun nod vecin nu oferă o similitudine mai mare. Am găsit rețeta fără a citi celelalte noduri din baza de date.`;
+        // No better neighbor in the current layer: DROP LAYER or FINISH
+        if (currentLayer > 0) {
+          const nextLayer = currentLayer - 1;
+          verticalTransitions.push({ nodeId: currentNode, fromLayer: currentLayer, toLayer: nextLayer });
+          
+          statusText.innerHTML = `Niciun vecin în <strong>Layer ${currentLayer}</strong> nu este mai apropiat.<br>
+            Coborâm la <strong>Layer ${nextLayer}</strong> la nodul <strong>${graphNodes[currentNode].label}</strong>.<br>
+            Apasă 'Pasul Următor' pentru a continua căutarea locală în noul strat.`;
+            
+          currentLayer = nextLayer;
+          drawGraph();
+        } else {
+          // We are already at Layer 0 and no neighbor is better: FINISHED!
+          isFinished = true;
+          nextBtn.disabled = true;
+          const finalLabel = graphNodes[currentNode].label;
+          
+          statusText.innerHTML = `<strong>Căutare HNSW finalizată!</strong><br>
+            <strong>Nod Final găsit:</strong> ${finalLabel}<br>
+            <strong>Similitudine maximă:</strong> ${curSim.toFixed(3)}<br>
+            Algoritmul s-a oprit deoarece am atins un minim local în Layer 0. Am localizat rețeta optimă prin analizarea a doar câtorva noduri din graf.`;
 
-        drawGraph(null, currentNode);
+          drawGraph();
+        }
       }
     });
 
     resetBtn.addEventListener('click', () => {
+      currentLayer = 2;
       currentNode = null;
       visitedLinks = [];
+      verticalTransitions = [];
       isFinished = false;
       querySelect.disabled = false;
       startBtn.disabled = false;
       nextBtn.disabled = true;
       statusText.innerHTML = "Apasă 'Inițializează Căutare' pentru a plasa punctul de intrare.";
-      drawGraph(null, null);
+      drawGraph();
     });
 
     // Initial draw
-    drawGraph(null, null);
+    drawGraph();
   }
 
   // ── RAG vs Pure LLM Showdown ─────────────────────────────────────────────

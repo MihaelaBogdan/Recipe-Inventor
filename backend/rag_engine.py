@@ -17,36 +17,11 @@ SYNONYMS = {
     "pasta": ["spaghetti", "penne", "noodles", "linguine", "macaroni", "bucatini"],
     "cheese": ["parmesan", "feta", "mozzarella", "cheddar", "pecorino"],
     "egg": ["eggs", "yolk"],
-    
-    # Romanian-English translations for shopping list items and recipe ingredients
-    "pui": ["chicken", "poultry", "thighs", "breast"],
-    "usturoi": ["garlic", "cloves"],
-    "sare": ["salt"],
-    "piper": ["pepper", "black pepper"],
-    "ulei": ["oil", "vegetable oil", "olive oil"],
-    "ceapa": ["onion", "onions"],
-    "chimen": ["cumin"],
-    "chili": ["chili", "powder"],
-    "rosii": ["tomato", "tomatoes", "sauce"],
-    "sos": ["sauce", "tomato"],
-    "macaroane": ["macaroni", "elbow"],
-    "paste": ["pasta", "spaghetti", "bucatini"]
 }
 
 NORMALIZATIONS = {
     "tomatoes": "tomato", "potatoes": "potato", "onions": "onion",
     "mushrooms": "mushroom", "eggs": "egg", "lemons": "lemon",
-    
-    # Romanian character normalization and common plurals
-    "ceapă": "ceapa",
-    "cepe": "ceapa",
-    "roșii": "rosii",
-    "roșie": "rosii",
-    "sare": "sare",
-    "tăiței": "paste",
-    "piper": "piper",
-    "paste": "paste",
-    "macaroane": "macaroane"
 }
 
 class BM25:
@@ -98,7 +73,29 @@ class RecipeRAGEngine:
             
         self.collection = self.chroma_client.create_collection("recipes")
         
+        # Smart dynamic vocabulary mapping
+        self.english_vocab = []
+        self.vocab_embeddings = None
+        self._build_vocab_index()
+        
         self._build_index()
+
+    def _build_vocab_index(self):
+        import string
+        stop_words = {"with", "and", "the", "for", "in", "of", "a", "an", "to", "or", "at", "by", "from", "on", "fresh", "ground", "chopped", "sliced", "diced", "powder", "taste", "salt", "pepper"}
+        
+        vocab = set()
+        for r in self.recipes:
+            text = (r.get("title", "") + " " + " ".join(r.get("ingredients", []))).lower()
+            text = text.translate(str.maketrans("", "", string.punctuation + string.digits))
+            for word in text.split():
+                if len(word) > 2 and word.isalpha() and word not in stop_words:
+                    vocab.add(word)
+                    
+        self.english_vocab = sorted(list(vocab))
+        if self.english_vocab:
+            print(f"Embedding {len(self.english_vocab)} English vocabulary terms for dynamic semantic translation...")
+            self.vocab_embeddings = self.encoder.encode(self.english_vocab)
 
     def _build_index(self):
         print(f"Indexing {len(self.recipes)} recipes into ChromaDB & BM25...")
@@ -149,11 +146,39 @@ class RecipeRAGEngine:
     def _expand_query(self, query: str) -> str:
         words = query.lower().split()
         expanded = set(words)
-        for w in words:
-            w = NORMALIZATIONS.get(w, w)
-            expanded.add(w)
-            if w in SYNONYMS:
-                expanded.update(SYNONYMS[w])
+        
+        if self.vocab_embeddings is not None and len(self.english_vocab) > 0:
+            for w in words:
+                w_norm = NORMALIZATIONS.get(w, w)
+                expanded.add(w_norm)
+                
+                if w_norm in SYNONYMS:
+                    expanded.update(SYNONYMS[w_norm])
+                    
+                # Dynamically translate any non-English/alternative query term using embedding similarity
+                if w_norm not in self.english_vocab:
+                    w_emb = self.encoder.encode([w_norm])
+                    dots = np.dot(self.vocab_embeddings, w_emb[0])
+                    norms_vocab = np.linalg.norm(self.vocab_embeddings, axis=1)
+                    norm_w = np.linalg.norm(w_emb[0])
+                    
+                    if norm_w > 0:
+                        similarities = dots / (norms_vocab * norm_w)
+                        matches = []
+                        for idx in np.where(similarities > 0.55)[0]:
+                            matches.append((self.english_vocab[idx], similarities[idx]))
+                        
+                        # Sort and pick top 2 closest English terms
+                        matches.sort(key=lambda x: x[1], reverse=True)
+                        for m_word, score in matches[:2]:
+                            expanded.add(m_word)
+        else:
+            for w in words:
+                w = NORMALIZATIONS.get(w, w)
+                expanded.add(w)
+                if w in SYNONYMS:
+                    expanded.update(SYNONYMS[w])
+                    
         return " ".join(expanded)
 
     def retrieve(self, query: str, filters: dict = None, top_k: int = 5) -> list[dict]:

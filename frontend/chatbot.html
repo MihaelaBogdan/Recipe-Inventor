@@ -899,11 +899,17 @@
           addMessage(response.text, "bot", false, false);
           response.recipes.forEach((recipe, idx) => {
             addMessage(renderChatRecipeCard(recipe, idx), "bot", false, true);
+            try {
+              window.parent.postMessage({ action: "recipeCreated", recipe: recipe }, "*");
+            } catch (err) { console.error(err); }
           });
         }
         else if (response.type === "recipe_detail" && response.recipe) {
           addMessage(response.text, "bot", false, false);
           addMessage(renderChatRecipeCard(response.recipe, 0), "bot", false, true);
+          try {
+            window.parent.postMessage({ action: "recipeCreated", recipe: response.recipe }, "*");
+          } catch (err) { console.error(err); }
         }
         else if (response.type === "technique") {
           const techHtml = `
