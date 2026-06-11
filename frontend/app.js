@@ -1846,7 +1846,7 @@ for hits in results:
       { name: "basil", label: "busuioc", category: "vegetable", color: "#10b981", desc: "Iarba aromatica proaspata si dulceaga, specifica bucatariei mediteraneene si sosului pesto.", companions: [{ name: "tomato", score: 0.95 }, { name: "olive oil", score: 0.92 }, { name: "cheese", score: 0.84 }, { name: "garlic", score: 0.81 }] },
       { name: "rosemary", label: "rozmarin", category: "vegetable", color: "#10b981", desc: "Iarba aromatica cu frunze aciculare si aroma puternica de pin, potrivita pentru fripturi la cuptor.", companions: [{ name: "garlic", score: 0.86 }, { name: "chicken", score: 0.85 }, { name: "butter", score: 0.81 }, { name: "beef", score: 0.75 }] },
       { name: "ginger", label: "ghimbir", category: "vegetable", color: "#10b981", desc: "Radacina picanta si proaspata, ideala in bucataria asiatica, ceaiuri, dulciuri sau sosuri curry.", companions: [{ name: "garlic", score: 0.89 }, { name: "tofu", score: 0.89 }, { name: "honey", score: 0.84 }, { name: "chili", score: 0.81 }] },
-      { name: "lemon", label: "lamaie", category: "vegetable", color: "#10b981", desc: "Citric acidulat folosit pentru a echilibra grasimile din preparate si pentru a oferi prospetime.", companions: [{ name: "salmon", score: 0.90 }, { name: "shrimp", score: 0.88 }, { name: "chicken", score: 0.82 }, { name: "honey", score: 0.80 }] },
+      { name: "lemon", label: "lamaie", category: "vegetable", color: "#10b981", desc: "Fruct citric folosit pentru aroma si aciditate.", companions: [{ name: "salmon", score: 0.90 }, { name: "shrimp", score: 0.88 }, { name: "chicken", score: 0.82 }, { name: "honey", score: 0.80 }] },
       { name: "cilantro", label: "coriandru", category: "vegetable", color: "#10b981", desc: "Iarba aromatica proaspata si citrica, esentiala in bucataria mexicana si asiatica.", companions: [{ name: "shrimp", score: 0.78 }, { name: "chili", score: 0.77 }, { name: "onion", score: 0.75 }, { name: "garlic", score: 0.72 }] },
       
       { name: "butter", label: "unt", category: "dairy", color: "#06b6d4", desc: "Grasime bogata obtinuta din lapte, adauga textura cremoasa si savoare de neegalat preparatelor.", companions: [{ name: "garlic", score: 0.86 }, { name: "shrimp", score: 0.85 }, { name: "chicken", score: 0.79 }, { name: "onion", score: 0.80 }] },
@@ -2114,6 +2114,11 @@ for hits in results:
       if (creatorTabBtn) {
         creatorTabBtn.click();
       }
+
+      // Auto trigger recipe invention!
+      if (typeof handleInvent === 'function') {
+        handleInvent();
+      }
     });
 
     useInChatBtn.addEventListener('click', () => {
@@ -2128,17 +2133,19 @@ for hits in results:
       const allIngs = [seedNode.label, ...companionsLabels].join(', ');
       const promptText = `Propune o reteta inventiva care sa combine armonios urmatoarele ingrediente: ${allIngs}. Explica profilul de aroma rezultat.`;
 
-      // Post message to chatbot iframe
-      const iframe = document.querySelector('.chatbot-container iframe');
-      if (iframe && iframe.contentWindow) {
-        iframe.contentWindow.postMessage({ action: "suggestRecipe", query: promptText }, "*");
-      }
-
-      // Switch tab to Chatbot
+      // Switch tab to Chatbot first
       const chatbotTabBtn = document.querySelector('.tab-button[data-tab="chatbot"]');
       if (chatbotTabBtn) {
         chatbotTabBtn.click();
       }
+
+      // Post message to chatbot iframe after transition delay
+      setTimeout(() => {
+        const iframe = document.querySelector('.chatbot-container iframe');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage({ action: "suggestRecipe", query: promptText }, "*");
+        }
+      }, 150);
     });
 
     // Start
