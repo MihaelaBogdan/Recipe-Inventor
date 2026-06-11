@@ -281,3 +281,59 @@ class HNSWSimulator:
                 "ml": float(self.ml)
             }
         }
+
+    def add_recipe(self, recipe: Dict, embedding: np.ndarray):
+        """Add a new recipe dynamically to the HNSW graph and rebuild connections"""
+        rid = str(recipe["id"])
+        if rid in self.embeddings_map:
+            return  # Already exists
+        
+        # 1. Add to recipes list and embeddings map
+        self.recipes.append(recipe)
+        self.embeddings_map[rid] = embedding
+        
+        # 2. Determine Layer for the new recipe using probability distribution
+        r = random.random()
+        if r < 0.02:
+            layer = 4
+        elif r < 0.05:
+            layer = 3
+        elif r < 0.15:
+            layer = 2
+        elif r < 0.40:
+            layer = 1
+        else:
+            layer = 0
+            
+        self.layers[rid] = layer
+        self.max_layer = max(self.max_layer, layer)
+        
+        # 3. Add node to graph
+        self.graph[rid] = {"neighbors": []}
+        
+        # 4. Connect the new recipe to the rest of the graph
+        emb1 = embedding
+        recipe_ids = [str(r["id"]) for r in self.recipes]
+        
+        distances = []
+        for rid2 in recipe_ids:
+            if rid != rid2:
+                emb2 = self.embeddings_map.get(rid2, np.zeros(384))
+                if np.sum(emb2) > 0:
+                    try:
+                        sim = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2) + 1e-8)
+                        dist = 1 - max(0, sim)
+                        distances.append((dist, rid2))
+                    except:
+                        pass
+                        
+        distances.sort()
+        # Connect new node to neighbors (up to M)
+        neighbors = [r_id for _, r_id in distances[:self.M]]
+        self.graph[rid]["neighbors"] = neighbors
+        
+        # Connect neighbors back to the new node
+        for n_id in neighbors:
+            if n_id in self.graph:
+                if rid not in self.graph[n_id]["neighbors"]:
+                    self.graph[n_id]["neighbors"].append(rid)

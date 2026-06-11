@@ -39,6 +39,30 @@ const loadDbCount      = document.getElementById('loadDbCount');
 
 // ── State ─────────────────────────────────────────────────────────────────
 let tags = [];  // current ingredient tags
+window.createdRecipes = []; // dynamically track created recipes
+
+function updateHnswCustomRecipesDropdown() {
+  const querySelect = document.getElementById('hnswQuerySelect');
+  if (!querySelect) return;
+
+  // Remove existing options that start with custom_
+  const toRemove = [];
+  for (let i = 0; i < querySelect.options.length; i++) {
+    if (querySelect.options[i].value.startsWith('custom_')) {
+      toRemove.push(querySelect.options[i]);
+    }
+  }
+  toRemove.forEach(opt => opt.remove());
+
+  // Add options for each custom recipe
+  window.createdRecipes.forEach((recipe, i) => {
+    const opt = document.createElement('option');
+    opt.value = `custom_${i}`;
+    opt.textContent = `Rețetă creată: "${recipe.title.substring(0, 30)}${recipe.title.length > 30 ? '...' : ''}"`;
+    querySelect.appendChild(opt);
+  });
+}
+
 
 // ── Init ──────────────────────────────────────────────────────────────────
 async function init() {
@@ -403,6 +427,15 @@ function printLogsToTerminal(logs, callback) {
 
 // ── Render results ────────────────────────────────────────────────────────
 function showResults(data) {
+  if (data.recipes) {
+    data.recipes.forEach(r => {
+      if (window.createdRecipes && !window.createdRecipes.some(existing => existing.title === r.title)) {
+        window.createdRecipes.push(r);
+      }
+    });
+    updateHnswCustomRecipesDropdown();
+  }
+
   recipesGrid.innerHTML = '';
   loadingOverlay.classList.add('hidden');
   resultsSection.classList.remove('hidden');
@@ -1758,53 +1791,6 @@ for hits in results:
       svg.setAttribute('viewBox', '0 0 500 260');
     }
 
-    const graphNodes = {
-      mamaliga:  { id: 'mamaliga',  label: 'Mămăligă',  x: 180, val: [0.0, 0.0, -0.3, -0.2, -0.9] },
-      somon:     { id: 'somon',     label: 'Somon',     x: 320, val: [0.9, 0.0, -0.9, -0.6, 0.4] },
-      sarmale:   { id: 'sarmale',   label: 'Sarmale',   x: 100, val: [0.8, 0.3, -0.9, 0.6, -0.9] },
-      carbonara: { id: 'carbonara', label: 'Spaghete',  x: 400, val: [0.7, 0.2, -0.8, 0.4, 0.6] },
-      papanasi:  { id: 'papanasi',  label: 'Papanași',  x: 40,  val: [-0.4, -0.6, 0.8, 0.3, -0.9] },
-      curry:     { id: 'curry',     label: 'Curry Pui', x: 460, val: [0.8, 0.9, -0.4, 0.8, 0.9] }
-    };
-
-    const layers = {
-      2: {
-        nodes: ['mamaliga', 'somon'],
-        links: [
-          { source: 'mamaliga', target: 'somon' }
-        ]
-      },
-      1: {
-        nodes: ['mamaliga', 'somon', 'sarmale', 'carbonara'],
-        links: [
-          { source: 'mamaliga', target: 'sarmale' },
-          { source: 'mamaliga', target: 'somon' },
-          { source: 'mamaliga', target: 'carbonara' },
-          { source: 'carbonara', target: 'somon' }
-        ]
-      },
-      0: {
-        nodes: ['mamaliga', 'sarmale', 'papanasi', 'carbonara', 'somon', 'curry'],
-        links: [
-          { source: 'mamaliga', target: 'sarmale' },
-          { source: 'mamaliga', target: 'somon' },
-          { source: 'mamaliga', target: 'carbonara' },
-          { source: 'sarmale', target: 'papanasi' },
-          { source: 'sarmale', target: 'curry' },
-          { source: 'somon', target: 'curry' },
-          { source: 'carbonara', target: 'somon' },
-          { source: 'carbonara', target: 'papanasi' }
-        ]
-      }
-    };
-
-    const targets = {
-      desert:      { name: "'ceva dulce și cald'", vector: [-0.5, -0.7, 0.9, 0.2, -0.8] },
-      peste:       { name: "'pește ușor cu legume'", vector: [0.9, 0.0, -0.9, -0.7, 0.5] },
-      paste:       { name: "'spaghete italienești cremoase'", vector: [0.7, 0.2, -0.8, 0.5, 0.6] },
-      traditional: { name: "'mâncare românească tradițională'", vector: [0.8, 0.3, -0.9, 0.5, -0.9] }
-    };
-
     const querySelect = document.getElementById('hnswQuerySelect');
     const startBtn    = document.getElementById('hnswStartBtn');
     const nextBtn     = document.getElementById('hnswNextBtn');
@@ -1813,25 +1799,49 @@ for hits in results:
 
     if (!querySelect || !startBtn) return;
 
-    let currentLayer = 2;
-    let currentNode = null;
-    let visitedLinks = []; // list of { source, target, layer }
-    let verticalTransitions = []; // list of { nodeId, fromLayer, toLayer }
-    let isFinished = false;
+    let hnswRealPath = [];
+    let hnswCurrentStep = -1;
+    let uniqueNodeIds = [];
+    let xMap = {};
 
-    function getCosineSimilarity(v1, v2) {
-      let dot = 0;
-      let n1 = 0;
-      let n2 = 0;
-      for (let i = 0; i < 5; i++) {
-        dot += v1[i] * v2[i];
-        n1 += v1[i] * v1[i];
-        n2 += v2[i] * v2[i];
-      }
-      return n1 > 0 && n2 > 0 ? (dot / (Math.sqrt(n1) * Math.sqrt(n2))) : 0;
+    const queryMap = {
+      desert: "ceva dulce și cald",
+      peste: "pește ușor cu legume",
+      paste: "spaghete italienești cremoase",
+      traditional: "mâncare românească tradițională"
+    };
+
+    function get5DVectorFromFlavor(flav) {
+      if (!flav) return [0.5, 0.1, -0.5, 0.0, 0.3];
+      const sweet = flav.sweet || 20;
+      const sour = flav.sour || 20;
+      const salty = flav.salty || 20;
+      const spicy = flav.spicy || 10;
+      const creamy = flav.creamy || 15;
+      const umami = flav.umami || 15;
+      
+      return [
+        sweet < 35 ? 0.75 : -0.75, // Dim 0: Protein (+) vs Sweet/Dessert (-)
+        (spicy / 50.0) - 0.4,       // Dim 1: Spicy (+) vs Mild (-)
+        (sweet / 50.0) - ((salty + umami) / 100.0), // Dim 2: Sweet (+) vs Savory (-)
+        (sour / 50.0) - 0.4,        // Dim 3: Sour (+) vs Traditional (-)
+        (creamy / 50.0) - 0.4       // Dim 4: Creamy (+) vs Light (-)
+      ];
     }
 
-    function drawGraph() {
+    function getLayerY(layer) {
+      // Map layers 4, 3, 2, 1, 0 to vertical space in the SVG
+      const yMap = {
+        4: 40,
+        3: 85,
+        2: 130,
+        1: 175,
+        0: 220
+      };
+      return yMap[layer] || 220;
+    }
+
+    function drawRealPath() {
       const svgNodes = document.getElementById('hnswNodes');
       const svgLinks = document.getElementById('hnswLinks');
       if (!svgNodes || !svgLinks) return;
@@ -1839,8 +1849,12 @@ for hits in results:
       svgNodes.innerHTML = '';
       svgLinks.innerHTML = '';
 
-      // 1. Draw horizontal layer dividers
-      [85, 165].forEach(y => {
+      if (hnswRealPath.length === 0) return;
+
+      // Draw horizontal dashed lines for layers present in the path
+      const layersInPath = Array.from(new Set(hnswRealPath.map(p => p.layer))).sort().reverse();
+      layersInPath.forEach(L => {
+        const y = getLayerY(L);
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', '10');
         line.setAttribute('y1', y);
@@ -1850,251 +1864,299 @@ for hits in results:
         line.setAttribute('stroke-width', '1');
         line.setAttribute('stroke-dasharray', '5,5');
         svgLinks.appendChild(line);
-      });
 
-      // 2. Draw vertical projection lines connecting identical nodes across layers
-      const nodesAcrossLayers = [
-        { id: 'mamaliga', x: 180, startL: 2, endL: 0 },
-        { id: 'somon', x: 320, startL: 2, endL: 0 },
-        { id: 'sarmale', x: 100, startL: 1, endL: 0 },
-        { id: 'carbonara', x: 400, startL: 1, endL: 0 }
-      ];
-
-      nodesAcrossLayers.forEach(node => {
-        const yStart = 50 + (2 - node.startL) * 80;
-        const yEnd = 50 + (2 - node.endL) * 80;
-
-        // Check if this vertical path was active in transition history
-        const isActive = verticalTransitions.some(t => 
-          t.nodeId === node.id && 
-          ((t.fromLayer === 2 && t.toLayer === 1 && yStart <= 50 && yEnd >= 130) ||
-           (t.fromLayer === 1 && t.toLayer === 0 && yStart <= 130 && yEnd >= 210))
-        );
-
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', node.x);
-        line.setAttribute('y1', yStart);
-        line.setAttribute('x2', node.x);
-        line.setAttribute('y2', yEnd);
-        line.setAttribute('stroke', isActive ? 'var(--amber)' : 'rgba(255,255,255,0.06)');
-        line.setAttribute('stroke-width', isActive ? '2' : '1');
-        line.setAttribute('stroke-dasharray', isActive ? 'none' : '2,4');
-        svgLinks.appendChild(line);
-      });
-
-      // 3. Draw horizontal active/visited links for each layer
-      [2, 1, 0].forEach(L => {
-        const y = 50 + (2 - L) * 80;
-        layers[L].links.forEach(link => {
-          const sNode = graphNodes[link.source];
-          const tNode = graphNodes[link.target];
-          
-          const isVisited = visitedLinks.some(vl => 
-            vl.layer === L && 
-            ((vl.source === link.source && vl.target === link.target) ||
-             (vl.source === link.target && vl.target === link.source))
-          );
-
-          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-          line.setAttribute('x1', sNode.x);
-          line.setAttribute('y1', y);
-          line.setAttribute('x2', tNode.x);
-          line.setAttribute('y2', y);
-          line.setAttribute('stroke', isVisited ? 'var(--cyan)' : 'rgba(255,255,255,0.08)');
-          line.setAttribute('stroke-width', isVisited ? '2.5' : '1.2');
-          if (isVisited) {
-            line.setAttribute('stroke-dasharray', 'none');
-          } else {
-            line.setAttribute('stroke-dasharray', '3,3');
-          }
-          svgLinks.appendChild(line);
-        });
-      });
-
-      // 4. Draw Layer Info Text Labels in SVG
-      const layersLabels = [
-        { text: "LAYER 2: Entry Layer (Sparse Hops)", y: 22 },
-        { text: "LAYER 1: Express Layer (Medium Hops)", y: 102 },
-        { text: "LAYER 0: Base Layer (All Recipes)", y: 182 }
-      ];
-
-      const labelGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      layersLabels.forEach(lbl => {
+        // Add Layer Label
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', '15');
-        text.setAttribute('y', lbl.y);
+        text.setAttribute('y', y - 10);
         text.setAttribute('font-size', '8px');
-        text.setAttribute('fill', 'rgba(255,255,255,0.3)');
+        text.setAttribute('fill', 'rgba(255,255,255,0.25)');
         text.setAttribute('font-weight', 'bold');
-        text.textContent = lbl.text;
-        labelGroup.appendChild(text);
+        text.textContent = `LAYER ${L}`;
+        svgNodes.appendChild(text);
       });
-      svgNodes.appendChild(labelGroup);
 
-      // 5. Draw nodes for each layer
-      [2, 1, 0].forEach(L => {
-        const y = 50 + (2 - L) * 80;
-        layers[L].nodes.forEach(nId => {
-          const node = graphNodes[nId];
-          const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          
-          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          circle.setAttribute('cx', node.x);
-          circle.setAttribute('cy', y);
-          circle.setAttribute('r', '14');
-          
-          let fill = 'rgba(255,255,255,0.03)';
-          let stroke = 'var(--border)';
-          let strokeWidth = '1';
+      // Draw links between visited nodes up to currentStep
+      for (let i = 0; i < hnswCurrentStep; i++) {
+        const current = hnswRealPath[i];
+        const next = hnswRealPath[i + 1];
+        if (!current || !next) continue;
 
-          const isActive = (currentNode === nId && currentLayer === L && !isFinished);
-          const isFinishedNode = (isFinished && currentNode === nId && L === 0);
-          
-          const wasVisited = (currentNode === nId && currentLayer === L) ||
-                             visitedLinks.some(vl => (vl.source === nId || vl.target === nId) && vl.layer === L) || 
-                             verticalTransitions.some(vt => vt.nodeId === nId && (vt.fromLayer === L || vt.toLayer === L));
+        const x1 = xMap[current.node];
+        const y1 = getLayerY(current.layer);
+        const x2 = xMap[next.node];
+        const y2 = getLayerY(next.layer);
 
-          if (isFinishedNode) {
-            fill = 'rgba(16,185,129,0.2)';
-            stroke = 'var(--emerald)';
-            strokeWidth = '2.5';
-          } else if (isActive) {
-            fill = 'rgba(245,158,11,0.25)';
-            stroke = 'var(--amber)';
-            strokeWidth = '2.5';
-          } else if (wasVisited) {
-            fill = 'rgba(6,182,212,0.15)';
-            stroke = 'var(--cyan)';
-            strokeWidth = '1.8';
-          }
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
 
-          circle.setAttribute('fill', fill);
-          circle.setAttribute('stroke', stroke);
-          circle.setAttribute('stroke-width', strokeWidth);
-          g.appendChild(circle);
+        // If it's a layer drop (same node, different layer)
+        if (current.node === next.node) {
+          line.setAttribute('stroke', 'var(--amber)');
+          line.setAttribute('stroke-width', '2');
+          line.setAttribute('stroke-dasharray', '3,3');
+        } else {
+          // Horizontal hop within same layer or general link
+          line.setAttribute('stroke', 'var(--cyan)');
+          line.setAttribute('stroke-width', '2.5');
+        }
+        svgLinks.appendChild(line);
+      }
 
-          const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          text.setAttribute('x', node.x);
-          text.setAttribute('y', y + 3);
-          text.setAttribute('text-anchor', 'middle');
-          text.setAttribute('font-size', '7.5px');
-          text.setAttribute('fill', '#fff');
-          text.setAttribute('font-weight', 'bold');
-          text.textContent = node.label.substring(0, 5);
-          g.appendChild(text);
+      // Draw all nodes visited up to currentStep
+      hnswRealPath.forEach((step, idx) => {
+        if (idx > hnswCurrentStep) return;
 
-          const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'title');
-          titleEl.textContent = `${node.label} (Layer ${L})`;
-          g.appendChild(titleEl);
+        const x = xMap[step.node];
+        const y = getLayerY(step.layer);
 
-          svgNodes.appendChild(g);
-        });
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', '13');
+
+        const isCurrent = (idx === hnswCurrentStep);
+        const isLast = (isCurrent && idx === hnswRealPath.length - 1);
+
+        let fill = 'rgba(6, 182, 212, 0.15)';
+        let stroke = 'var(--cyan)';
+        let strokeWidth = '1.8';
+
+        if (isLast) {
+          fill = 'rgba(16, 185, 129, 0.2)';
+          stroke = 'var(--emerald)';
+          strokeWidth = '2.5';
+        } else if (isCurrent) {
+          fill = 'rgba(245, 158, 11, 0.25)';
+          stroke = 'var(--amber)';
+          strokeWidth = '2.5';
+        }
+
+        circle.setAttribute('fill', fill);
+        circle.setAttribute('stroke', stroke);
+        circle.setAttribute('stroke-width', strokeWidth);
+        g.appendChild(circle);
+
+        // Text label inside node (first 5 chars of recipe title or ID)
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', y + 3);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '7px');
+        text.setAttribute('fill', '#fff');
+        text.setAttribute('font-weight', 'bold');
+        text.textContent = step.recipe_title ? step.recipe_title.substring(0, 5) : step.node;
+        g.appendChild(text);
+
+        // Tooltip title
+        const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        titleEl.textContent = `${step.recipe_title} (Layer ${step.layer}, Sim: ${step.similarity.toFixed(3)})`;
+        g.appendChild(titleEl);
+
+        svgNodes.appendChild(g);
       });
     }
 
-    startBtn.addEventListener('click', () => {
-      currentLayer = 2;
-      currentNode = 'mamaliga';
-      visitedLinks = [];
-      verticalTransitions = [];
-      isFinished = false;
-      querySelect.disabled = true;
-      startBtn.disabled = true;
-      nextBtn.disabled = false;
-      
-      const targetQuery = targets[querySelect.value];
-      const startSim = getCosineSimilarity(graphNodes.mamaliga.val, targetQuery.vector);
+    function runMockHnswSimulation(queryText) {
+      const val = querySelect.value;
+      let mockPath = [];
 
-      statusText.innerHTML = `Indexul HNSW a fost inițializat.<br>
-        <strong>Nod Curent:</strong> Mămăligă (Punct de intrare)<br>
-        <strong>Strat Curent:</strong> Layer 2 (Top sparse)<br>
-        <strong>Similitudine inițială:</strong> ${startSim.toFixed(3)}<br>
-        Apasă 'Pasul Următor' pentru a evalua vecinii din acest strat.`;
-      
-      drawGraph();
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (!currentNode || isFinished) return;
-
-      const targetVal = querySelect.value;
-      const targetQuery = targets[targetVal];
-      const curSim = getCosineSimilarity(graphNodes[currentNode].val, targetQuery.vector);
-
-      // Find neighbors of currentNode in the currentLayer
-      const neighbors = [];
-      layers[currentLayer].links.forEach(link => {
-        if (link.source === currentNode) neighbors.push(link.target);
-        else if (link.target === currentNode) neighbors.push(link.source);
-      });
-
-      let bestNeighbor = null;
-      let bestSim = curSim;
-
-      neighbors.forEach(nId => {
-        const sim = getCosineSimilarity(graphNodes[nId].val, targetQuery.vector);
-        if (sim > bestSim) {
-          bestSim = sim;
-          bestNeighbor = nId;
-        }
-      });
-
-      if (bestNeighbor) {
-        // We found a better neighbor in the current layer: HOP
-        visitedLinks.push({ source: currentNode, target: bestNeighbor, layer: currentLayer });
-        const oldLabel = graphNodes[currentNode].label;
-        currentNode = bestNeighbor;
-        const newLabel = graphNodes[currentNode].label;
-
-        statusText.innerHTML = `Săritură în <strong>Layer ${currentLayer}</strong>:<br>
-          De la <strong>${oldLabel}</strong> la <strong>${newLabel}</strong><br>
-          <strong>Similitudine nouă:</strong> ${bestSim.toFixed(3)} (Mai bună)<br>
-          Apasă din nou 'Pasul Următor'.`;
-
-        drawGraph();
+      if (val === 'desert') {
+        mockPath = [
+          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.200 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 1, similarity: 0.200 },
+          { node: 'sarmale', recipe_title: 'Sarmale', layer: 1, similarity: 0.350 },
+          { node: 'sarmale', recipe_title: 'Sarmale', layer: 0, similarity: 0.350 },
+          { node: 'papanasi', recipe_title: 'Papanași', layer: 0, similarity: 0.880 }
+        ];
+      } else if (val === 'peste') {
+        mockPath = [
+          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.100 },
+          { node: 'somon', recipe_title: 'Somon', layer: 2, similarity: 0.780 },
+          { node: 'somon', recipe_title: 'Somon', layer: 1, similarity: 0.780 },
+          { node: 'somon', recipe_title: 'Somon', layer: 0, similarity: 0.840 }
+        ];
+      } else if (val === 'paste') {
+        mockPath = [
+          { node: 'somon', recipe_title: 'Somon', layer: 2, similarity: 0.150 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.250 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 1, similarity: 0.250 },
+          { node: 'carbonara', recipe_title: 'Spaghete', layer: 1, similarity: 0.820 },
+          { node: 'carbonara', recipe_title: 'Spaghete', layer: 0, similarity: 0.860 }
+        ];
       } else {
-        // No better neighbor in the current layer: DROP LAYER or FINISH
-        if (currentLayer > 0) {
-          const nextLayer = currentLayer - 1;
-          verticalTransitions.push({ nodeId: currentNode, fromLayer: currentLayer, toLayer: nextLayer });
-          
-          statusText.innerHTML = `Niciun vecin în <strong>Layer ${currentLayer}</strong> nu este mai apropiat.<br>
-            Coborâm la <strong>Layer ${nextLayer}</strong> la nodul <strong>${graphNodes[currentNode].label}</strong>.<br>
-            Apasă 'Pasul Următor' pentru a continua căutarea locală în noul strat.`;
-            
-          currentLayer = nextLayer;
-          drawGraph();
-        } else {
-          // We are already at Layer 0 and no neighbor is better: FINISHED!
-          isFinished = true;
-          nextBtn.disabled = true;
-          const finalLabel = graphNodes[currentNode].label;
-          
-          statusText.innerHTML = `<strong>Căutare HNSW finalizată!</strong><br>
-            <strong>Nod Final găsit:</strong> ${finalLabel}<br>
-            <strong>Similitudine maximă:</strong> ${curSim.toFixed(3)}<br>
-            Algoritmul s-a oprit deoarece am atins un minim local în Layer 0. Am localizat rețeta optimă prin analizarea a doar câtorva noduri din graf.`;
+        // traditional or custom
+        mockPath = [
+          { node: 'somon', recipe_title: 'Somon', layer: 2, similarity: 0.080 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.380 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 1, similarity: 0.380 },
+          { node: 'sarmale', recipe_title: 'Sarmale', layer: 1, similarity: 0.810 },
+          { node: 'sarmale', recipe_title: 'Sarmale', layer: 0, similarity: 0.890 }
+        ];
+      }
 
-          drawGraph();
+      hnswRealPath = mockPath;
+      hnswCurrentStep = 0;
+
+      uniqueNodeIds = Array.from(new Set(hnswRealPath.map(p => p.node)));
+      xMap = {};
+      const margin = 50;
+      const width = 400;
+      const spacing = uniqueNodeIds.length > 1 ? width / (uniqueNodeIds.length - 1) : width;
+      uniqueNodeIds.forEach((nodeId, idx) => {
+        xMap[nodeId] = margin + idx * spacing;
+      });
+
+      const startStep = hnswRealPath[0];
+      statusText.innerHTML = `<strong>Inițializare HNSW (Simulare Locală de Rezervă)</strong><br>
+        <strong>Interogare:</strong> "${queryText}"<br>
+        <strong>Entry Point:</strong> ${startStep.recipe_title} (Layer ${startStep.layer})<br>
+        <strong>Similitudine inițială:</strong> ${startStep.similarity.toFixed(3)}<br>
+        Apasă 'Pasul Următor' pentru a urmări salturile prin graful ierarhic.
+        <div style="margin-top: 10px; padding: 10px; background: rgba(6,182,212,0.08); border-left: 3px solid var(--cyan); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
+          <strong>Cum funcționează:</strong> Serverul este temporar indisponibil sau nu a putut returna simularea. Rulăm o simulare locală simplificată pentru a înțelege algoritmul.
+        </div>`;
+
+      nextBtn.disabled = false;
+      drawRealPath();
+    }
+
+    startBtn.addEventListener('click', async () => {
+      let queryText = "";
+      let targetRecipeId = null;
+      const val = querySelect.value;
+      if (val.startsWith('custom_')) {
+        const customIdx = parseInt(val.split('_')[1]);
+        const recipe = window.createdRecipes[customIdx];
+        queryText = recipe ? recipe.title : "pui";
+        targetRecipeId = recipe ? recipe.id : null;
+      } else {
+        queryText = queryMap[val] || val;
+      }
+
+      statusText.innerHTML = `🔄 Se calculează graful HNSW real pe server...`;
+      startBtn.disabled = true;
+      querySelect.disabled = true;
+
+      try {
+        const response = await fetch(`${API}/api/hnsw/simulate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: queryText, target_recipe_id: targetRecipeId })
+        });
+
+        if (!response.ok) throw new Error('Simulation failed');
+        const data = await response.json();
+
+        hnswRealPath = data.path || [];
+        hnswCurrentStep = 0;
+
+        if (hnswRealPath.length === 0) {
+          throw new Error("Nu s-au returnat pași de căutare.");
         }
+
+        // Initialize coordinates map for unique nodes in the path
+        uniqueNodeIds = Array.from(new Set(hnswRealPath.map(p => p.node)));
+        xMap = {};
+        const margin = 45;
+        const width = 410; // 500 - 2 * margin
+        const spacing = uniqueNodeIds.length > 1 ? width / (uniqueNodeIds.length - 1) : width;
+        uniqueNodeIds.forEach((nodeId, idx) => {
+          xMap[nodeId] = margin + idx * spacing;
+        });
+
+        const startStep = hnswRealPath[0];
+        statusText.innerHTML = `<strong>Inițializare HNSW Reală pe Server</strong><br>
+          <strong>Interogare:</strong> "${queryText}"<br>
+          <strong>Entry Point:</strong> ${startStep.recipe_title} (Layer ${startStep.layer})<br>
+          <strong>Similitudine inițială:</strong> ${startStep.similarity.toFixed(3)}<br>
+          Apasă 'Pasul Următor' pentru a urmări salturile reale prin graful ierarhic.
+          <div style="margin-top: 10px; padding: 10px; background: rgba(6,182,212,0.08); border-left: 3px solid var(--cyan); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
+            <strong>Cum funcționează:</strong> Am trimis textul interogării la backend. Algoritmul HNSW a localizat un punct de pornire aleatoriu pe cel mai înalt strat disponibil (Layer ${startStep.layer}) și este pregătit să exploreze legăturile.
+          </div>`;
+
+        nextBtn.disabled = false;
+        drawRealPath();
+
+      } catch (err) {
+        console.warn("HNSW real simulation failed, falling back to mock:", err);
+        runMockHnswSimulation(queryText);
       }
     });
 
+    nextBtn.addEventListener('click', () => {
+      if (hnswCurrentStep === -1 || hnswCurrentStep >= hnswRealPath.length - 1) return;
+
+      hnswCurrentStep++;
+      const current = hnswRealPath[hnswCurrentStep];
+      const prev = hnswRealPath[hnswCurrentStep - 1];
+
+      let targetVal = querySelect.value;
+      let targetName = "";
+      if (targetVal.startsWith('custom_')) {
+        const customIdx = parseInt(targetVal.split('_')[1]);
+        const recipe = window.createdRecipes[customIdx];
+        targetName = recipe ? recipe.title : "rețetă";
+      } else {
+        targetName = queryMap[targetVal] || targetVal;
+      }
+
+      const isLast = (hnswCurrentStep === hnswRealPath.length - 1);
+
+      if (current.node === prev.node) {
+        // Drop layer
+        statusText.innerHTML = `Coborâre de nivel la <strong>Layer ${current.layer}</strong>:<br>
+          La rețeta <strong>${current.recipe_title}</strong><br>
+          <strong>Similitudine:</strong> ${current.similarity.toFixed(3)}<br>
+          Apasă 'Pasul Următor' pentru a explora legăturile mai fine din acest strat.
+          <div style="margin-top: 10px; padding: 10px; background: rgba(245,158,11,0.08); border-left: 3px solid var(--amber); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
+            <strong>Cum funcționează:</strong> În Layer ${prev.layer}, niciun vecin direct nu a adus o potrivire mai bună pentru "${targetName}". De aceea, algoritmul "coboară vertical" în Layer ${current.layer} pe aceeași rețetă pentru a accesa conexiuni locale mai detaliate.
+          </div>`;
+      } else {
+        // Hop
+        statusText.innerHTML = `Săritură în <strong>Layer ${current.layer}</strong>:<br>
+          De la <strong>${prev.recipe_title}</strong> la <strong>${current.recipe_title}</strong><br>
+          <strong>Similitudine nouă:</strong> ${current.similarity.toFixed(3)} (Creștere de la ${prev.similarity.toFixed(3)})<br>
+          ${isLast ? "Căutare finalizată!" : "Apasă din nou 'Pasul Următor'."}
+          <div style="margin-top: 10px; padding: 10px; background: rgba(16,185,129,0.08); border-left: 3px solid var(--emerald); border-radius: 4px; font-size: 0.78rem; line-height: 1.4; color: var(--text-dim);">
+            <strong>Cum funcționează:</strong> Algoritmul a evaluat vecinii din Layer ${current.layer} și a găsit o rețetă care seamănă mai mult cu "${targetName}". A urmat legătura din graf și a făcut un salt la ea.
+          </div>`;
+      }
+
+      if (isLast) {
+        nextBtn.disabled = true;
+        statusText.innerHTML += `
+          <div style="margin-top: 10px; padding: 12px; background: rgba(168,85,247,0.08); border-left: 3px solid var(--violet-lt); border-radius: 4px; font-size: 0.8rem; line-height: 1.45; color: var(--text-dim);">
+            <strong>🎉 Căutare finalizată cu succes!</strong><br>
+            Am găsit rețeta <strong>${current.recipe_title}</strong> (Similitudine: ${current.similarity.toFixed(3)}) prin analizarea a doar <strong>${uniqueNodeIds.length} rețete distincte</strong>, în loc de scanarea liniară a tuturor celor 250+ rețete din baza de date. Acesta este avantajul indexului HNSW!
+          </div>
+        `;
+      }
+
+      drawRealPath();
+    });
+
     resetBtn.addEventListener('click', () => {
-      currentLayer = 2;
-      currentNode = null;
-      visitedLinks = [];
-      verticalTransitions = [];
-      isFinished = false;
+      hnswRealPath = [];
+      hnswCurrentStep = -1;
+      uniqueNodeIds = [];
+      xMap = {};
+      
       querySelect.disabled = false;
       startBtn.disabled = false;
       nextBtn.disabled = true;
       statusText.innerHTML = "Apasă 'Inițializează Căutare' pentru a plasa punctul de intrare.";
-      drawGraph();
+      
+      const svgNodes = document.getElementById('hnswNodes');
+      const svgLinks = document.getElementById('hnswLinks');
+      if (svgNodes) svgNodes.innerHTML = '';
+      if (svgLinks) svgLinks.innerHTML = '';
     });
-
-    // Initial draw
-    drawGraph();
   }
 
   // ── RAG vs Pure LLM Showdown ─────────────────────────────────────────────
@@ -2209,7 +2271,7 @@ for hits in results:
       { name: "butter", label: "unt", category: "dairy", color: "#06b6d4", desc: "Grasime bogata obtinuta din lapte, adauga textura cremoasa si savoare de neegalat preparatelor.", companions: [{ name: "garlic", score: 0.86 }, { name: "shrimp", score: 0.85 }, { name: "chicken", score: 0.79 }, { name: "onion", score: 0.80 }] },
       { name: "cheese", label: "branza", category: "dairy", color: "#06b6d4", desc: "Produs lactat variat, de la fin si cremos la maturat si sarat, perfect pentru gratinat.", companions: [{ name: "basil", score: 0.84 }, { name: "tomato", score: 0.83 }, { name: "olive oil", score: 0.79 }, { name: "garlic", score: 0.71 }] },
       { name: "cream", label: "smantana", category: "dairy", color: "#06b6d4", desc: "Smantana grasa fermentata sau dulce, ideala pentru sosuri catifelate sau echilibrarea condimentelor.", companions: [{ name: "chicken", score: 0.78 }, { name: "butter", score: 0.76 }, { name: "vanilla", score: 0.74 }, { name: "chocolate", score: 0.72 }] },
-      { name: "olive oil", label: "ulei de masline", category: "dairy", color: "#06b6d4", desc: "Ulei vegetal sanatos, baza sosurilor reci si a calirii legumelor in bucataria mediteraneana.", companions: [{ name: "garlic", score: 0.94 }, { name: "basil", score: 0.92 }, { name: "tomato", score: 0.91 }, { name: "cheese", score: 0.79 }] } }
+      { name: "olive oil", label: "ulei de masline", category: "dairy", color: "#06b6d4", desc: "Ulei vegetal sanatos, baza sosurilor reci si a calirii legumelor in bucataria mediteraneana.", companions: [{ name: "garlic", score: 0.94 }, { name: "basil", score: 0.92 }, { name: "tomato", score: 0.91 }, { name: "cheese", score: 0.79 }] },
 
       { name: "honey", label: "miere", category: "spice", color: "#f59e0b", desc: "Indulcitor natural cu note florale.", companions: [{ name: "lemon", score: 0.80 }, { name: "ginger", score: 0.84 }, { name: "cinnamon", score: 0.79 }, { name: "chicken", score: 0.78 }] },
       { name: "cinnamon", label: "scortisoara", category: "spice", color: "#f59e0b", desc: "Condiment cald cu aroma dulce-lemnoasa.", companions: [{ name: "honey", score: 0.79 }, { name: "vanilla", score: 0.82 }, { name: "chocolate", score: 0.75 }, { name: "butter", score: 0.70 }] },
@@ -2732,6 +2794,14 @@ window.addEventListener('message', (event) => {
         setTimeout(() => handleInvent(), 500);
       }
     }, 300);
+  }
+
+  if (event.data && event.data.action === 'recipeCreated') {
+    const recipe = event.data.recipe;
+    if (recipe && window.createdRecipes && !window.createdRecipes.some(existing => existing.title === recipe.title)) {
+      window.createdRecipes.push(recipe);
+      updateHnswCustomRecipesDropdown();
+    }
   }
 });
 

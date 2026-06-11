@@ -390,3 +390,57 @@ class RecipeRAGEngine:
             "latency_ms": latency_ms
         }
 
+    def register_recipe(self, r: dict):
+        """Register a dynamically created recipe into RAG, ChromaDB, and HNSW if available"""
+        if "id" not in r:
+            r["id"] = f"invented_{len(self.recipes) + 1}"
+        
+        rid = str(r["id"])
+        
+        # Check duplicate
+        if any(str(x.get("id")) == rid for x in self.recipes):
+            return
+            
+        # 1. Add to local list
+        self.recipes.append(r)
+        
+        # 2. Embed and add to ChromaDB
+        ings = " ".join(r.get("ingredients", [])).lower()
+        title = r.get("title", "")
+        steps = " ".join(r.get("steps", []))
+        doc_text = f"Title: {title}. Ingredients: {ings}. Instructions: {steps}"
+        
+        emb = self.encoder.encode([doc_text])
+        emb_list = emb.tolist()
+        
+        metadata = {
+            "title": title,
+            "cuisine": r.get("cuisine", ""),
+            "ingredients": ings
+        }
+        
+        try:
+            self.collection.add(
+                documents=[doc_text],
+                embeddings=emb_list,
+                ids=[rid],
+                metadatas=[metadata]
+            )
+        except Exception as e:
+            print(f"Error adding dynamic recipe to ChromaDB: {e}")
+            
+        # 3. Rebuild BM25
+        try:
+            ing_corpus = [" ".join(x.get("ingredients", [])).lower() for x in self.recipes]
+            self.bm25 = BM25(ing_corpus)
+        except Exception as e:
+            print(f"Error rebuilding BM25: {e}")
+            
+        # 4. Add to HNSW simulator if registered
+        hnsw = getattr(self, "hnsw_simulator", None)
+        if hnsw is not None:
+            try:
+                hnsw.add_recipe(r, emb[0])
+            except Exception as e:
+                print(f"Error adding dynamic recipe to HNSW simulator: {e}")
+

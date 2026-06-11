@@ -55,6 +55,7 @@ for id, emb in zip(ids, embeddings):
     EMBEDDINGS_MAP[id] = emb
 
 HNSW_SIMULATOR = HNSWSimulator(ALL_RECIPES, EMBEDDINGS_MAP, ENGINE.encoder)
+ENGINE.hnsw_simulator = HNSW_SIMULATOR
 print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed. HNSW simulator initialized.")
 
 class InventRequest(BaseModel):
@@ -99,6 +100,12 @@ def chat(req: ChatRequest):
         raise HTTPException(status_code=400, detail="Mesajul nu poate fi gol.")
     
     bot_res = CHATBOT.respond(cleaned)
+    # Register any invented recipes in the engine/HNSW simulator
+    if "recipes" in bot_res and isinstance(bot_res["recipes"], list):
+        for r in bot_res["recipes"]:
+            ENGINE.register_recipe(r)
+    if "recipe" in bot_res and isinstance(bot_res["recipe"], dict):
+        ENGINE.register_recipe(bot_res["recipe"])
     return bot_res
 
 @app.post("/api/invent")
@@ -134,6 +141,8 @@ def invent(req: InventRequest):
         retrieved_recipes=retrieved,
         num_recipes=min(req.num_recipes, len(retrieved))
     )
+    for r in invented:
+        ENGINE.register_recipe(r)
 
     return {
         "recipes": invented,
