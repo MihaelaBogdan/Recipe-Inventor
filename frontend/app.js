@@ -995,43 +995,51 @@ RESPONSE (Generat factual pe baza documentelor furnizate):`;
   });
 
   // Similarity calculator
-  calcSimBtn.addEventListener('click', async () => {
-    const t1 = simText1.value.trim();
-    const t2 = simText2.value.trim();
-    if (!t1 || !t2) return;
+  if (calcSimBtn) {
+    calcSimBtn.addEventListener('click', async () => {
+      const t1 = simText1 ? simText1.value.trim() : '';
+      const t2 = simText2 ? simText2.value.trim() : '';
+      if (!t1 || !t2) return;
 
-    calcSimBtn.disabled = true;
-    simResultVal.textContent = '...';
-    simResultVal.style.color = 'var(--text-muted)';
-
-    try {
-      const res = await fetch(`${API}/api/playground/similarity`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text1: t1, text2: t2 })
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
-      const sim = data.similarity;
-      simResultVal.textContent = sim.toFixed(4);
-
-      if (sim > 0.6) {
-        simResultVal.style.color = 'var(--emerald)';
-      } else if (sim > 0.3) {
-        simResultVal.style.color = 'var(--amber)';
-      } else {
-        simResultVal.style.color = 'var(--red)';
+      calcSimBtn.disabled = true;
+      if (simResultVal) {
+        simResultVal.textContent = '...';
+        simResultVal.style.color = 'var(--text-muted)';
       }
-    } catch (e) {
-      console.error(e);
-      simResultVal.textContent = 'Error';
-      simResultVal.style.color = 'var(--red)';
-    } finally {
-      calcSimBtn.disabled = false;
-    }
-  });
+
+      try {
+        const res = await fetch(`${API}/api/playground/similarity`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text1: t1, text2: t2 })
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const sim = data.similarity;
+        if (simResultVal) {
+          simResultVal.textContent = sim.toFixed(4);
+
+          if (sim > 0.6) {
+            simResultVal.style.color = 'var(--emerald)';
+          } else if (sim > 0.3) {
+            simResultVal.style.color = 'var(--amber)';
+          } else {
+            simResultVal.style.color = 'var(--red)';
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        if (simResultVal) {
+          simResultVal.textContent = 'Error';
+          simResultVal.style.color = 'var(--red)';
+        }
+      } finally {
+        calcSimBtn.disabled = false;
+      }
+    });
+  }
 
   // ── Database query simulator ────────────────────────────────────────────
   let selectedDb = 'chromadb';
@@ -1799,9 +1807,349 @@ for hits in results:
     runShowdown();
   }
 
+  // ── Culinary Galaxy Particle Simulator ────────────────────────────────────
+  function initCulinaryGalaxy() {
+    const canvas = document.getElementById('galaxyCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    const select = document.getElementById('galaxySeedSelect');
+    const selectedTitle = document.getElementById('galaxySelectedTitle');
+    const selectedDesc = document.getElementById('galaxySelectedDesc');
+    const list = document.getElementById('galaxyCompanionsList');
+    const useInCreatorBtn = document.getElementById('galaxyUseInCreatorBtn');
+    const useInChatBtn = document.getElementById('galaxyUseInChatBtn');
+
+    // Handle high DPI
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const originalWidth = 650;
+    const originalHeight = 500;
+    canvas.width = originalWidth * devicePixelRatio;
+    canvas.height = originalHeight * devicePixelRatio;
+    canvas.style.width = originalWidth + "px";
+    canvas.style.height = originalHeight + "px";
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+
+    const cx = originalWidth / 2;
+    const cy = originalHeight / 2;
+
+    const galaxyIngredients = [
+      { name: "chicken", label: "pui", category: "protein", color: "#ec4899", desc: "Proteina centrala versatila, compatibila cu profiluri aromatice ierboase, usturoiate si citrice.", companions: [{ name: "garlic", score: 0.88 }, { name: "rosemary", score: 0.85 }, { name: "lemon", score: 0.82 }, { name: "butter", score: 0.79 }] },
+      { name: "beef", label: "vita", category: "protein", color: "#ec4899", desc: "Carne rosie cu gust bogat, ideala pentru fripturi lente, burgeri sau sosuri consistente.", companions: [{ name: "onion", score: 0.84 }, { name: "garlic", score: 0.82 }, { name: "butter", score: 0.78 }, { name: "rosemary", score: 0.75 }] },
+      { name: "shrimp", label: "creveti", category: "protein", color: "#ec4899", desc: "Fructe de mare delicate cu timp rapid de gatire, excelente cu sosuri acidulate si ierburi aromate.", companions: [{ name: "garlic", score: 0.91 }, { name: "lemon", score: 0.88 }, { name: "butter", score: 0.85 }, { name: "cilantro", score: 0.78 }] },
+      { name: "salmon", label: "somon", category: "protein", color: "#ec4899", desc: "Peste gras bogat in acizi grasi Omega-3, cu gust pregnant, perfect pentru coacere sau grill.", companions: [{ name: "lemon", score: 0.90 }, { name: "butter", score: 0.84 }, { name: "garlic", score: 0.81 }, { name: "basil", score: 0.76 }] },
+      { name: "tofu", label: "tofu", category: "protein", color: "#ec4899", desc: "Proteina vegetala din soia, absoarbe excelent marinadele si sosurile cu arome picante sau asiatice.", companions: [{ name: "ginger", score: 0.89 }, { name: "garlic", score: 0.85 }, { name: "onion", score: 0.78 }, { name: "chili", score: 0.76 }] },
+      
+      { name: "garlic", label: "usturoi", category: "vegetable", color: "#10b981", desc: "Ingredient aromatic fundamental, utilizat universal pentru a potenta gustul preparatelor sarate.", companions: [{ name: "olive oil", score: 0.94 }, { name: "onion", score: 0.89 }, { name: "chicken", score: 0.88 }, { name: "tomato", score: 0.85 }] },
+      { name: "onion", label: "ceapa", category: "vegetable", color: "#10b981", desc: "Baza oricarui sos sau mancare gatita, ofera dulceata prin caramelizare sau iutime in stare cruda.", companions: [{ name: "garlic", score: 0.89 }, { name: "beef", score: 0.84 }, { name: "tomato", score: 0.82 }, { name: "butter", score: 0.80 }] },
+      { name: "tomato", label: "rosii", category: "vegetable", color: "#10b981", desc: "Fruct zemos si acidulat, baza multor sosuri clasice, supe si salate proaspete de vara.", companions: [{ name: "basil", score: 0.95 }, { name: "olive oil", score: 0.91 }, { name: "garlic", score: 0.85 }, { name: "cheese", score: 0.83 }] },
+      { name: "basil", label: "busuioc", category: "vegetable", color: "#10b981", desc: "Iarba aromatica proaspata si dulceaga, specifica bucatariei mediteraneene si sosului pesto.", companions: [{ name: "tomato", score: 0.95 }, { name: "olive oil", score: 0.92 }, { name: "cheese", score: 0.84 }, { name: "garlic", score: 0.81 }] },
+      { name: "rosemary", label: "rozmarin", category: "vegetable", color: "#10b981", desc: "Iarba aromatica cu frunze aciculare si aroma puternica de pin, potrivita pentru fripturi la cuptor.", companions: [{ name: "garlic", score: 0.86 }, { name: "chicken", score: 0.85 }, { name: "butter", score: 0.81 }, { name: "beef", score: 0.75 }] },
+      { name: "ginger", label: "ghimbir", category: "vegetable", color: "#10b981", desc: "Radacina picanta si proaspata, ideala in bucataria asiatica, ceaiuri, dulciuri sau sosuri curry.", companions: [{ name: "garlic", score: 0.89 }, { name: "tofu", score: 0.89 }, { name: "honey", score: 0.84 }, { name: "chili", score: 0.81 }] },
+      { name: "lemon", label: "lamaie", category: "vegetable", color: "#10b981", desc: "Citric acidulat folosit pentru a echilibra grasimile din preparate si pentru a oferi prospetime.", companions: [{ name: "salmon", score: 0.90 }, { name: "shrimp", score: 0.88 }, { name: "chicken", score: 0.82 }, { name: "honey", score: 0.80 }] },
+      { name: "cilantro", label: "coriandru", category: "vegetable", color: "#10b981", desc: "Iarba aromatica proaspata si citrica, esentiala in bucataria mexicana si asiatica.", companions: [{ name: "shrimp", score: 0.78 }, { name: "chili", score: 0.77 }, { name: "onion", score: 0.75 }, { name: "garlic", score: 0.72 }] },
+      
+      { name: "butter", label: "unt", category: "dairy", color: "#06b6d4", desc: "Grasime bogata obtinuta din lapte, adauga textura cremoasa si savoare de neegalat preparatelor.", companions: [{ name: "garlic", score: 0.86 }, { name: "shrimp", score: 0.85 }, { name: "chicken", score: 0.79 }, { name: "onion", score: 0.80 }] },
+      { name: "cheese", label: "branza", category: "dairy", color: "#06b6d4", desc: "Produs lactat variat, de la fin si cremos la maturat si sarat, perfect pentru gratinat.", companions: [{ name: "basil", score: 0.84 }, { name: "tomato", score: 0.83 }, { name: "olive oil", score: 0.79 }, { name: "garlic", score: 0.71 }] },
+      { name: "cream", label: "smantana", category: "dairy", color: "#06b6d4", desc: "Smantana grasa fermentata sau dulce, ideala pentru sosuri catifelate sau echilibrarea condimentelor.", companions: [{ name: "chicken", score: 0.78 }, { name: "butter", score: 0.76 }, { name: "vanilla", score: 0.74 }, { name: "chocolate", score: 0.72 }] },
+      { name: "olive oil", label: "ulei de masline", category: "dairy", color: "#06b6d4", desc: "Ulei vegetal sanatos, baza sosurilor reci si a calirii legumelor in bucataria mediteraneana.", companions: [{ name: "garlic", score: 0.94 }, { name: "basil", score: 0.92 }, { name: "tomato", score: 0.91 }, { name: "cheese", score: 0.79 }] },
+      
+      { name: "honey", label: "miere", category: "spice", color: "#f59e0b", desc: "Indulcitor natural cu note florale, excelent pentru echilibrarea preparatelor picante sau acide.", companions: [{ name: "lemon", score: 0.80 }, { name: "ginger", score: 0.84 }, { name: "cinnamon", score: 0.79 }, { name: "chicken", score: 0.78 }] },
+      { name: "cinnamon", label: "scortisoara", category: "spice", color: "#f59e0b", desc: "Condiment cald cu aroma dulce-lemnoasa, nelipsit din placinte, dulciuri si mancaruri asiatice.", companions: [{ name: "honey", score: 0.79 }, { name: "vanilla", score: 0.82 }, { name: "chocolate", score: 0.75 }, { name: "butter", score: 0.70 }] },
+      { name: "vanilla", label: "vanilie", category: "spice", color: "#f59e0b", desc: "Aroma exotica dulce si delicata, cel mai popular ingredient aromatic in patiseria globala.", companions: [{ name: "chocolate", score: 0.88 }, { name: "cinnamon", score: 0.82 }, { name: "cream", score: 0.74 }, { name: "honey", score: 0.71 }] },
+      { name: "chocolate", label: "ciocolata", category: "spice", color: "#f59e0b", desc: "Derivat bogat si dulce din cacao, ingredient de referinta pentru deserturi sau sosuri asiatice mole.", companions: [{ name: "vanilla", score: 0.88 }, { name: "chili", score: 0.80 }, { name: "cinnamon", score: 0.75 }, { name: "cream", score: 0.72 }] },
+      { name: "chili", label: "chili", category: "spice", color: "#f59e0b", desc: "Ardei iute uscat sau proaspat, adauga caldura, picanterie si intensitate oricarui preparat.", companions: [{ name: "chocolate", score: 0.80 }, { name: "ginger", score: 0.81 }, { name: "garlic", score: 0.78 }, { name: "cilantro", score: 0.77 }] }
+    ];
+
+    let activeSeedName = "chicken";
+
+    // Populate dropdown
+    select.innerHTML = galaxyIngredients.map(ing => `
+      <option value="${ing.name}">${ing.label.toUpperCase()}</option>
+    `).join('');
+    select.value = activeSeedName;
+
+    // Simulation nodes setup
+    const nodes = galaxyIngredients.map((ing, idx) => {
+      return {
+        ...ing,
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.0015 + Math.random() * 0.002,
+        currentRadius: 180 + idx * 8,
+        targetRadius: 180 + idx * 8,
+        x: cx,
+        y: cy
+      };
+    });
+
+    function updateActiveSeed(name) {
+      activeSeedName = name;
+      select.value = name;
+      const seedNode = nodes.find(n => n.name === name);
+      if (!seedNode) return;
+
+      // Update sidebar title and description
+      selectedTitle.textContent = seedNode.label.toUpperCase();
+      selectedTitle.style.color = seedNode.color;
+      selectedDesc.textContent = seedNode.desc;
+
+      // Update companion sidebar list
+      const companionNames = seedNode.companions.map(c => c.name);
+      const sortedCompanions = seedNode.companions.slice().sort((a, b) => b.score - a.score);
+      
+      list.innerHTML = sortedCompanions.map(c => {
+        const matchingNode = nodes.find(n => n.name === c.name);
+        const label = matchingNode ? matchingNode.label : c.name;
+        const color = matchingNode ? matchingNode.color : "var(--text)";
+        return `
+          <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.82rem;">
+            <span style="font-weight: 600; color: ${color};">${label.toUpperCase()}</span>
+            <span style="color: var(--text-muted); font-size: 0.76rem;">${Math.round(c.score * 100)}% Sinergie</span>
+          </div>
+        `;
+      }).join('');
+
+      // Recalculate target radii for orbit interpolation
+      let companionIndex = 0;
+      let nonCompanionIndex = 0;
+
+      nodes.forEach(n => {
+        if (n.name === name) {
+          n.targetRadius = 0;
+        } else {
+          const companionObj = seedNode.companions.find(c => c.name === n.name);
+          if (companionObj) {
+            n.targetRadius = 55 + companionIndex * 35;
+            companionIndex++;
+          } else {
+            n.targetRadius = 210 + nonCompanionIndex * 15;
+            nonCompanionIndex++;
+          }
+        }
+      });
+    }
+
+    // Canvas rendering loop
+    let mouseX = -1000;
+    let mouseY = -1000;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      mouseX = -1000;
+      mouseY = -1000;
+    });
+
+    canvas.addEventListener('click', () => {
+      let closestNode = null;
+      let closestDist = 25; // Click radius
+      nodes.forEach(n => {
+        const d = Math.hypot(n.x - mouseX, n.y - mouseY);
+        if (d < closestDist) {
+          closestNode = n;
+          closestDist = d;
+        }
+      });
+
+      if (closestNode) {
+        updateActiveSeed(closestNode.name);
+      }
+    });
+
+    select.addEventListener('change', (e) => {
+      updateActiveSeed(e.target.value);
+    });
+
+    function draw() {
+      // Check if canvas container is visible (not tab hidden)
+      if (canvas.offsetParent === null) {
+        // Skip heavy drawing if galaxy tab is not active
+        setTimeout(draw, 100);
+        return;
+      }
+
+      ctx.clearRect(0, 0, originalWidth, originalHeight);
+
+      // Draw background space elements (orbital tracks)
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      [55, 90, 125, 160, 210, 240, 270].forEach(r => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      ctx.setLineDash([]);
+
+      // Update positions
+      nodes.forEach(n => {
+        n.angle += n.speed;
+        n.currentRadius += (n.targetRadius - n.currentRadius) * 0.06;
+        n.x = cx + n.currentRadius * Math.cos(n.angle);
+        n.y = cy + n.currentRadius * Math.sin(n.angle);
+      });
+
+      // Draw connection lines to active seed's companions
+      const seedNode = nodes.find(n => n.name === activeSeedName);
+      if (seedNode) {
+        nodes.forEach(n => {
+          if (n.name !== activeSeedName) {
+            const companionObj = seedNode.companions.find(c => c.name === n.name);
+            if (companionObj) {
+              ctx.beginPath();
+              ctx.moveTo(seedNode.x, seedNode.y);
+              ctx.lineTo(n.x, n.y);
+              ctx.lineWidth = 1.5;
+              const grad = ctx.createLinearGradient(seedNode.x, seedNode.y, n.x, n.y);
+              grad.addColorStop(0, seedNode.color);
+              grad.addColorStop(1, n.color);
+              ctx.strokeStyle = grad;
+              ctx.shadowColor = n.color;
+              ctx.shadowBlur = 8;
+              ctx.stroke();
+              ctx.shadowBlur = 0;
+            }
+          }
+        });
+      }
+
+      // Draw center core glow
+      if (seedNode) {
+        ctx.beginPath();
+        ctx.arc(seedNode.x, seedNode.y, 22, 0, Math.PI * 2);
+        const radialGrad = ctx.createRadialGradient(seedNode.x, seedNode.y, 0, seedNode.x, seedNode.y, 22);
+        radialGrad.addColorStop(0, "rgba(255,255,255,0.4)");
+        radialGrad.addColorStop(0.3, seedNode.color);
+        radialGrad.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = radialGrad;
+        ctx.shadowColor = seedNode.color;
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      // Draw nodes
+      let hoveredNode = null;
+      nodes.forEach(n => {
+        const isHovered = Math.hypot(n.x - mouseX, n.y - mouseY) < 12;
+        if (isHovered) hoveredNode = n;
+
+        ctx.beginPath();
+        const nodeRadius = n.name === activeSeedName ? 10 : (isHovered ? 8 : 5);
+        ctx.arc(n.x, n.y, nodeRadius, 0, Math.PI * 2);
+        ctx.fillStyle = n.color;
+        
+        if (n.name === activeSeedName || isHovered) {
+          ctx.shadowColor = n.color;
+          ctx.shadowBlur = 10;
+        }
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Label
+        if (n.name !== activeSeedName) {
+          ctx.font = isHovered ? "bold 11px Outfit" : "10px Outfit";
+          ctx.fillStyle = isHovered ? "#fff" : "var(--text-muted)";
+          ctx.fillText(n.label.toUpperCase(), n.x + 8, n.y + 3);
+        }
+      });
+
+      // Draw central label
+      if (seedNode) {
+        ctx.font = "bold 12px Outfit";
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        ctx.shadowBlur = 4;
+        ctx.fillText(seedNode.label.toUpperCase(), seedNode.x - 12, seedNode.y - 14);
+        ctx.shadowBlur = 0;
+      }
+
+      // Draw hover tooltip on canvas
+      if (hoveredNode) {
+        ctx.fillStyle = "rgba(13, 18, 32, 0.95)";
+        ctx.strokeStyle = hoveredNode.color;
+        ctx.lineWidth = 1;
+        
+        const tooltipX = mouseX + 10;
+        const tooltipY = mouseY - 45;
+        
+        ctx.beginPath();
+        ctx.roundRect(tooltipX, tooltipY, 150, 36, 6);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.font = "bold 11px Outfit";
+        ctx.fillStyle = hoveredNode.color;
+        ctx.fillText(hoveredNode.label.toUpperCase(), tooltipX + 8, tooltipY + 16);
+
+        ctx.font = "9px Outfit";
+        ctx.fillStyle = "var(--text-muted)";
+        ctx.fillText(hoveredNode.category.toUpperCase(), tooltipX + 8, tooltipY + 28);
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    // Bind action buttons
+    useInCreatorBtn.addEventListener('click', () => {
+      const seedNode = nodes.find(n => n.name === activeSeedName);
+      if (!seedNode) return;
+
+      // Clear creator tags
+      tags = [];
+      addTag(seedNode.label);
+      seedNode.companions.forEach(c => {
+        const match = nodes.find(n => n.name === c.name);
+        if (match) {
+          addTag(match.label);
+        }
+      });
+
+      // Switch tab to Creator
+      const creatorTabBtn = document.querySelector('.tab-button[data-tab="creator"]');
+      if (creatorTabBtn) {
+        creatorTabBtn.click();
+      }
+    });
+
+    useInChatBtn.addEventListener('click', () => {
+      const seedNode = nodes.find(n => n.name === activeSeedName);
+      if (!seedNode) return;
+
+      const companionsLabels = seedNode.companions.map(c => {
+        const match = nodes.find(n => n.name === c.name);
+        return match ? match.label : c.name;
+      });
+
+      const allIngs = [seedNode.label, ...companionsLabels].join(', ');
+      const promptText = `Propune o reteta inventiva care sa combine armonios urmatoarele ingrediente: ${allIngs}. Explica profilul de aroma rezultat.`;
+
+      // Post message to chatbot iframe
+      const iframe = document.querySelector('.chatbot-container iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ action: "suggestRecipe", query: promptText }, "*");
+      }
+
+      // Switch tab to Chatbot
+      const chatbotTabBtn = document.querySelector('.tab-button[data-tab="chatbot"]');
+      if (chatbotTabBtn) {
+        chatbotTabBtn.click();
+      }
+    });
+
+    // Start
+    updateActiveSeed("chicken");
+    draw();
+  }
+
   initHnswSimulator();
   initShowdown();
   initThematicExplorer();
+  initCulinaryGalaxy();
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────

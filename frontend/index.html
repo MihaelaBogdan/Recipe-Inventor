@@ -219,6 +219,7 @@
       <button class="tab-button" data-tab="chatbot"> Chatbot</button>
       <button class="tab-button" data-tab="shopping"> Shopping List</button>
       <button class="tab-button" data-tab="rag-playground"> RAG Playground</button>
+      <button class="tab-button" data-tab="galaxy"> Galaxie Ingrediente</button>
       <button class="tab-button" data-tab="about">ℹ️ About</button>
     </div>
   </div>
@@ -833,8 +834,8 @@
           </div>
         </div>
 
-        <!-- ROW 3: Embedding Model Comparison & Live Similarity Calculator -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+        <!-- ROW 3: Embedding Model Comparison -->
+        <div style="margin-bottom: 24px;">
           <!-- Embeddings Comparison -->
           <div class="glass-card" style="padding: 28px;">
             <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--emerald);"> Modele de Embeddings On-Premise (Benchmarker Live)</h3>
@@ -853,31 +854,6 @@
               <div style="font-size: 0.85rem; color: var(--text-dim); text-align: center; font-style: italic; padding: 20px 0;">
                 Apasă pe 'Run Benchmark' pentru a calcula latența locală!
               </div>
-            </div>
-          </div>
-
-          <!-- Similarity Arena -->
-          <div class="glass-card" style="padding: 28px;">
-            <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; color: var(--violet-lt);"> Calculator de Similitudine Semantică</h3>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">
-              Calculează live distanța cosinus (similitudinea semantică) între două texte folosind modelul on-prem.
-            </p>
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-              <input type="text" id="simText1" value="pui" placeholder="Text A" 
-                style="width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 0.88rem;">
-              <input type="text" id="simText2" value="chicken" placeholder="Text B" 
-                style="width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 0.88rem;">
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-              <button id="calcSimBtn" class="btn-invent" style="width: auto; padding: 8px 16px; font-size: 0.85rem; margin: 0;">
-                <span>Calculate Similarity</span>
-              </button>
-              <div style="font-size: 0.9rem; font-weight: 600;">
-                Similitudine: <span id="simResultVal" style="color: var(--violet-lt); font-size: 1.1rem;">—</span>
-              </div>
-            </div>
-            <div style="margin-top: 14px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
-              Scorul este normalizat între <strong>-1.0</strong> și <strong>1.0</strong>. Modelul multilingual este capabil să recunoască echivalența semantică între limbi diferite sau denumiri alternative de ingrediente. De exemplu, <strong>pui</strong> și <strong>chicken</strong> vor returna o similitudine semantică mare datorită alinierii spațiului vectorial.
             </div>
           </div>
         </div>
@@ -1132,6 +1108,72 @@
           </div>
         </div>
 
+      </div>
+    </div>
+
+    <!-- ──━━━━━ TAB: GALAXY ━━━━━── -->
+    <div class="tab-content" id="galaxy" data-tab="galaxy">
+      <div class="glass-card" style="padding: 28px; margin-bottom: 40px;">
+        <h2 style="font-size: 1.8rem; font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">Galaxia Interactivă a Ingredientelor</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 24px; max-width: 800px;">
+          Vizualizați asocierile aromatice și sinergia dintre ingrediente. Selectați un ingredient central pentru a-i vedea sateliții culinari (ingrediente compatibile) și trimiteți combinația direct în Creator sau Chatbot pentru a inventa o rețetă nouă.
+        </p>
+
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 28px; min-height: 500px; flex-wrap: wrap;">
+          
+          <!-- Canvas Panel -->
+          <div style="position: relative; background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 500px;">
+            <canvas id="galaxyCanvas" width="650" height="500" style="display: block; cursor: pointer; max-width: 100%; height: auto;"></canvas>
+            <div style="position: absolute; bottom: 16px; left: 16px; display: flex; gap: 12px; font-size: 0.72rem; color: var(--text-muted); pointer-events: none; flex-wrap: wrap;">
+              <span style="display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--rose-lt);"></span> Proteine</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--emerald);"></span> Legume & Ierburi</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--cyan);"></span> Lactate & Grăsimi</span>
+              <span style="display: flex; align-items: center; gap: 4px;"><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--amber);"></span> Condimente & Dulci</span>
+            </div>
+            <div style="position: absolute; top: 16px; right: 16px; font-size: 0.72rem; color: var(--text-dim); pointer-events: none;">
+              Sfat: Faceți click pe nodurile din galaxie pentru a schimba centrul aromatic
+            </div>
+          </div>
+
+          <!-- Controls & Recommendation Panel -->
+          <div style="display: flex; flex-direction: column; gap: 20px; justify-content: space-between;">
+            <div>
+              <div class="about-card" style="margin:0; padding:20px; background:rgba(255,255,255,0.01); border:1px solid var(--border); margin-bottom: 20px;">
+                <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--violet-lt); text-transform:uppercase; margin-bottom:8px;">Ingredient Central</label>
+                <select id="galaxySeedSelect" style="width:100%; background:rgba(0,0,0,0.5); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; color:var(--text); font-family:inherit; font-size:0.9rem; outline: none; margin-bottom:12px;">
+                  <!-- Dinamic populated -->
+                </select>
+
+                <div id="galaxySelectedDetails" style="display: flex; flex-direction: column; gap: 8px;">
+                  <h3 id="galaxySelectedTitle" style="font-size: 1.25rem; font-weight: 700; color: #fff;">Pui</h3>
+                  <p id="galaxySelectedDesc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45;">
+                    Proteina centrala versatila, compatibila cu profiluri aromatice ierboase, usturoiate si citrice.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Compatibility List -->
+              <div class="about-card" style="margin:0; padding:20px; background:rgba(255,255,255,0.01); border:1px solid var(--border);">
+                <h4 style="font-size:0.8rem; font-weight:700; color:var(--cyan); text-transform:uppercase; margin-bottom:12px; border-bottom:1px solid var(--border); padding-bottom:8px;">Combinații Recomandate & Sinergie</h4>
+                <div id="galaxyCompanionsList" style="display:flex; flex-direction:column; gap:10px; overflow-y:auto; max-height:220px;">
+                  <!-- Dinamic populated -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto;">
+              <button id="galaxyUseInCreatorBtn" class="btn-invent" style="width: 100%; padding: 12px; margin: 0; background: var(--grad);">
+                <span>Trimite ingredientele in Creator</span>
+              </button>
+              <button id="galaxyUseInChatBtn" class="btn-invent" style="width: 100%; padding: 12px; margin: 0; background: none; border: 1px solid var(--cyan); color: var(--cyan);">
+                <span>Propune reteta in Chatbot</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
       </div>
     </div>
 

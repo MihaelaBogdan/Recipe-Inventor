@@ -649,6 +649,16 @@
     const sendBtn = document.getElementById("sendBtn");
     const statsBar = document.getElementById("statsBar");
 
+    window.addEventListener("message", (e) => {
+      if (e.data && e.data.action === "suggestRecipe") {
+        chatInput.value = e.data.query;
+        chatInput.focus();
+        if (typeof sendMessage === "function") {
+          sendMessage();
+        }
+      }
+    });
+
     let currentFilters = {
       cuisine: null,
       maxTime: null,
