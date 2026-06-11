@@ -129,6 +129,7 @@ class HNSWSimulator:
         path.append({
             "node": current_node,
             "recipe_title": current_recipe.get("title", "Unknown"),
+            "ingredients": current_recipe.get("ingredients", []),
             "layer": current_layer,
             "similarity": float(current_similarity),
             "is_entry": True,
@@ -177,6 +178,7 @@ class HNSWSimulator:
                         path.append({
                             "node": neighbor,
                             "recipe_title": neighbor_recipe.get("title", "Unknown"),
+                            "ingredients": neighbor_recipe.get("ingredients", []),
                             "layer": neighbor_layer,
                             "similarity": float(neighbor_similarity),
                             "is_entry": False,

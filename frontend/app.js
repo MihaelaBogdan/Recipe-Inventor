@@ -1792,10 +1792,18 @@ for hits in results:
     }
 
     const querySelect = document.getElementById('hnswQuerySelect');
+    const queryInput  = document.getElementById('hnswQueryInput');
     const startBtn    = document.getElementById('hnswStartBtn');
     const nextBtn     = document.getElementById('hnswNextBtn');
     const resetBtn    = document.getElementById('hnswResetBtn');
     const statusText  = document.getElementById('hnswStatusText');
+
+    // Detail Box elements
+    const detailBox        = document.getElementById('hnswNodeDetailBox');
+    const detailTitle      = document.getElementById('hnswNodeDetailTitle');
+    const detailIngredients = document.getElementById('hnswNodeDetailIngredients');
+    const sendToCreatorBtn = document.getElementById('hnswSendToCreatorBtn');
+    const sendToChatBtn    = document.getElementById('hnswSendToChatBtn');
 
     if (!querySelect || !startBtn) return;
 
@@ -1803,6 +1811,7 @@ for hits in results:
     let hnswCurrentStep = -1;
     let uniqueNodeIds = [];
     let xMap = {};
+    let selectedStepForActions = null;
 
     const queryMap = {
       desert: "ceva dulce și cald",
@@ -1811,26 +1820,89 @@ for hits in results:
       traditional: "mâncare românească tradițională"
     };
 
-    function get5DVectorFromFlavor(flav) {
-      if (!flav) return [0.5, 0.1, -0.5, 0.0, 0.3];
-      const sweet = flav.sweet || 20;
-      const sour = flav.sour || 20;
-      const salty = flav.salty || 20;
-      const spicy = flav.spicy || 10;
-      const creamy = flav.creamy || 15;
-      const umami = flav.umami || 15;
+    function showHnswNodeDetails(step) {
+      if (!step || !step.recipe_title) return;
+      selectedStepForActions = step;
+      if (detailBox) detailBox.style.display = 'block';
+      if (detailTitle) detailTitle.textContent = step.recipe_title;
       
-      return [
-        sweet < 35 ? 0.75 : -0.75, // Dim 0: Protein (+) vs Sweet/Dessert (-)
-        (spicy / 50.0) - 0.4,       // Dim 1: Spicy (+) vs Mild (-)
-        (sweet / 50.0) - ((salty + umami) / 100.0), // Dim 2: Sweet (+) vs Savory (-)
-        (sour / 50.0) - 0.4,        // Dim 3: Sour (+) vs Traditional (-)
-        (creamy / 50.0) - 0.4       // Dim 4: Creamy (+) vs Light (-)
-      ];
+      const ingredients = step.ingredients || [];
+      if (detailIngredients) {
+        detailIngredients.textContent = ingredients.length > 0 ? ingredients.join(', ') : '—';
+      }
+    }
+
+    // Dynamic actions for clicked recipe node
+    if (sendToCreatorBtn) {
+      sendToCreatorBtn.addEventListener('click', () => {
+        if (!selectedStepForActions || !selectedStepForActions.ingredients) return;
+        
+        // Switch to Creator tab
+        const creatorTabBtn = document.querySelector('.tab-button[data-tab="creator"]');
+        if (creatorTabBtn) {
+          creatorTabBtn.click();
+        }
+        
+        // Populate Creator ingredients tags
+        if (typeof tags !== 'undefined' && Array.isArray(tags)) {
+          tags.length = 0;
+          const tagsUl = document.getElementById('tagsList');
+          if (tagsUl) tagsUl.innerHTML = '';
+          
+          selectedStepForActions.ingredients.slice(0, 6).forEach(ing => {
+            if (ing && ing.trim()) {
+              addTag(ing.trim());
+            }
+          });
+        }
+        
+        // Visual notification
+        showNotification(`✅ Ingredientele din "${selectedStepForActions.recipe_title}" au fost trimise la Creator!`);
+      });
+    }
+
+    if (sendToChatBtn) {
+      sendToChatBtn.addEventListener('click', () => {
+        if (!selectedStepForActions) return;
+        
+        // Switch to Chatbot tab
+        const chatbotTabBtn = document.querySelector('.tab-button[data-tab="chatbot"]');
+        if (chatbotTabBtn) {
+          chatbotTabBtn.click();
+        }
+        
+        // Send postMessage to chatbot iframe
+        const iframe = document.getElementById('chatbotIframe');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage({
+            action: 'suggestRecipe',
+            query: `Cum prepar rețeta de "${selectedStepForActions.recipe_title}"?`
+          }, '*');
+        }
+      });
+    }
+
+    function showNotification(msg) {
+      const notif = document.createElement('div');
+      notif.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, var(--emerald), var(--cyan));
+        color: white;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: slideIn 0.3s ease-out;
+      `;
+      notif.textContent = msg;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
     }
 
     function getLayerY(layer) {
-      // Map layers 4, 3, 2, 1, 0 to vertical space in the SVG
       const yMap = {
         4: 40,
         3: 85,
@@ -1851,7 +1923,7 @@ for hits in results:
 
       if (hnswRealPath.length === 0) return;
 
-      // Draw horizontal dashed lines for layers present in the path
+      // Draw horizontal dashed lines
       const layersInPath = Array.from(new Set(hnswRealPath.map(p => p.layer))).sort().reverse();
       layersInPath.forEach(L => {
         const y = getLayerY(L);
@@ -1865,7 +1937,6 @@ for hits in results:
         line.setAttribute('stroke-dasharray', '5,5');
         svgLinks.appendChild(line);
 
-        // Add Layer Label
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', '15');
         text.setAttribute('y', y - 10);
@@ -1876,7 +1947,7 @@ for hits in results:
         svgNodes.appendChild(text);
       });
 
-      // Draw links between visited nodes up to currentStep
+      // Draw links up to currentStep
       for (let i = 0; i < hnswCurrentStep; i++) {
         const current = hnswRealPath[i];
         const next = hnswRealPath[i + 1];
@@ -1893,13 +1964,11 @@ for hits in results:
         line.setAttribute('x2', x2);
         line.setAttribute('y2', y2);
 
-        // If it's a layer drop (same node, different layer)
         if (current.node === next.node) {
           line.setAttribute('stroke', 'var(--amber)');
           line.setAttribute('stroke-width', '2');
           line.setAttribute('stroke-dasharray', '3,3');
         } else {
-          // Horizontal hop within same layer or general link
           line.setAttribute('stroke', 'var(--cyan)');
           line.setAttribute('stroke-width', '2.5');
         }
@@ -1914,6 +1983,10 @@ for hits in results:
         const y = getLayerY(step.layer);
 
         const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.style.cursor = 'pointer';
+        g.addEventListener('click', () => {
+          showHnswNodeDetails(step);
+        });
 
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', x);
@@ -1942,7 +2015,6 @@ for hits in results:
         circle.setAttribute('stroke-width', strokeWidth);
         g.appendChild(circle);
 
-        // Text label inside node (first 5 chars of recipe title or ID)
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', x);
         text.setAttribute('y', y + 3);
@@ -1953,7 +2025,6 @@ for hits in results:
         text.textContent = step.recipe_title ? step.recipe_title.substring(0, 5) : step.node;
         g.appendChild(text);
 
-        // Tooltip title
         const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'title');
         titleEl.textContent = `${step.recipe_title} (Layer ${step.layer}, Sim: ${step.similarity.toFixed(3)})`;
         g.appendChild(titleEl);
@@ -1968,35 +2039,34 @@ for hits in results:
 
       if (val === 'desert') {
         mockPath = [
-          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.200 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 1, similarity: 0.200 },
-          { node: 'sarmale', recipe_title: 'Sarmale', layer: 1, similarity: 0.350 },
-          { node: 'sarmale', recipe_title: 'Sarmale', layer: 0, similarity: 0.350 },
-          { node: 'papanasi', recipe_title: 'Papanași', layer: 0, similarity: 0.880 }
+          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.200 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 1, similarity: 0.200 },
+          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 1, similarity: 0.350 },
+          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 0, similarity: 0.350 },
+          { node: 'papanasi', recipe_title: 'Papanași', ingredients: ['brânză de vaci', 'făină', 'ouă', 'smântână', 'gem de afine'], layer: 0, similarity: 0.880 }
         ];
       } else if (val === 'peste') {
         mockPath = [
-          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.100 },
-          { node: 'somon', recipe_title: 'Somon', layer: 2, similarity: 0.780 },
-          { node: 'somon', recipe_title: 'Somon', layer: 1, similarity: 0.780 },
-          { node: 'somon', recipe_title: 'Somon', layer: 0, similarity: 0.840 }
+          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.100 },
+          { node: 'somon', recipe_title: 'Somon la Grătar', ingredients: ['somon', 'lămâie', 'ulei de măsline', 'usturoi'], layer: 2, similarity: 0.780 },
+          { node: 'somon', recipe_title: 'Somon la Grătar', ingredients: ['somon', 'lămâie', 'ulei de măsline', 'usturoi'], layer: 1, similarity: 0.780 },
+          { node: 'somon', recipe_title: 'Somon la Grătar', ingredients: ['somon', 'lămâie', 'ulei de măsline', 'usturoi'], layer: 0, similarity: 0.840 }
         ];
       } else if (val === 'paste') {
         mockPath = [
-          { node: 'somon', recipe_title: 'Somon', layer: 2, similarity: 0.150 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.250 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 1, similarity: 0.250 },
-          { node: 'carbonara', recipe_title: 'Spaghete', layer: 1, similarity: 0.820 },
-          { node: 'carbonara', recipe_title: 'Spaghete', layer: 0, similarity: 0.860 }
+          { node: 'somon', recipe_title: 'Somon', ingredients: ['somon', 'lămâie'], layer: 2, similarity: 0.150 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.250 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 1, similarity: 0.250 },
+          { node: 'carbonara', recipe_title: 'Carbonara', ingredients: ['paste', 'gălbenuș de ou', 'pecorino romano', 'guanciale'], layer: 1, similarity: 0.820 },
+          { node: 'carbonara', recipe_title: 'Carbonara', ingredients: ['paste', 'gălbenuș de ou', 'pecorino romano', 'guanciale'], layer: 0, similarity: 0.860 }
         ];
       } else {
-        // traditional or custom
         mockPath = [
-          { node: 'somon', recipe_title: 'Somon', layer: 2, similarity: 0.080 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 2, similarity: 0.380 },
-          { node: 'mamaliga', recipe_title: 'Mămăligă', layer: 1, similarity: 0.380 },
-          { node: 'sarmale', recipe_title: 'Sarmale', layer: 1, similarity: 0.810 },
-          { node: 'sarmale', recipe_title: 'Sarmale', layer: 0, similarity: 0.890 }
+          { node: 'somon', recipe_title: 'Somon', ingredients: ['somon', 'lămâie'], layer: 2, similarity: 0.080 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 2, similarity: 0.380 },
+          { node: 'mamaliga', recipe_title: 'Mămăligă', ingredients: ['mălai', 'apă', 'sare'], layer: 1, similarity: 0.380 },
+          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 1, similarity: 0.810 },
+          { node: 'sarmale', recipe_title: 'Sarmale', ingredients: ['carne tocată', 'varză murată', 'orez', 'ceapă'], layer: 0, similarity: 0.890 }
         ];
       }
 
@@ -2023,25 +2093,33 @@ for hits in results:
         </div>`;
 
       nextBtn.disabled = false;
+      showHnswNodeDetails(startStep);
       drawRealPath();
     }
 
     startBtn.addEventListener('click', async () => {
       let queryText = "";
       let targetRecipeId = null;
-      const val = querySelect.value;
-      if (val.startsWith('custom_')) {
-        const customIdx = parseInt(val.split('_')[1]);
-        const recipe = window.createdRecipes[customIdx];
-        queryText = recipe ? recipe.title : "pui";
-        targetRecipeId = recipe ? recipe.id : null;
+      
+      const customVal = queryInput ? queryInput.value.trim() : "";
+      if (customVal) {
+        queryText = customVal;
       } else {
-        queryText = queryMap[val] || val;
+        const val = querySelect.value;
+        if (val.startsWith('custom_')) {
+          const customIdx = parseInt(val.split('_')[1]);
+          const recipe = window.createdRecipes[customIdx];
+          queryText = recipe ? recipe.title : "pui";
+          targetRecipeId = recipe ? recipe.id : null;
+        } else {
+          queryText = queryMap[val] || val;
+        }
       }
 
       statusText.innerHTML = `🔄 Se calculează graful HNSW real pe server...`;
       startBtn.disabled = true;
       querySelect.disabled = true;
+      if (queryInput) queryInput.disabled = true;
 
       try {
         const response = await fetch(`${API}/api/hnsw/simulate`, {
@@ -2060,11 +2138,10 @@ for hits in results:
           throw new Error("Nu s-au returnat pași de căutare.");
         }
 
-        // Initialize coordinates map for unique nodes in the path
         uniqueNodeIds = Array.from(new Set(hnswRealPath.map(p => p.node)));
         xMap = {};
         const margin = 45;
-        const width = 410; // 500 - 2 * margin
+        const width = 410;
         const spacing = uniqueNodeIds.length > 1 ? width / (uniqueNodeIds.length - 1) : width;
         uniqueNodeIds.forEach((nodeId, idx) => {
           xMap[nodeId] = margin + idx * spacing;
@@ -2081,6 +2158,7 @@ for hits in results:
           </div>`;
 
         nextBtn.disabled = false;
+        showHnswNodeDetails(startStep);
         drawRealPath();
 
       } catch (err) {
@@ -2096,20 +2174,24 @@ for hits in results:
       const current = hnswRealPath[hnswCurrentStep];
       const prev = hnswRealPath[hnswCurrentStep - 1];
 
-      let targetVal = querySelect.value;
       let targetName = "";
-      if (targetVal.startsWith('custom_')) {
-        const customIdx = parseInt(targetVal.split('_')[1]);
-        const recipe = window.createdRecipes[customIdx];
-        targetName = recipe ? recipe.title : "rețetă";
+      const customVal = queryInput ? queryInput.value.trim() : "";
+      if (customVal) {
+        targetName = customVal;
       } else {
-        targetName = queryMap[targetVal] || targetVal;
+        let targetVal = querySelect.value;
+        if (targetVal.startsWith('custom_')) {
+          const customIdx = parseInt(targetVal.split('_')[1]);
+          const recipe = window.createdRecipes[customIdx];
+          targetName = recipe ? recipe.title : "rețetă";
+        } else {
+          targetName = queryMap[targetVal] || targetVal;
+        }
       }
 
       const isLast = (hnswCurrentStep === hnswRealPath.length - 1);
 
       if (current.node === prev.node) {
-        // Drop layer
         statusText.innerHTML = `Coborâre de nivel la <strong>Layer ${current.layer}</strong>:<br>
           La rețeta <strong>${current.recipe_title}</strong><br>
           <strong>Similitudine:</strong> ${current.similarity.toFixed(3)}<br>
@@ -2118,7 +2200,6 @@ for hits in results:
             <strong>Cum funcționează:</strong> În Layer ${prev.layer}, niciun vecin direct nu a adus o potrivire mai bună pentru "${targetName}". De aceea, algoritmul "coboară vertical" în Layer ${current.layer} pe aceeași rețetă pentru a accesa conexiuni locale mai detaliate.
           </div>`;
       } else {
-        // Hop
         statusText.innerHTML = `Săritură în <strong>Layer ${current.layer}</strong>:<br>
           De la <strong>${prev.recipe_title}</strong> la <strong>${current.recipe_title}</strong><br>
           <strong>Similitudine nouă:</strong> ${current.similarity.toFixed(3)} (Creștere de la ${prev.similarity.toFixed(3)})<br>
@@ -2138,6 +2219,7 @@ for hits in results:
         `;
       }
 
+      showHnswNodeDetails(current);
       drawRealPath();
     });
 
@@ -2146,11 +2228,17 @@ for hits in results:
       hnswCurrentStep = -1;
       uniqueNodeIds = [];
       xMap = {};
+      selectedStepForActions = null;
       
       querySelect.disabled = false;
+      if (queryInput) {
+        queryInput.disabled = false;
+        queryInput.value = "";
+      }
       startBtn.disabled = false;
       nextBtn.disabled = true;
       statusText.innerHTML = "Apasă 'Inițializează Căutare' pentru a plasa punctul de intrare.";
+      if (detailBox) detailBox.style.display = 'none';
       
       const svgNodes = document.getElementById('hnswNodes');
       const svgLinks = document.getElementById('hnswLinks');
