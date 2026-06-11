@@ -2209,13 +2209,13 @@ for hits in results:
       { name: "butter", label: "unt", category: "dairy", color: "#06b6d4", desc: "Grasime bogata obtinuta din lapte, adauga textura cremoasa si savoare de neegalat preparatelor.", companions: [{ name: "garlic", score: 0.86 }, { name: "shrimp", score: 0.85 }, { name: "chicken", score: 0.79 }, { name: "onion", score: 0.80 }] },
       { name: "cheese", label: "branza", category: "dairy", color: "#06b6d4", desc: "Produs lactat variat, de la fin si cremos la maturat si sarat, perfect pentru gratinat.", companions: [{ name: "basil", score: 0.84 }, { name: "tomato", score: 0.83 }, { name: "olive oil", score: 0.79 }, { name: "garlic", score: 0.71 }] },
       { name: "cream", label: "smantana", category: "dairy", color: "#06b6d4", desc: "Smantana grasa fermentata sau dulce, ideala pentru sosuri catifelate sau echilibrarea condimentelor.", companions: [{ name: "chicken", score: 0.78 }, { name: "butter", score: 0.76 }, { name: "vanilla", score: 0.74 }, { name: "chocolate", score: 0.72 }] },
-      { name: "olive oil", label: "ulei de masline", category: "dairy", color: "#06b6d4", desc: "Ulei vegetal sanatos, baza sosurilor reci si a calirii legumelor in bucataria mediteraneana.", companions: [{ name: "garlic", score: 0.94 }, { name: "basil", score: 0.92 }, { name: "tomato", score: 0.91 }, { name: "cheese", score: 0.79 }] },
-      
-      { name: "honey", label: "miere", category: "spice", color: "#f59e0b", desc: "Indulcitor natural cu note florale, excelent pentru echilibrarea preparatelor picante sau acide.", companions: [{ name: "lemon", score: 0.80 }, { name: "ginger", score: 0.84 }, { name: "cinnamon", score: 0.79 }, { name: "chicken", score: 0.78 }] },
-      { name: "cinnamon", label: "scortisoara", category: "spice", color: "#f59e0b", desc: "Condiment cald cu aroma dulce-lemnoasa, nelipsit din placinte, dulciuri si mancaruri asiatice.", companions: [{ name: "honey", score: 0.79 }, { name: "vanilla", score: 0.82 }, { name: "chocolate", score: 0.75 }, { name: "butter", score: 0.70 }] },
-      { name: "vanilla", label: "vanilie", category: "spice", color: "#f59e0b", desc: "Aroma exotica dulce si delicata, cel mai popular ingredient aromatic in patiseria globala.", companions: [{ name: "chocolate", score: 0.88 }, { name: "cinnamon", score: 0.82 }, { name: "cream", score: 0.74 }, { name: "honey", score: 0.71 }] },
-      { name: "chocolate", label: "ciocolata", category: "spice", color: "#f59e0b", desc: "Derivat bogat si dulce din cacao, ingredient de referinta pentru deserturi sau sosuri asiatice mole.", companions: [{ name: "vanilla", score: 0.88 }, { name: "chili", score: 0.80 }, { name: "cinnamon", score: 0.75 }, { name: "cream", score: 0.72 }] },
-      { name: "chili", label: "chili", category: "spice", color: "#f59e0b", desc: "Ardei iute uscat sau proaspat, adauga caldura, picanterie si intensitate oricarui preparat.", companions: [{ name: "chocolate", score: 0.80 }, { name: "ginger", score: 0.81 }, { name: "garlic", score: 0.78 }, { name: "cilantro", score: 0.77 }] }
+      { name: "olive oil", label: "ulei de masline", category: "dairy", color: "#06b6d4", desc: "Ulei vegetal sanatos, baza sosurilor reci si a calirii legumelor in bucataria mediteraneana.", companions: [{ name: "garlic", score: 0.94 }, { name: "basil", score: 0.92 }, { name: "tomato", score: 0.91 }, { name: "cheese", score: 0.79 }] } }
+
+      { name: "honey", label: "miere", category: "spice", color: "#f59e0b", desc: "Indulcitor natural cu note florale.", companions: [{ name: "lemon", score: 0.80 }, { name: "ginger", score: 0.84 }, { name: "cinnamon", score: 0.79 }, { name: "chicken", score: 0.78 }] },
+      { name: "cinnamon", label: "scortisoara", category: "spice", color: "#f59e0b", desc: "Condiment cald cu aroma dulce-lemnoasa.", companions: [{ name: "honey", score: 0.79 }, { name: "vanilla", score: 0.82 }, { name: "chocolate", score: 0.75 }, { name: "butter", score: 0.70 }] },
+      { name: "vanilla", label: "vanilie", category: "spice", color: "#f59e0b", desc: "Aroma exotica dulce si delicata.", companions: [{ name: "chocolate", score: 0.88 }, { name: "cinnamon", score: 0.82 }, { name: "cream", score: 0.74 }, { name: "honey", score: 0.71 }] },
+      { name: "chocolate", label: "ciocolata", category: "spice", color: "#f59e0b", desc: "Derivat bogat si dulce din cacao.", companions: [{ name: "vanilla", score: 0.88 }, { name: "chili", score: 0.80 }, { name: "cinnamon", score: 0.75 }, { name: "cream", score: 0.72 }] },
+      { name: "chili", label: "chili", category: "spice", color: "#f59e0b", desc: "Ardei iute, adauga caldura si intensitate.", companions: [{ name: "chocolate", score: 0.80 }, { name: "ginger", score: 0.81 }, { name: "garlic", score: 0.78 }, { name: "cilantro", score: 0.77 }] }
     ];
 
     let activeSeedName = "chicken";
@@ -2538,6 +2538,202 @@ for hits in results:
   initThematicExplorer();
   initCulinaryGalaxy();
 }
+
+// ── HNSW Navigator Functions ──────────────────────────────────────────────
+let selectedHNSWRecipe = null;
+let hnswResults = [];
+
+async function searchHNSW() {
+  const query = document.getElementById('hnswQueryInput').value.trim();
+  if (!query) {
+    alert('Introduceți o interogare!');
+    return;
+  }
+
+  const statusDiv = document.getElementById('hnswStatus');
+  const resultsDiv = document.getElementById('hnswResultsList');
+  const statsDiv = document.getElementById('hnswStats');
+  const sendBtn = document.getElementById('hnswSendCreatorBtn');
+
+  statusDiv.textContent = '🔄 Se caută cu HNSW...';
+  resultsDiv.innerHTML = '';
+  selectedHNSWRecipe = null;
+  sendBtn.disabled = true;
+  sendBtn.style.opacity = '0.5';
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/hnsw/simulate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, target_recipe_id: null })
+    });
+
+    if (!response.ok) throw new Error('HNSW search failed');
+    const data = await response.json();
+    hnswResults = data.final_candidates || [];
+
+    // Display results
+    resultsDiv.innerHTML = hnswResults.map((recipe, idx) => `
+      <div onclick="selectHNSWRecipe(${idx})" style="padding: 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.3s ease; hover:background rgba(6, 182, 212, 0.2);">
+        <div style="font-weight: 600; color: var(--cyan); font-size: 0.9rem; margin-bottom: 4px;">${idx + 1}. ${recipe.recipe_title}</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+            <div style="height: 100%; width: ${recipe.similarity * 100}%; background: linear-gradient(90deg, var(--cyan), var(--emerald)); border-radius: 3px;"></div>
+          </div>
+          <div style="font-weight: 600; color: var(--cyan); font-size: 0.8rem; min-width: 45px;">${(recipe.similarity * 100).toFixed(1)}%</div>
+        </div>
+      </div>
+    `).join('');
+
+    // Show stats
+    statsDiv.style.display = 'grid';
+    statsDiv.innerHTML = `
+      <div style="background: rgba(124, 58, 237, 0.1); border: 1px solid rgba(124, 58, 237, 0.2); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Total Pași</div>
+        <div style="font-size: 1.3rem; font-weight: 700; color: var(--violet-lt);">${data.total_steps}</div>
+      </div>
+      <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.2); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Noduri Vizitate</div>
+        <div style="font-size: 1.3rem; font-weight: 700; color: var(--cyan);">${data.visited_nodes.length}</div>
+      </div>
+      <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 16px; border-radius: var(--radius-sm);">
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">Entry Recipe</div>
+        <div style="font-size: 0.9rem; font-weight: 600; color: var(--emerald);">${data.entry_recipe.substring(0, 20)}...</div>
+      </div>
+    `;
+
+    statusDiv.textContent = `✅ Găsite ${hnswResults.length} rețete în ${data.total_steps} pași`;
+  } catch (error) {
+    statusDiv.textContent = `❌ Eroare: ${error.message}`;
+    statusDiv.style.color = 'var(--amber)';
+  }
+}
+
+function selectHNSWRecipe(idx) {
+  selectedHNSWRecipe = hnswResults[idx];
+  const sendBtn = document.getElementById('hnswSendCreatorBtn');
+  sendBtn.disabled = false;
+  sendBtn.style.opacity = '1';
+  sendBtn.style.cursor = 'pointer';
+
+  // Highlight selected
+  document.querySelectorAll('#hnswResultsList > div').forEach((el, i) => {
+    if (i === idx) {
+      el.style.background = 'rgba(6, 182, 212, 0.3)';
+      el.style.borderColor = 'rgba(6, 182, 212, 0.6)';
+    } else {
+      el.style.background = 'rgba(6, 182, 212, 0.1)';
+      el.style.borderColor = 'rgba(6, 182, 212, 0.3)';
+    }
+  });
+}
+
+async function sendHNSWResultToCreator() {
+  if (!selectedHNSWRecipe) return;
+
+  // Extract ingredients from selected recipe
+  const ingredients = selectedHNSWRecipe.ingredients || [];
+  const recipeName = selectedHNSWRecipe.recipe_title;
+
+  // Switch to Creator tab
+  const creatorTabBtn = document.querySelector('.tab-button[data-tab="creator"]');
+  if (creatorTabBtn) {
+    creatorTabBtn.click();
+  }
+
+  // Add ingredients to Creator
+  setTimeout(() => {
+    // Global tags array from Creator
+    if (typeof tags !== 'undefined' && Array.isArray(tags)) {
+      tags = []; // Clear existing
+      ingredients.forEach(ing => {
+        if (ing && ing.trim()) {
+          addTag(ing.trim());
+        }
+      });
+    }
+
+    // Show notification
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      color: white;
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      z-index: 10000;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.3s ease-out;
+    `;
+    notif.textContent = `✅ ${ingredients.length} ingrediente din "${recipeName}" adăugate`;
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+
+    // Auto-trigger invention
+    if (typeof handleInvent === 'function') {
+      setTimeout(() => handleInvent(), 500);
+    }
+  }, 300);
+}
+
+// Listen to message events from standalone HNSW tab/window
+window.addEventListener('message', (event) => {
+  const data = event.data;
+  if (data && data.type === 'HNSW_ADD_INGREDIENTS') {
+    const ingredients = data.ingredients || [];
+    const recipeName = data.recipe || 'Rețetă';
+
+    // Switch to Creator tab
+    const creatorTabBtn = document.querySelector('.tab-button[data-tab="creator"]');
+    if (creatorTabBtn) {
+      creatorTabBtn.click();
+    }
+
+    setTimeout(() => {
+      if (typeof tags !== 'undefined' && Array.isArray(tags)) {
+        // Clear existing tags array
+        tags.length = 0;
+        
+        // Clear visual tags from DOM
+        const tagsUl = document.getElementById('tagsList');
+        if (tagsUl) tagsUl.innerHTML = '';
+        
+        ingredients.forEach(ing => {
+          if (ing && ing.trim()) {
+            addTag(ing.trim());
+          }
+        });
+      }
+
+      // Show notification
+      const notif = document.createElement('div');
+      notif.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, var(--emerald), var(--cyan));
+        color: white;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        z-index: 10000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        animation: slideIn 0.3s ease-out;
+      `;
+      notif.textContent = `✅ ${ingredients.length} ingrediente din "${recipeName}" adăugate în Creator`;
+      document.body.appendChild(notif);
+      setTimeout(() => notif.remove(), 3000);
+
+      // Auto-trigger invention
+      if (typeof handleInvent === 'function') {
+        setTimeout(() => handleInvent(), 500);
+      }
+    }, 300);
+  }
+});
 
 // ── Boot ──────────────────────────────────────────────────────────────────
 init();

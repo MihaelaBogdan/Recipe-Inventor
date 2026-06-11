@@ -17,6 +17,7 @@ from deterministic_agent import DeterministicAgent
 from recipe_generator import invent_recipes
 from chatbot import RecipeChatbot
 from object_detector import DETECTOR
+from hnsw_simulator import HNSWSimulator
 
 app = FastAPI(
     title="AI Recipe Agent PRO",
@@ -36,7 +37,25 @@ ALL_RECIPES = load_recipes()
 ENGINE = RecipeRAGEngine(ALL_RECIPES)
 AGENT = DeterministicAgent(ENGINE)
 CHATBOT = RecipeChatbot(ENGINE, AGENT)
-print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed.")
+
+# Build embeddings map for HNSW simulator
+print("Building embeddings map for HNSW visualization...")
+EMBEDDINGS_MAP = {}
+texts = []
+ids = []
+for r in ALL_RECIPES:
+    ings = " ".join(r.get("ingredients", [])).lower()
+    title = r.get("title", "")
+    doc_text = f"Title: {title}. Ingredients: {ings}"
+    texts.append(doc_text)
+    ids.append(str(r["id"]))
+
+embeddings = ENGINE.encoder.encode(texts)
+for id, emb in zip(ids, embeddings):
+    EMBEDDINGS_MAP[id] = emb
+
+HNSW_SIMULATOR = HNSWSimulator(ALL_RECIPES, EMBEDDINGS_MAP, ENGINE.encoder)
+print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed. HNSW simulator initialized.")
 
 class InventRequest(BaseModel):
     ingredients: list[str]
@@ -486,6 +505,54 @@ async def upload_fridge(file: UploadFile = File(...)):
         return {"ingredients": detected}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to process image: {str(e)}")
+
+# HNSW Visualization Endpoints
+class HNSWSimulationRequest(BaseModel):
+    query: str
+    target_recipe_id: Optional[str] = None
+
+@app.post("/api/hnsw/simulate")
+def hnsw_simulate(req: HNSWSimulationRequest):
+    """Simulate HNSW search traversal for visualization"""
+    if not req.query.strip():
+        raise HTTPException(status_code=400, detail="Query cannot be empty")
+
+    result = HNSW_SIMULATOR.simulate_search(req.query, req.target_recipe_id)
+    return result
+
+@app.get("/api/hnsw/graph-stats")
+def hnsw_graph_stats():
+    """Get HNSW graph statistics"""
+    return HNSW_SIMULATOR.get_graph_stats()
+
+@app.get("/api/hnsw/layer/{layer}")
+def hnsw_get_layer(layer: int):
+    """Get all nodes at a specific layer"""
+    if layer < 0 or layer > HNSW_SIMULATOR.max_layer:
+        raise HTTPException(status_code=400, detail=f"Layer must be between 0 and {HNSW_SIMULATOR.max_layer}")
+
+    nodes = HNSW_SIMULATOR.get_layer_nodes(layer)
+    return {
+        "layer": layer,
+        "node_count": len(nodes),
+        "nodes": nodes
+    }
+
+@app.get("/api/hnsw/recipes")
+def hnsw_get_recipes(limit: int = 50):
+    """Get recipes for HNSW visualization"""
+    recipes = []
+    for r in ALL_RECIPES[:limit]:
+        rid = str(r["id"])
+        layer = HNSW_SIMULATOR.layers.get(rid, 0)
+        recipes.append({
+            "id": rid,
+            "title": r.get("title", "Unknown"),
+            "layer": layer,
+            "cuisine": r.get("cuisine", ""),
+            "ingredients": r.get("ingredients", [])[:5]  # First 5 ingredients
+        })
+    return {"recipes": recipes}
 
 @app.get("/")
 def serve_app():
