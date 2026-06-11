@@ -1,3 +1,5 @@
+from urllib import response
+
 import requests
 
 
@@ -6,23 +8,18 @@ class LLMEngineLocal:
         self.model = model
         self.base_url = base_url
 
-    def generate(self, prompt: str, temperature=0.7, max_tokens=300):
-
-        url = f"{self.base_url}/api/generate"
-
-        payload = {
-            "model": self.model,
-            "prompt": prompt,
-            "stream": True,
-            "options": {
-                "temperature": temperature,
-                "num_predict": max_tokens
+    def generate(self, prompt):
+        response = requests.post(
+            f"{self.base_url}/api/generate",
+            json={
+                "model": self.model,
+                "prompt": prompt,
+                "stream": False
             }
-        }
-
-        response = requests.post(url, json=payload, timeout=60)
-
-        if response.status_code != 200:
-            raise Exception(f"Ollama error: {response.text}")
-
-        return response.json().get("response", "").strip()
+        )
+    
+        try:
+            data = response.json()
+            return data.get("response", "").strip()
+        except Exception:
+            return response.text.strip()

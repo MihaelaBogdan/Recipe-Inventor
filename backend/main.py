@@ -17,9 +17,7 @@ from data_loader import load_recipes, get_unique_cuisines, get_unique_difficulti
 from rag_engine import RecipeRAGEngine
 from deterministic_agent import DeterministicAgent
 from recipe_generator import invent_recipes
-from chatbot import RecipeChatbot
 from chatbot_llm import RecipeChatbotLLM
-from llm_engine_hugging import LLMEngineHugging
 from llm_engine_local import LLMEngineLocal
 from object_detector import DETECTOR
 from hnsw_simulator import HNSWSimulator
@@ -42,10 +40,10 @@ ALL_RECIPES = load_recipes()
 ENGINE = RecipeRAGEngine(ALL_RECIPES)
 AGENT = DeterministicAgent(ENGINE)
 LLM = LLMEngineLocal()
-CHATBOT = RecipeChatbot(ENGINE, AGENT)
 
 
-#CHATBOT_LLM = RecipeChatbotLLM(ENGINE, AGENT, LLM)
+
+CHATBOT_LLM = RecipeChatbotLLM(ENGINE, AGENT, LLM)
 
 
 
@@ -86,6 +84,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/api/stats")
 def get_stats():
+    
     return {
         "recipes": len(ALL_RECIPES),
         "total_recipes": len(ALL_RECIPES), # Support frontend names
@@ -95,6 +94,21 @@ def get_stats():
         "avg_ingredients": 7,
         "version": "3.0.0 (Agentic RAG)"
     }
+
+@app.get("/debug")
+def debug():
+    return {
+        "engine_id": id(ENGINE),
+        "count": len(ALL_RECIPES)
+    }
+
+@app.get("/debug-search")
+def debug_search():
+    return ENGINE.retrieve_custom(
+        query="chicken pasta",
+        method="hybrid",
+        top_k=5
+    )
 
 @app.get("/api/cuisines")
 def get_cuisines():
@@ -110,8 +124,10 @@ def chat(req: ChatRequest):
     if not cleaned:
         raise HTTPException(status_code=400, detail="Mesajul nu poate fi gol.")
     
-    bot_res = CHATBOT.respond(cleaned)
-    return bot_res
+    bot_res = CHATBOT_LLM.respond(cleaned)
+    return {
+        "response": bot_res
+    }
 
 @app.post("/api/invent")
 def invent(req: InventRequest):

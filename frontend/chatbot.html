@@ -1,683 +1,769 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ro">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> Recipe AI Chatbot — RAG Engine</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: "Outfit", sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-      color: #e0e7ff;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* ── Header ──────────────────────────────────────────────────────────── */
-    .chatbot-header {
-      background: rgba(15, 23, 42, 0.9);
-      border-bottom: 1px solid rgba(224, 231, 255, 0.1);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .chatbot-header h1 {
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    .chatbot-header .status {
-      font-size: 12px;
-      color: #a5b4fc;
-      margin-left: auto;
-    }
-
-    .status.online::before {
-      content: "● ";
-      color: #4ade80;
-    }
-
-    /* ── Main Chat Area ──────────────────────────────────────────────────── */
-    .chat-container {
-      flex: 1;
-      display: flex;
-      gap: 16px;
-      padding: 16px;
-      overflow: hidden;
-    }
-
-    .chat-messages {
-      flex: 1;
-      background: rgba(30, 27, 75, 0.4);
-      border-radius: 16px;
-      border: 1px solid rgba(224, 231, 255, 0.1);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      padding: 16px;
-      gap: 12px;
-    }
-
-    .chat-messages::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .chat-messages::-webkit-scrollbar-track {
-      background: rgba(224, 231, 255, 0.05);
-      border-radius: 4px;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb {
-      background: rgba(224, 231, 255, 0.2);
-      border-radius: 4px;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb:hover {
-      background: rgba(224, 231, 255, 0.3);
-    }
-
-    /* ── Message Bubbles ──────────────────────────────────────────────────── */
-    .message {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 8px;
-      animation: slideIn 0.3s ease-out;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipe AI Chatbot — RAG Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      body {
+        font-family: "Outfit", sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        color: #e0e7ff;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
-    }
 
-    .message.user {
-      justify-content: flex-end;
-    }
-
-    .message-bubble {
-      max-width: 70%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      word-wrap: break-word;
-      line-height: 1.4;
-    }
-
-    .message.user .message-bubble {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-
-    .message.bot .message-bubble {
-      background: rgba(224, 231, 255, 0.08);
-      border: 1px solid rgba(224, 231, 255, 0.2);
-      border-bottom-left-radius: 4px;
-    }
-
-    .message-meta {
-      font-size: 11px;
-      color: #a5b4fc;
-      margin-top: 4px;
-    }
-
-    /* ── Sidebar (Quick Options) ──────────────────────────────────────────── */
-    .sidebar {
-      width: 280px;
-      background: rgba(30, 27, 75, 0.4);
-      border-radius: 16px;
-      border: 1px solid rgba(224, 231, 255, 0.1);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      padding: 16px;
-      gap: 16px;
-    }
-
-    .sidebar::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .sidebar::-webkit-scrollbar-thumb {
-      background: rgba(224, 231, 255, 0.2);
-      border-radius: 3px;
-    }
-
-    .sidebar-section {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sidebar-section h3 {
-      font-size: 12px;
-      font-weight: 600;
-      color: #a5b4fc;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .quick-btn {
-      padding: 8px 12px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 8px;
-      color: #c7d2fe;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-align: left;
-    }
-
-    .quick-btn:hover {
-      background: rgba(99, 102, 241, 0.2);
-      border-color: rgba(99, 102, 241, 0.5);
-      transform: translateX(2px);
-    }
-
-    .suggested-question {
-      padding: 10px;
-      background: rgba(139, 92, 246, 0.1);
-      border-left: 3px solid #8b5cf6;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 12px;
-    }
-
-    .suggested-question:hover {
-      background: rgba(139, 92, 246, 0.2);
-    }
-
-    /* ── Input Area ──────────────────────────────────────────────────────── */
-    .input-container {
-      background: rgba(15, 23, 42, 0.9);
-      border-top: 1px solid rgba(224, 231, 255, 0.1);
-      padding: 16px 24px;
-      display: flex;
-      gap: 8px;
-      align-items: flex-end;
-    }
-
-    .input-wrapper {
-      flex: 1;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
-    #chatInput {
-      flex: 1;
-      background: rgba(30, 27, 75, 0.6);
-      border: 1px solid rgba(224, 231, 255, 0.2);
-      border-radius: 8px;
-      padding: 10px 12px;
-      color: #e0e7ff;
-      font-family: "Outfit", sans-serif;
-      font-size: 14px;
-      resize: none;
-      max-height: 100px;
-      transition: all 0.2s;
-    }
-
-    #chatInput:focus {
-      outline: none;
-      border-color: #6366f1;
-      background: rgba(30, 27, 75, 0.8);
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-    }
-
-    #sendBtn {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #sendBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-    }
-
-    #sendBtn:active {
-      transform: translateY(0);
-    }
-
-    #sendBtn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* ── Recipe Card ──────────────────────────────────────────────────────── */
-    .recipe-card {
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 8px;
-      padding: 12px;
-      margin-top: 8px;
-      font-size: 13px;
-    }
-
-    .recipe-card .title {
-      font-weight: 600;
-      color: #c7d2fe;
-      margin-bottom: 6px;
-    }
-
-    .recipe-card .meta {
-      display: flex;
-      gap: 12px;
-      font-size: 11px;
-      color: #a5b4fc;
-      margin-bottom: 6px;
-    }
-
-    .recipe-card .meta span {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-    }
-
-    .recipe-card .ingredients {
-      color: #cbd5e1;
-      margin: 6px 0;
-    }
-
-    .recipe-card .ingredients strong {
-      color: #c7d2fe;
-    }
-
-    .recipe-card .instructions {
-      color: #cbd5e1;
-      margin-top: 6px;
-      line-height: 1.3;
-    }
-
-    .recipe-card .match-score {
-      margin-top: 8px;
-      font-size: 11px;
-      color: #4ade80;
-    }
-
-    /* ── Typing Indicator ──────────────────────────────────────────────────── */
-    .typing-indicator {
-      display: flex;
-      gap: 4px;
-      padding: 8px;
-    }
-
-    .typing-dot {
-      width: 6px;
-      height: 6px;
-      background: #a5b4fc;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
-    }
-
-    .typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    .typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-
-    @keyframes typing {
-      0%, 60%, 100% {
-        opacity: 0.3;
+      /* ── Header ──────────────────────────────────────────────────────────── */
+      .chatbot-header {
+        background: rgba(15, 23, 42, 0.9);
+        border-bottom: 1px solid rgba(224, 231, 255, 0.1);
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       }
-      30% {
-        opacity: 1;
+
+      .chatbot-header h1 {
+        font-size: 24px;
+        font-weight: 700;
       }
-    }
 
-    /* ── Stats Bar ──────────────────────────────────────────────────────── */
-    .stats-bar {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 12px;
-      background: rgba(139, 92, 246, 0.1);
-      border-radius: 8px;
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      font-size: 11px;
-    }
+      .chatbot-header .status {
+        font-size: 12px;
+        color: #a5b4fc;
+        margin-left: auto;
+      }
 
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+      .status.online::before {
+        content: "● ";
+        color: #4ade80;
+      }
 
-    .stat-label {
-      color: #a5b4fc;
-    }
+      /* ── Main Chat Area ──────────────────────────────────────────────────── */
+      .chat-container {
+        flex: 1;
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        overflow: hidden;
+      }
 
-    /* ── Agent Terminal ──────────────────────────────────────────────────────── */
-    .agent-terminal-header {
-      display: flex;
-      align-items: center;
-      background: #111827;
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      border-bottom: none;
-      border-top-left-radius: 6px;
-      border-top-right-radius: 6px;
-      padding: 6px 12px;
-      font-size: 10px;
-      color: #34d399;
-      font-family: monospace;
-      font-weight: 600;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .agent-terminal-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #ef4444;
-    }
-    .agent-terminal-dot:nth-child(2) { background: #f59e0b; }
-    .agent-terminal-dot:nth-child(3) { background: #10b981; }
+      .chat-messages {
+        flex: 1;
+        background: rgba(30, 27, 75, 0.4);
+        border-radius: 16px;
+        border: 1px solid rgba(224, 231, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 16px;
+        gap: 12px;
+      }
 
-    .agent-terminal {
-      background: #090d16;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-bottom-left-radius: 6px;
-      border-bottom-right-radius: 6px;
-      padding: 10px;
-      font-family: monospace;
-      font-size: 11px;
-      color: #a7f3d0;
-      max-height: 180px;
-      overflow-y: auto;
-      line-height: 1.4;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-      white-space: pre-wrap;
-    }
-    .agent-terminal-line {
-      margin-bottom: 2px;
-      opacity: 0.95;
-    }
+      .chat-messages::-webkit-scrollbar {
+        width: 8px;
+      }
 
-    /* ── Nutrition Label ──────────────────────────────────────────────────────── */
-    .nutrition-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      padding: 8px;
-      margin-top: 8px;
-      text-align: center;
-    }
-    .nutrition-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .nutrition-val {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #e0e7ff;
-    }
-    .nutrition-lbl {
-      font-size: 0.65rem;
-      color: #a5b4fc;
-      text-transform: uppercase;
-    }
+      .chat-messages::-webkit-scrollbar-track {
+        background: rgba(224, 231, 255, 0.05);
+        border-radius: 4px;
+      }
 
-    /* ── Flavor Profile ───────────────────────────────────────────────────────── */
-    .flavor-profile-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 12px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 8px;
-      padding: 10px;
-      margin-top: 8px;
-    }
-    .flavor-profile-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-    .flavor-profile-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.7rem;
-    }
-    .flavor-profile-name { color: #e0e7ff; }
-    .flavor-profile-pct { color: #a5b4fc; font-weight: 600; }
-    .flavor-bar-bg {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      overflow: hidden;
-    }
-    .flavor-bar-fill {
-      height: 100%;
-      border-radius: 20px;
-      transition: width 0.8s ease-in-out;
-    }
-    .fill-sweet { background: linear-gradient(to right, #f43f5e, #fb7185); }
-    .fill-sour { background: linear-gradient(to right, #eab308, #fef08a); }
-    .fill-salty { background: linear-gradient(to right, #3b82f6, #60a5fa); }
-    .fill-spicy { background: linear-gradient(to right, #f97316, #fb923c); }
-    .fill-creamy { background: linear-gradient(to right, #a855f7, #c084fc); }
-    .fill-umami { background: linear-gradient(to right, #10b981, #34d399); }
+      .chat-messages::-webkit-scrollbar-thumb {
+        background: rgba(224, 231, 255, 0.2);
+        border-radius: 4px;
+      }
 
-    /* ── Plating & Pairing ────────────────────────────────────────────────────── */
-    .plating-box {
-      background: rgba(6, 182, 212, 0.04);
-      border-left: 2px solid #06b6d4;
-      padding: 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      color: #cbd5e1;
-      line-height: 1.4;
-      margin-top: 6px;
-    }
-    .pairing-box {
-      background: rgba(245, 158, 11, 0.04);
-      border-left: 2px solid #f59e0b;
-      padding: 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      color: #cbd5e1;
-      line-height: 1.4;
-      margin-top: 6px;
-    }
+      .chat-messages::-webkit-scrollbar-thumb:hover {
+        background: rgba(224, 231, 255, 0.3);
+      }
 
-    /* ── Collapsibles & Accordions ────────────────────────────────────────────── */
-    .collapsible { overflow: hidden; max-height: 0; transition: max-height 0.35s ease; }
-    .collapsible.open { max-height: 1000px; }
-    .toggle-header { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; }
-    .toggle-header .toggle-icon { font-size: 10px; color: #a5b4fc; transition: transform 0.25s; }
-    .toggle-header.open .toggle-icon { transform: rotate(180deg); }
+      /* ── Message Bubbles ──────────────────────────────────────────────────── */
+      .message {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+        animation: slideIn 0.3s ease-out;
+      }
 
-    /* ── Chat Suggestions ─────────────────────────────────────────────────────── */
-    .suggestions-row-chat {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .chat-sugg-btn {
-      padding: 6px 12px;
-      background: rgba(99, 102, 241, 0.15);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 20px;
-      color: #c7d2fe;
-      font-size: 11px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .chat-sugg-btn:hover {
-      background: rgba(99, 102, 241, 0.3);
-      transform: translateY(-1px);
-    }
-  </style>
-</head>
-<body>
-  <!-- ── Header ──────────────────────────────────────────────────────────── -->
-  <div class="chatbot-header">
-    <span style="font-size: 28px;"></span>
-    <h1>Recipe AI Chatbot</h1>
-    <span class="status online">Ready</span>
-  </div>
-
-  <!-- ── Main Content ──────────────────────────────────────────────────────── -->
-  <div class="chat-container">
-    <!-- Chat Messages -->
-    <div class="chat-messages" id="chatMessages">
-      <div class="message bot">
-        <div class="message-bubble">
-           Salut! Sunt asistentul tău AI pentru rețete. Spune-mi ce ingrediente ai și o să găsesc rețete perfecte pentru tine!
-          <div class="message-meta">Acum</div>
-        </div>
-      </div>
-      <div class="message bot">
-        <div class="message-bubble">
-           Poți cere:
-          • "Ce pot face cu pui și lămâie?"
-          • "Rețete italiene rapide"
-          • "Ceva vegan cu broccoli"
-          • "Substitut pentru smântână"
-          <div class="message-meta">Acum</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <div class="stats-bar" id="statsBar"></div>
-
-      <!-- Agent activity monitor terminal inside chatbot sidebar -->
-      <div class="sidebar-section">
-        <h3> Agent Thought Monitor</h3>
-        <div class="agent-terminal-header">
-          <div class="agent-terminal-dot"></div>
-          <div class="agent-terminal-dot"></div>
-          <div class="agent-terminal-dot"></div>
-          <span style="margin-left:4px;">Agent RAG Console</span>
-        </div>
-        <div class="agent-terminal" id="agentTerminal">
-          > Agent idle. Waiting for RAG query...
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <h3> Sugestii Rapide</h3>
-        <div class="suggested-question" onclick="askQuestion('Ce mâncări pot face cu pui, usturoi și lămâie?')">
-           Pui + Usturoi + Lămâie
-        </div>
-        <div class="suggested-question" onclick="askQuestion('Rețete italiene cu paste și roșii')">
-           Paste Italiene
-        </div>
-        <div class="suggested-question" onclick="askQuestion('Rețete vegane cu broccoli și ciuperci')">
-           Broccoli Vegan
-        </div>
-        <div class="suggested-question" onclick="askQuestion('Rețete rapide sub 30 de minute')">
-           Rețete Rapide
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <h3> Bucătării Populare</h3>
-        <button class="quick-btn" onclick="filterByCuisine('Italian')"> Italiană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Thai')"> Thailandeză</button>
-        <button class="quick-btn" onclick="filterByCuisine('Indian')"> Indiană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Mexican')"> Mexicană</button>
-        <button class="quick-btn" onclick="filterByCuisine('Japanese')"> Japoneză</button>
-        <button class="quick-btn" onclick="filterByCuisine('Chinese')"> Chineză</button>
-      </div>
-
-      <div class="sidebar-section">
-        <h3>⏱️ Timp Disponibil</h3>
-        <button class="quick-btn" onclick="filterByTime(15)"> Sub 15 min</button>
-        <button class="quick-btn" onclick="filterByTime(30)"> Sub 30 min</button>
-        <button class="quick-btn" onclick="filterByTime(60)"> Sub 1 oră</button>
-        <button class="quick-btn" onclick="filterByTime(999)"> Orice timp</button>
-      </div>
-
-      <div class="sidebar-section">
-        <h3> Dificultate</h3>
-        <button class="quick-btn" onclick="filterByDifficulty('Easy')"> Ușor</button>
-        <button class="quick-btn" onclick="filterByDifficulty('Medium')"> Mediu</button>
-        <button class="quick-btn" onclick="filterByDifficulty('Hard')"> Dificil</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── Input Area ──────────────────────────────────────────────────────── -->
-  <div class="input-container">
-    <div class="input-wrapper">
-      <textarea id="chatInput" placeholder="Spune-mi ce ingrediente ai..." rows="1"></textarea>
-      <button id="sendBtn" onclick="sendMessage()"></button>
-    </div>
-  </div>
-
-  <script>
-    const chatMessages = document.getElementById("chatMessages");
-    const chatInput = document.getElementById("chatInput");
-    const sendBtn = document.getElementById("sendBtn");
-    const statsBar = document.getElementById("statsBar");
-
-    window.addEventListener("message", (e) => {
-      if (e.data && e.data.action === "suggestRecipe") {
-        chatInput.value = e.data.query;
-        chatInput.focus();
-        if (typeof sendMessage === "function") {
-          sendMessage();
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
       }
-    });
 
-    let currentFilters = {
-      cuisine: null,
-      maxTime: null,
-      difficulty: null,
-    };
-
-    // ── Initialize ──────────────────────────────────────────────────────────
-    async function initializeChatbot() {
-      try {
-        const stats = await fetch("/api/stats").then(r => r.json());
-        displayStats(stats);
-      } catch (error) {
-        console.error("Failed to load stats:", error);
+      .message.user {
+        justify-content: flex-end;
       }
-    }
 
-    // ── Display Stats ──────────────────────────────────────────────────────
-    function displayStats(stats) {
-      statsBar.innerHTML = `
+      .message-bubble {
+        max-width: 70%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        word-wrap: break-word;
+        line-height: 1.4;
+      }
+
+      .message.user .message-bubble {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        border-bottom-right-radius: 4px;
+      }
+
+      .message.bot .message-bubble {
+        background: rgba(224, 231, 255, 0.08);
+        border: 1px solid rgba(224, 231, 255, 0.2);
+        border-bottom-left-radius: 4px;
+      }
+
+      .message-meta {
+        font-size: 11px;
+        color: #a5b4fc;
+        margin-top: 4px;
+      }
+
+      /* ── Sidebar (Quick Options) ──────────────────────────────────────────── */
+      .sidebar {
+        width: 280px;
+        background: rgba(30, 27, 75, 0.4);
+        border-radius: 16px;
+        border: 1px solid rgba(224, 231, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 16px;
+        gap: 16px;
+      }
+
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(224, 231, 255, 0.2);
+        border-radius: 3px;
+      }
+
+      .sidebar-section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sidebar-section h3 {
+        font-size: 12px;
+        font-weight: 600;
+        color: #a5b4fc;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .quick-btn {
+        padding: 8px 12px;
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 8px;
+        color: #c7d2fe;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: left;
+      }
+
+      .quick-btn:hover {
+        background: rgba(99, 102, 241, 0.2);
+        border-color: rgba(99, 102, 241, 0.5);
+        transform: translateX(2px);
+      }
+
+      .suggested-question {
+        padding: 10px;
+        background: rgba(139, 92, 246, 0.1);
+        border-left: 3px solid #8b5cf6;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 12px;
+      }
+
+      .suggested-question:hover {
+        background: rgba(139, 92, 246, 0.2);
+      }
+
+      /* ── Input Area ──────────────────────────────────────────────────────── */
+      .input-container {
+        background: rgba(15, 23, 42, 0.9);
+        border-top: 1px solid rgba(224, 231, 255, 0.1);
+        padding: 16px 24px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+      }
+
+      .input-wrapper {
+        flex: 1;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      #chatInput {
+        flex: 1;
+        background: rgba(30, 27, 75, 0.6);
+        border: 1px solid rgba(224, 231, 255, 0.2);
+        border-radius: 8px;
+        padding: 10px 12px;
+        color: #e0e7ff;
+        font-family: "Outfit", sans-serif;
+        font-size: 14px;
+        resize: none;
+        max-height: 100px;
+        transition: all 0.2s;
+      }
+
+      #chatInput:focus {
+        outline: none;
+        border-color: #6366f1;
+        background: rgba(30, 27, 75, 0.8);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      #sendBtn {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #sendBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
+
+      #sendBtn:active {
+        transform: translateY(0);
+      }
+
+      #sendBtn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      /* ── Recipe Card ──────────────────────────────────────────────────────── */
+      .recipe-card {
+        background: rgba(99, 102, 241, 0.1);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 8px;
+        padding: 12px;
+        margin-top: 8px;
+        font-size: 13px;
+      }
+
+      .recipe-card .title {
+        font-weight: 600;
+        color: #c7d2fe;
+        margin-bottom: 6px;
+      }
+
+      .recipe-card .meta {
+        display: flex;
+        gap: 12px;
+        font-size: 11px;
+        color: #a5b4fc;
+        margin-bottom: 6px;
+      }
+
+      .recipe-card .meta span {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      .recipe-card .ingredients {
+        color: #cbd5e1;
+        margin: 6px 0;
+      }
+
+      .recipe-card .ingredients strong {
+        color: #c7d2fe;
+      }
+
+      .recipe-card .instructions {
+        color: #cbd5e1;
+        margin-top: 6px;
+        line-height: 1.3;
+      }
+
+      .recipe-card .match-score {
+        margin-top: 8px;
+        font-size: 11px;
+        color: #4ade80;
+      }
+
+      /* ── Typing Indicator ──────────────────────────────────────────────────── */
+      .typing-indicator {
+        display: flex;
+        gap: 4px;
+        padding: 8px;
+      }
+
+      .typing-dot {
+        width: 6px;
+        height: 6px;
+        background: #a5b4fc;
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          opacity: 0.3;
+        }
+        30% {
+          opacity: 1;
+        }
+      }
+
+      /* ── Stats Bar ──────────────────────────────────────────────────────── */
+      .stats-bar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding: 12px;
+        background: rgba(139, 92, 246, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        font-size: 11px;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .stat-label {
+        color: #a5b4fc;
+      }
+
+      /* ── Agent Terminal ──────────────────────────────────────────────────────── */
+      .agent-terminal-header {
+        display: flex;
+        align-items: center;
+        background: #111827;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        border-bottom: none;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+        padding: 6px 12px;
+        font-size: 10px;
+        color: #34d399;
+        font-family: monospace;
+        font-weight: 600;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .agent-terminal-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #ef4444;
+      }
+      .agent-terminal-dot:nth-child(2) {
+        background: #f59e0b;
+      }
+      .agent-terminal-dot:nth-child(3) {
+        background: #10b981;
+      }
+
+      .agent-terminal {
+        background: #090d16;
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        padding: 10px;
+        font-family: monospace;
+        font-size: 11px;
+        color: #a7f3d0;
+        max-height: 180px;
+        overflow-y: auto;
+        line-height: 1.4;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+        white-space: pre-wrap;
+      }
+      .agent-terminal-line {
+        margin-bottom: 2px;
+        opacity: 0.95;
+      }
+
+      /* ── Nutrition Label ──────────────────────────────────────────────────────── */
+      .nutrition-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 8px;
+        margin-top: 8px;
+        text-align: center;
+      }
+      .nutrition-item {
+        display: flex;
+        flex-direction: column;
+      }
+      .nutrition-val {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #e0e7ff;
+      }
+      .nutrition-lbl {
+        font-size: 0.65rem;
+        color: #a5b4fc;
+        text-transform: uppercase;
+      }
+
+      /* ── Flavor Profile ───────────────────────────────────────────────────────── */
+      .flavor-profile-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 8px;
+      }
+      .flavor-profile-item {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .flavor-profile-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.7rem;
+      }
+      .flavor-profile-name {
+        color: #e0e7ff;
+      }
+      .flavor-profile-pct {
+        color: #a5b4fc;
+        font-weight: 600;
+      }
+      .flavor-bar-bg {
+        height: 4px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+      .flavor-bar-fill {
+        height: 100%;
+        border-radius: 20px;
+        transition: width 0.8s ease-in-out;
+      }
+      .fill-sweet {
+        background: linear-gradient(to right, #f43f5e, #fb7185);
+      }
+      .fill-sour {
+        background: linear-gradient(to right, #eab308, #fef08a);
+      }
+      .fill-salty {
+        background: linear-gradient(to right, #3b82f6, #60a5fa);
+      }
+      .fill-spicy {
+        background: linear-gradient(to right, #f97316, #fb923c);
+      }
+      .fill-creamy {
+        background: linear-gradient(to right, #a855f7, #c084fc);
+      }
+      .fill-umami {
+        background: linear-gradient(to right, #10b981, #34d399);
+      }
+
+      /* ── Plating & Pairing ────────────────────────────────────────────────────── */
+      .plating-box {
+        background: rgba(6, 182, 212, 0.04);
+        border-left: 2px solid #06b6d4;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: #cbd5e1;
+        line-height: 1.4;
+        margin-top: 6px;
+      }
+      .pairing-box {
+        background: rgba(245, 158, 11, 0.04);
+        border-left: 2px solid #f59e0b;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        color: #cbd5e1;
+        line-height: 1.4;
+        margin-top: 6px;
+      }
+
+      /* ── Collapsibles & Accordions ────────────────────────────────────────────── */
+      .collapsible {
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.35s ease;
+      }
+      .collapsible.open {
+        max-height: 1000px;
+      }
+      .toggle-header {
+        cursor: pointer;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .toggle-header .toggle-icon {
+        font-size: 10px;
+        color: #a5b4fc;
+        transition: transform 0.25s;
+      }
+      .toggle-header.open .toggle-icon {
+        transform: rotate(180deg);
+      }
+
+      /* ── Chat Suggestions ─────────────────────────────────────────────────────── */
+      .suggestions-row-chat {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .chat-sugg-btn {
+        padding: 6px 12px;
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        border-radius: 20px;
+        color: #c7d2fe;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .chat-sugg-btn:hover {
+        background: rgba(99, 102, 241, 0.3);
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── Header ──────────────────────────────────────────────────────────── -->
+    <div class="chatbot-header">
+      <span style="font-size: 28px"></span>
+      <h1>Recipe AI Chatbot</h1>
+      <span class="status online">Ready</span>
+    </div>
+
+    <!-- ── Main Content ──────────────────────────────────────────────────────── -->
+    <div class="chat-container">
+      <!-- Chat Messages -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          <div class="message-bubble">
+            Salut! Sunt asistentul tău AI pentru rețete. Spune-mi ce ingrediente
+            ai și o să găsesc rețete perfecte pentru tine!
+            <div class="message-meta">Acum</div>
+          </div>
+        </div>
+        <div class="message bot">
+          <div class="message-bubble">
+            Poți cere: • "Ce pot face cu pui și lămâie?" • "Rețete italiene
+            rapide" • "Ceva vegan cu broccoli" • "Substitut pentru smântână"
+            <div class="message-meta">Acum</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="stats-bar" id="statsBar"></div>
+
+        <!-- Agent activity monitor terminal inside chatbot sidebar -->
+        <div class="sidebar-section">
+          <h3>Agent Thought Monitor</h3>
+          <div class="agent-terminal-header">
+            <div class="agent-terminal-dot"></div>
+            <div class="agent-terminal-dot"></div>
+            <div class="agent-terminal-dot"></div>
+            <span style="margin-left: 4px">Agent RAG Console</span>
+          </div>
+          <div class="agent-terminal" id="agentTerminal">
+            > Agent idle. Waiting for RAG query...
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Sugestii Rapide</h3>
+          <div
+            class="suggested-question"
+            onclick="
+              askQuestion('Ce mâncări pot face cu pui, usturoi și lămâie?')
+            "
+          >
+            Pui + Usturoi + Lămâie
+          </div>
+          <div
+            class="suggested-question"
+            onclick="askQuestion('Rețete italiene cu paste și roșii')"
+          >
+            Paste Italiene
+          </div>
+          <div
+            class="suggested-question"
+            onclick="askQuestion('Rețete vegane cu broccoli și ciuperci')"
+          >
+            Broccoli Vegan
+          </div>
+          <div
+            class="suggested-question"
+            onclick="askQuestion('Rețete rapide sub 30 de minute')"
+          >
+            Rețete Rapide
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Bucătării Populare</h3>
+          <button class="quick-btn" onclick="filterByCuisine('Italian')">
+            Italiană
+          </button>
+          <button class="quick-btn" onclick="filterByCuisine('Thai')">
+            Thailandeză
+          </button>
+          <button class="quick-btn" onclick="filterByCuisine('Indian')">
+            Indiană
+          </button>
+          <button class="quick-btn" onclick="filterByCuisine('Mexican')">
+            Mexicană
+          </button>
+          <button class="quick-btn" onclick="filterByCuisine('Japanese')">
+            Japoneză
+          </button>
+          <button class="quick-btn" onclick="filterByCuisine('Chinese')">
+            Chineză
+          </button>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>⏱️ Timp Disponibil</h3>
+          <button class="quick-btn" onclick="filterByTime(15)">
+            Sub 15 min
+          </button>
+          <button class="quick-btn" onclick="filterByTime(30)">
+            Sub 30 min
+          </button>
+          <button class="quick-btn" onclick="filterByTime(60)">
+            Sub 1 oră
+          </button>
+          <button class="quick-btn" onclick="filterByTime(999)">
+            Orice timp
+          </button>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Dificultate</h3>
+          <button class="quick-btn" onclick="filterByDifficulty('Easy')">
+            Ușor
+          </button>
+          <button class="quick-btn" onclick="filterByDifficulty('Medium')">
+            Mediu
+          </button>
+          <button class="quick-btn" onclick="filterByDifficulty('Hard')">
+            Dificil
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Input Area ──────────────────────────────────────────────────────── -->
+    <div class="input-container">
+      <div class="input-wrapper">
+        <textarea
+          id="chatInput"
+          placeholder="Spune-mi ce ingrediente ai..."
+          rows="1"
+        ></textarea>
+        <button id="sendBtn" onclick="sendMessage()"></button>
+      </div>
+    </div>
+
+    <script>
+      const chatMessages = document.getElementById("chatMessages");
+      const chatInput = document.getElementById("chatInput");
+      const sendBtn = document.getElementById("sendBtn");
+      const statsBar = document.getElementById("statsBar");
+
+      window.addEventListener("message", (e) => {
+        if (e.data && e.data.action === "suggestRecipe") {
+          chatInput.value = e.data.query;
+          chatInput.focus();
+          if (typeof sendMessage === "function") {
+            sendMessage();
+          }
+        }
+      });
+
+      let currentFilters = {
+        cuisine: null,
+        maxTime: null,
+        difficulty: null,
+      };
+
+      // ── Initialize ──────────────────────────────────────────────────────────
+      async function initializeChatbot() {
+        try {
+          const stats = await fetch("/api/stats").then((r) => r.json());
+          displayStats(stats);
+        } catch (error) {
+          console.error("Failed to load stats:", error);
+        }
+      }
+
+      // ── Display Stats ──────────────────────────────────────────────────────
+      function displayStats(stats) {
+        statsBar.innerHTML = `
         <div class="stat-item">
           <span class="stat-label">️ Rețete</span>
           <span class="stat-value">${stats.total_recipes}</span>
@@ -695,51 +781,75 @@
           <span class="stat-value">RAG v2</span>
         </div>
       `;
-    }
+      }
 
-    // ── Helper escape function ─────────────────────────────────────────────
-    function esc(str) {
-      if (typeof str !== 'string') return '';
-      return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
+      // ── Helper escape function ─────────────────────────────────────────────
+      function esc(str) {
+        if (typeof str !== "string") return "";
+        return str
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
 
-    // ── Render inline recipe card for chat ──────────────────────────────────
-    function renderChatRecipeCard(recipe, idx) {
-      const uniqueId = `chat-rec-${Date.now()}-${idx}`;
-      const nutr = recipe.nutrition || { calories: 340, protein: '12g', carbs: '40g', fat: '10g' };
-      const flav = recipe.flavor_percentages || { sweet: 20, sour: 20, salty: 20, spicy: 10, creamy: 15, umami: 15 };
-      
-      const steps = recipe.steps || [];
-      const stepsHTML = steps.map((s, i) => `
+      // ── Render inline recipe card for chat ──────────────────────────────────
+      function renderChatRecipeCard(recipe, idx) {
+        const uniqueId = `chat-rec-${Date.now()}-${idx}`;
+        const nutr = recipe.nutrition || {
+          calories: 340,
+          protein: "12g",
+          carbs: "40g",
+          fat: "10g",
+        };
+        const flav = recipe.flavor_percentages || {
+          sweet: 20,
+          sour: 20,
+          salty: 20,
+          spicy: 10,
+          creamy: 15,
+          umami: 15,
+        };
+
+        const steps = recipe.steps || [];
+        const stepsHTML = steps
+          .map(
+            (s, i) => `
         <div class="step-item" style="display:flex; gap:8px; margin-top:4px; align-items:flex-start;">
-          <span class="step-num" style="width:18px; height:18px; font-size:9px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #8b5cf6); display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0; font-weight:700;">${i+1}</span>
+          <span class="step-num" style="width:18px; height:18px; font-size:9px; border-radius:50%; background:linear-gradient(135deg, #6366f1, #8b5cf6); display:flex; align-items:center; justify-content:center; color:white; flex-shrink:0; font-weight:700;">${i + 1}</span>
           <p class="step-text" style="font-size:11px; color:#cbd5e1; line-height:1.4; margin:0;">${esc(s)}</p>
         </div>
-      `).join('');
-      
-      const ingHTML = (recipe.ingredients || []).map(ing => `
-        <span class="ing-chip" style="background:rgba(255,255,255,0.05); border:1px solid rgba(224,231,255,0.15); padding:2px 6px; border-radius:50px; font-size:10px; color:#cbd5e1; display:inline-block; margin:2px;">${esc(ing)}</span>
-      `).join('');
+      `,
+          )
+          .join("");
 
-      const platingHTML = recipe.plating_guide ? `
+        const ingHTML = (recipe.ingredients || [])
+          .map(
+            (ing) => `
+        <span class="ing-chip" style="background:rgba(255,255,255,0.05); border:1px solid rgba(224,231,255,0.15); padding:2px 6px; border-radius:50px; font-size:10px; color:#cbd5e1; display:inline-block; margin:2px;">${esc(ing)}</span>
+      `,
+          )
+          .join("");
+
+        const platingHTML = recipe.plating_guide
+          ? `
         <div style="margin-top: 8px;">
           <span style="color:#06b6d4; font-size:9px; font-weight:600; text-transform:uppercase; display:block;"> Chef's Plating Guide</span>
           <div class="plating-box" style="margin-top:2px;">${esc(recipe.plating_guide)}</div>
         </div>
-      ` : '';
+      `
+          : "";
 
-      const pairingHTML = recipe.beverage_pairing ? `
+        const pairingHTML = recipe.beverage_pairing
+          ? `
         <div style="margin-top: 8px;">
           <span style="color:#f59e0b; font-size:9px; font-weight:600; text-transform:uppercase; display:block;"> Sommelier Pairing</span>
           <div class="pairing-box" style="margin-top:2px;">${esc(recipe.beverage_pairing)}</div>
         </div>
-      ` : '';
+      `
+          : "";
 
-      return `
+        return `
         <div class="recipe-card" style="margin-top: 10px; background: rgba(15,23,42,0.4); border: 1px solid rgba(224,231,255,0.1); border-radius: 12px; padding: 12px; font-size:12px; animation: slideIn 0.3s ease-out;">
           <div class="title" style="font-weight:700; font-size:13px; color:#c7d2fe; margin-bottom:4px;">️ ${esc(recipe.title)}</div>
           <div class="meta" style="display:flex; gap:10px; font-size:10px; color:#a5b4fc; margin-bottom:6px;">
@@ -811,261 +921,237 @@
           </div>
         </div>
       `;
-    }
-
-    // ── Send Message ────────────────────────────────────────────────────────
-    async function sendMessage() {
-      const text = chatInput.value.trim();
-      if (!text) return;
-
-      // User message
-      addMessage(text, "user");
-      chatInput.value = "";
-
-      // Typing indicator
-      const typingId = addMessage("...", "bot", true);
-
-      try {
-        console.log(" Sending message to Chat RAG:", text);
-
-        const fetchResponse = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text }),
-        });
-
-        console.log(" Response status:", fetchResponse.status);
-
-        if (!fetchResponse.ok) {
-          throw new Error(`HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`);
-        }
-
-        const response = await fetchResponse.json();
-        console.log(" Chatbot Response:", response);
-
-        removeMessage(typingId);
-
-        // ── Render Agent Terminal Logs ──────────────────────────────────────
-        const agentTerminal = document.getElementById("agentTerminal");
-        if (response.agent_logs && response.agent_logs.length > 0 && agentTerminal) {
-          agentTerminal.innerHTML = "";
-          response.agent_logs.forEach(log => {
-            const line = document.createElement("div");
-            line.className = "agent-terminal-line";
-            if (log.includes("") || log.includes("successful")) {
-              line.style.color = "#34d399";
-            } else if (log.includes("️") || log.includes("too low") || log.includes("Self-critique")) {
-              line.style.color = "#fbbf24";
-            } else if (log.includes("Dropped") || log.includes("Dropping") || log.includes("Aborting")) {
-              line.style.color = "#f87171";
-            } else if (log.includes("Iteration")) {
-              line.style.color = "#60a5fa";
-            }
-            line.textContent = `> ${log}`;
-            agentTerminal.appendChild(line);
-          });
-          // Add idle status cursor
-          const idleLine = document.createElement("div");
-          idleLine.innerHTML = `> Agent idle. Waiting...<span class="agent-terminal-cursor"></span>`;
-          agentTerminal.appendChild(idleLine);
-          agentTerminal.scrollTop = agentTerminal.scrollHeight;
-        } else if (agentTerminal) {
-          agentTerminal.innerHTML = "> Agent idle. Quick matched direct query.";
-        }
-
-        // ── Render Response Content ─────────────────────────────────────────
-        if (response.type === "text" || response.type === "unknown") {
-          addMessage(response.text, "bot", false, false);
-          
-          if (response.tip) {
-            addMessage(` **Tip culinar:**<br/>${response.tip}`, "bot", false, true);
-          }
-        } 
-        else if (response.type === "help" && response.capabilities) {
-          addMessage(response.text, "bot", false, false);
-          let capHtml = `<div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">`;
-          response.capabilities.forEach(c => {
-            capHtml += `
-              <div class="suggested-question" onclick="askQuestion('${esc(c.example)}')" style="border-left-color:#6366f1;">
-                <strong>${c.icon} ${esc(c.title)}</strong><br/>
-                <span style="color:#cbd5e1; font-size:10px;">Ex: "${esc(c.example)}"</span>
-              </div>
-            `;
-          });
-          capHtml += `</div>`;
-          addMessage(capHtml, "bot", false, true);
-        }
-        else if (response.type === "recipes" && response.recipes) {
-          addMessage(response.text, "bot", false, false);
-          response.recipes.forEach((recipe, idx) => {
-            addMessage(renderChatRecipeCard(recipe, idx), "bot", false, true);
-            try {
-              window.parent.postMessage({ action: "recipeCreated", recipe: recipe }, "*");
-            } catch (err) { console.error(err); }
-          });
-        }
-        else if (response.type === "recipe_detail" && response.recipe) {
-          addMessage(response.text, "bot", false, false);
-          addMessage(renderChatRecipeCard(response.recipe, 0), "bot", false, true);
-          try {
-            window.parent.postMessage({ action: "recipeCreated", recipe: response.recipe }, "*");
-          } catch (err) { console.error(err); }
-        }
-        else if (response.type === "technique") {
-          const techHtml = `
-            <strong>${esc(response.title)}</strong><br/><br/>
-            ${esc(response.text)}
-          `;
-          addMessage(techHtml, "bot", false, true);
-        }
-        else if (response.type === "technique_list" && response.techniques) {
-          addMessage(response.text, "bot", false, false);
-          let pillsHtml = `<div class="suggestions-row-chat">`;
-          response.techniques.forEach(t => {
-            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('Ce este tehnica ${esc(t.ro)}?')">${t.emoji} ${esc(t.ro)}</button>`;
-          });
-          pillsHtml += `</div>`;
-          addMessage(pillsHtml, "bot", false, true);
-        }
-        else if (response.type === "substitution" && response.substitutions) {
-          addMessage(` **${esc(response.title)}**<br/>${esc(response.text)}`, "bot", false, true);
-          let subsHtml = `<div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">`;
-          response.substitutions.forEach(s => {
-            subsHtml += `
-              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(224,231,255,0.1); border-radius:8px; padding:8px; font-size:11px;">
-                <strong style="color:#c7d2fe;"> ${esc(s.sub)}</strong> (Rată: ${esc(s.ratio)})<br/>
-                <span style="color:#cbd5e1; font-size:10px;">Excelent pentru: ${esc(s.best_for)}</span>
-              </div>
-            `;
-          });
-          subsHtml += `</div>`;
-          addMessage(subsHtml, "bot", false, true);
-        }
-        else if (response.type === "substitution_list" && response.available) {
-          addMessage(response.text, "bot", false, false);
-          let pillsHtml = `<div class="suggestions-row-chat">`;
-          response.available.forEach(s => {
-            pillsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('Ce pun in loc de ${esc(s.ro)}?')">${s.emoji} ${esc(s.ro)}</button>`;
-          });
-          pillsHtml += `</div>`;
-          addMessage(pillsHtml, "bot", false, true);
-        }
-
-        // Render suggestions if available
-        if (response.suggestions && response.suggestions.length > 0) {
-          let suggsHtml = `<div class="suggestions-row-chat" style="margin-top:10px; border-top:1px solid rgba(224,231,255,0.06); padding-top:6px;">`;
-          response.suggestions.forEach(s => {
-            suggsHtml += `<button class="chat-sugg-btn" onclick="askQuestion('${esc(s)}')">${esc(s)}</button>`;
-          });
-          suggsHtml += `</div>`;
-          addMessage(suggsHtml, "bot", false, true);
-        }
-
-      } catch (error) {
-        removeMessage(typingId);
-        console.error(" Error:", error);
-        addMessage(` Eroare: ${error.message}. Încearcă din nou!`, "bot");
       }
-    }
 
-    // ── Parse Ingredients ──────────────────────────────────────────────────
-    function parseIngredients(text) {
-      const stopwords = ["și", "sau", "din", "cu", "pe", "pentru", "ce", "pot", "face", "rețete", "mâncare", "cu", "care", "sub", "minute", "de", "rapid", "rapide", "ușor", "mediu", "dificil", "ceva", "broccoli", "vegan", "italiană", "ital", "thai", "indiană", "mexican", "japoneză"];
-      const words = text
-        .toLowerCase()
-        .split(/[,\s\?\!\.]+/)
-        .filter(w => w.length > 1 && !stopwords.includes(w))
-        .slice(0, 10);
+      // ── Send Message ────────────────────────────────────────────────────────
+      async function sendMessage() {
+        const text = chatInput.value.trim();
+        if (!text) return;
 
-      return words.length > 0 ? words : ["rețete"];
-    }
+        // User message
+        addMessage(text, "user");
+        chatInput.value = "";
 
-    // ── Add Message ────────────────────────────────────────────────────────
-    function addMessage(content, role, isTyping = false, isHtml = false) {
-      const msgDiv = document.createElement("div");
-      msgDiv.className = `message ${role}`;
-      msgDiv.id = `msg-${Date.now()}`;
+        // Typing indicator
+        const typingId = addMessage("...", "bot", true);
 
-      const bubble = document.createElement("div");
-      bubble.className = "message-bubble";
+        try {
+          console.log(" Sending message to Chat RAG:", text);
 
-      if (isTyping) {
-        bubble.innerHTML = `
+          const fetchResponse = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text }),
+          });
+
+          console.log(" Response status:", fetchResponse.status);
+
+          if (!fetchResponse.ok) {
+            throw new Error(
+              `HTTP ${fetchResponse.status}: ${fetchResponse.statusText}`,
+            );
+          }
+
+          const response = await fetchResponse.json();
+          console.log("RAW RESPONSE OBJECT:", JSON.stringify(response));
+          console.log(" Chatbot Response:", response.response);
+          let answer=response.response.toString();
+          answer = answer
+          .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+          .replace(/\n/g, "<br>");
+
+          removeMessage(typingId);
+
+          // ── Render Agent Terminal Logs ──────────────────────────────────────
+          const agentTerminal = document.getElementById("agentTerminal");
+          if (
+            response.agent_logs &&
+            response.agent_logs.length > 0 &&
+            agentTerminal
+          ) {
+            agentTerminal.innerHTML = "";
+            response.agent_logs.forEach((log) => {
+              const line = document.createElement("div");
+              line.className = "agent-terminal-line";
+              if (log.includes("") || log.includes("successful")) {
+                line.style.color = "#34d399";
+              } else if (
+                log.includes("️") ||
+                log.includes("too low") ||
+                log.includes("Self-critique")
+              ) {
+                line.style.color = "#fbbf24";
+              } else if (
+                log.includes("Dropped") ||
+                log.includes("Dropping") ||
+                log.includes("Aborting")
+              ) {
+                line.style.color = "#f87171";
+              } else if (log.includes("Iteration")) {
+                line.style.color = "#60a5fa";
+              }
+              line.textContent = `> ${log}`;
+              agentTerminal.appendChild(line);
+            });
+            // Add idle status cursor
+            const idleLine = document.createElement("div");
+            idleLine.innerHTML = `> Agent idle. Waiting...<span class="agent-terminal-cursor"></span>`;
+            agentTerminal.appendChild(idleLine);
+            agentTerminal.scrollTop = agentTerminal.scrollHeight;
+          } else if (agentTerminal) {
+            agentTerminal.innerHTML =
+              "> Agent idle. Quick matched direct query.";
+          }
+
+          // ── Render Response Content ─────────────────────────────────────────
+
+          // ALWAYS show response text
+          addMessage(
+            answer || "No response from server.",
+            "bot",
+            false,
+            true,
+          );
+
+        } catch (error) {
+          console.error("Error during chat interaction:", error);
+          removeMessage(typingId);
+          addMessage(
+            "Sorry, something went wrong while fetching the response. Please try again.",
+            "bot",
+          );
+        }
+      }
+
+      // ── Parse Ingredients ──────────────────────────────────────────────────
+      function parseIngredients(text) {
+        const stopwords = [
+          "și",
+          "sau",
+          "din",
+          "cu",
+          "pe",
+          "pentru",
+          "ce",
+          "pot",
+          "face",
+          "rețete",
+          "mâncare",
+          "cu",
+          "care",
+          "sub",
+          "minute",
+          "de",
+          "rapid",
+          "rapide",
+          "ușor",
+          "mediu",
+          "dificil",
+          "ceva",
+          "broccoli",
+          "vegan",
+          "italiană",
+          "ital",
+          "thai",
+          "indiană",
+          "mexican",
+          "japoneză",
+        ];
+        const words = text
+          .toLowerCase()
+          .split(/[,\s\?\!\.]+/)
+          .filter((w) => w.length > 1 && !stopwords.includes(w))
+          .slice(0, 10);
+
+        return words.length > 0 ? words : ["rețete"];
+      }
+
+      // ── Add Message ────────────────────────────────────────────────────────
+      function addMessage(content, role, isTyping = false, isHtml = false) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `message ${role}`;
+        msgDiv.id = `msg-${Date.now()}`;
+
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+
+        if (isTyping) {
+          bubble.innerHTML = `
           <div class="typing-indicator">
             <div class="typing-dot"></div>
             <div class="typing-dot"></div>
             <div class="typing-dot"></div>
           </div>
         `;
-      } else if (isHtml) {
-        bubble.innerHTML = content;
-      } else {
-        bubble.textContent = content;
+        } else if (isHtml) {
+          bubble.innerHTML = content;
+        } else {
+          bubble.textContent = content;
+        }
+
+        if (!isTyping) {
+          const meta = document.createElement("div");
+          meta.className = "message-meta";
+          meta.textContent = new Date().toLocaleTimeString("ro-RO", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          bubble.appendChild(meta);
+        }
+
+        msgDiv.appendChild(bubble);
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        return msgDiv.id;
       }
 
-      if (!isTyping) {
-        const meta = document.createElement("div");
-        meta.className = "message-meta";
-        meta.textContent = new Date().toLocaleTimeString("ro-RO", {
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-        bubble.appendChild(meta);
+      // ── Remove Message ─────────────────────────────────────────────────────
+      function removeMessage(id) {
+        document.getElementById(id)?.remove();
       }
 
-      msgDiv.appendChild(bubble);
-      chatMessages.appendChild(msgDiv);
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-
-      return msgDiv.id;
-    }
-
-    // ── Remove Message ─────────────────────────────────────────────────────
-    function removeMessage(id) {
-      document.getElementById(id)?.remove();
-    }
-
-    // ── Quick Actions ──────────────────────────────────────────────────────
-    function askQuestion(question) {
-      chatInput.value = question;
-      chatInput.focus();
-      sendMessage();
-    }
-
-    function filterByCuisine(cuisine) {
-      currentFilters.cuisine = cuisine;
-      chatInput.value = `Rețete ${cuisine.toLowerCase()}`;
-      chatInput.focus();
-    }
-
-    function filterByTime(minutes) {
-      currentFilters.maxTime = minutes;
-      chatInput.value = `Rețete rapide sub ${minutes} de minute`;
-      chatInput.focus();
-    }
-
-    function filterByDifficulty(level) {
-      currentFilters.difficulty = level;
-      chatInput.value = `Rețete ${level.toLowerCase()}`;
-      chatInput.focus();
-    }
-
-    // ── Textarea Auto-resize ──────────────────────────────────────────────
-    chatInput.addEventListener("input", function () {
-      this.style.height = "auto";
-      this.style.height = Math.min(this.scrollHeight, 100) + "px";
-    });
-
-    // ── Enter to Send ──────────────────────────────────────────────────────
-    chatInput.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
+      // ── Quick Actions ──────────────────────────────────────────────────────
+      function askQuestion(question) {
+        chatInput.value = question;
+        chatInput.focus();
         sendMessage();
       }
-    });
 
-    // ── Initialize ─────────────────────────────────────────────────────────
-    initializeChatbot();
-  </script>
-</body>
+      function filterByCuisine(cuisine) {
+        currentFilters.cuisine = cuisine;
+        chatInput.value = `Rețete ${cuisine.toLowerCase()}`;
+        chatInput.focus();
+      }
+
+      function filterByTime(minutes) {
+        currentFilters.maxTime = minutes;
+        chatInput.value = `Rețete rapide sub ${minutes} de minute`;
+        chatInput.focus();
+      }
+
+      function filterByDifficulty(level) {
+        currentFilters.difficulty = level;
+        chatInput.value = `Rețete ${level.toLowerCase()}`;
+        chatInput.focus();
+      }
+
+      // ── Textarea Auto-resize ──────────────────────────────────────────────
+      chatInput.addEventListener("input", function () {
+        this.style.height = "auto";
+        this.style.height = Math.min(this.scrollHeight, 100) + "px";
+      });
+
+      // ── Enter to Send ──────────────────────────────────────────────────────
+      chatInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+
+      // ── Initialize ─────────────────────────────────────────────────────────
+      initializeChatbot();
+    </script>
+  </body>
 </html>
