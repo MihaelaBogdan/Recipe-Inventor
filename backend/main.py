@@ -361,7 +361,7 @@ for hits in results:
         print(hit.id, hit.distance, hit.entity.get('title'))"""
 
     if db_name == "chromadb":
-        return {
+        res_dict = {
             "db_name": "ChromaDB (Active Database)",
             "code": chroma_code,
             "raw_output": chroma_res,
@@ -376,7 +376,7 @@ for hits in results:
             }
             for idx, (dist, meta) in enumerate(zip(chroma_res["distances"][0], chroma_res["metadatas"][0]))
         ]
-        return {
+        res_dict = {
             "db_name": "Qdrant Vector DB",
             "code": qdrant_code,
             "raw_output": qdrant_res,
@@ -392,7 +392,7 @@ for hits in results:
             }
             for idx, (dist, meta) in enumerate(zip(chroma_res["distances"][0], chroma_res["metadatas"][0]))
         ]
-        return {
+        res_dict = {
             "db_name": "pgvector (PostgreSQL)",
             "code": pgvector_code,
             "raw_output": pg_res,
@@ -407,12 +407,16 @@ for hits in results:
             }
             for idx, (dist, meta) in enumerate(zip(chroma_res["distances"][0], chroma_res["metadatas"][0]))
         ]
-        return {
+        res_dict = {
             "db_name": "Milvus",
             "code": milvus_code,
             "raw_output": milvus_res,
             "latency_ms": chroma_latency * 1.05
         }
+    
+    res_dict["query_vector"] = emb
+    return res_dict
+
 
 @app.post("/api/playground/model_benchmark")
 def playground_model_benchmark(req: ModelBenchmarkRequest):
