@@ -2139,13 +2139,36 @@ for hits in results:
         chatbotTabBtn.click();
       }
 
-      // Post message to chatbot iframe after transition delay
+      // Populate iframe input and trigger send
       setTimeout(() => {
         const iframe = document.querySelector('.chatbot-container iframe');
         if (iframe && iframe.contentWindow) {
+          try {
+            // Direct DOM manipulation (extremely reliable on same-origin)
+            const iframeDoc = iframe.contentWindow.document;
+            const chatInput = iframeDoc.getElementById('chatInput');
+            if (chatInput) {
+              chatInput.value = promptText;
+              chatInput.focus();
+              
+              // Call the global sendMessage function directly from the iframe's window scope
+              if (typeof iframe.contentWindow.sendMessage === 'function') {
+                iframe.contentWindow.sendMessage();
+              } else {
+                const sendBtn = iframeDoc.getElementById('sendBtn');
+                if (sendBtn) sendBtn.click();
+              }
+              console.log("Direct iframe recipe prompt submitted successfully.");
+              return; // Success
+            }
+          } catch (err) {
+            console.warn("Direct iframe access failed, falling back to postMessage:", err);
+          }
+          
+          // Fallback to postMessage
           iframe.contentWindow.postMessage({ action: "suggestRecipe", query: promptText }, "*");
         }
-      }, 150);
+      }, 300);
     });
 
     // Start
