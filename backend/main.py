@@ -2,6 +2,8 @@
 main.py — FastAPI backend v3 (Agentic RAG)
 """
 import os, sys, random
+
+
 sys.path.insert(0, os.path.dirname(__file__))
 
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File
@@ -16,6 +18,9 @@ from rag_engine import RecipeRAGEngine
 from deterministic_agent import DeterministicAgent
 from recipe_generator import invent_recipes
 from chatbot import RecipeChatbot
+from chatbot_llm import RecipeChatbotLLM
+from llm_engine_hugging import LLMEngineHugging
+from llm_engine_local import LLMEngineLocal
 from object_detector import DETECTOR
 from hnsw_simulator import HNSWSimulator
 
@@ -36,7 +41,13 @@ print("Loading recipe database...")
 ALL_RECIPES = load_recipes()
 ENGINE = RecipeRAGEngine(ALL_RECIPES)
 AGENT = DeterministicAgent(ENGINE)
+LLM = LLMEngineLocal()
 CHATBOT = RecipeChatbot(ENGINE, AGENT)
+
+
+#CHATBOT_LLM = RecipeChatbotLLM(ENGINE, AGENT, LLM)
+
+
 
 # Build embeddings map for HNSW simulator
 print("Building embeddings map for HNSW visualization...")
@@ -56,6 +67,7 @@ for id, emb in zip(ids, embeddings):
 
 HNSW_SIMULATOR = HNSWSimulator(ALL_RECIPES, EMBEDDINGS_MAP, ENGINE.encoder)
 print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed. HNSW simulator initialized.")
+print("CHROMA COUNT:", ENGINE.collection.count())
 
 class InventRequest(BaseModel):
     ingredients: list[str]
