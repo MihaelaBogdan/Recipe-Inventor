@@ -800,35 +800,35 @@
 
           <!-- Utility / Metric Explanations Section -->
           <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
-            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--violet-lt); margin-bottom: 12px; letter-spacing: 0.02em; text-transform: uppercase;">Ghid de Interpretare a Metricilor de Evaluare</h4>
+            <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--violet-lt); margin-bottom: 12px; letter-spacing: 0.02em; text-transform: uppercase;">Aplicabilitatea Metricilor in Inventarea de Retete (RAG)</h4>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
               <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
-                <div style="font-weight: 600; font-size: 0.85rem; color: var(--rose-lt); margin-bottom: 6px;">Precision (Precizie)</div>
+                <div style="font-weight: 600; font-size: 0.85rem; color: var(--rose-lt); margin-bottom: 6px;">Precision @ Inventare Retete</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
-                  Măsoară relevanța rețetelor returnate. O precizie ridicată garantează că primele rezultate nu conțin sugestii eronate sau complet incompatibile cu ingredientele solicitate de utilizator.
+                  Asigura ca retetele sugerate chiar contin ingredientele cerute (ex: cautati "pui", primiti preparate cu pui, nu deserturi). O precizie mica inseamna recomandari inutile cu ingrediente pe care nu le aveti in frigider.
                 </div>
               </div>
               <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
-                <div style="font-weight: 600; font-size: 0.85rem; color: var(--cyan); margin-bottom: 6px;">Recall (Acoperire)</div>
+                <div style="font-weight: 600; font-size: 0.85rem; color: var(--cyan); margin-bottom: 6px;">Recall @ Acoperire Ingrediente</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
-                  Indică procentul de rețete relevante recuperate din totalul bazei de date. Un recall ridicat asigură diversitate și căutare cuprinzătoare a tuturor rețetelor potrivite.
+                  Masoara capacitatea de a gasi toate retetele posibile ce pot folosi ingredientele disponibile. Un recall ridicat previne omiterea unor retete ideale din cauza ca sunt scrise diferit in baza de date.
                 </div>
               </div>
               <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
-                <div style="font-weight: 600; font-size: 0.85rem; color: var(--violet-lt); margin-bottom: 6px;">Mean Reciprocal Rank (MRR)</div>
+                <div style="font-weight: 600; font-size: 0.85rem; color: var(--violet-lt); margin-bottom: 6px;">MRR @ Prioritate Recomandari</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
-                  Evaluează poziția primei rețete corecte în rezultate. Un MRR apropiat de 1.0 arată că motorul plasează cea mai potrivită rețetă chiar pe prima poziție din listă.
+                  Verifica daca cea mai potrivita reteta (care se pliaza cel mai bine pe ingredientele si restrictiile introduse) este pozitionata prima in lista de rezultate, reducand timpul de cautare pentru utilizator.
                 </div>
               </div>
               <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px;">
-                <div style="font-weight: 600; font-size: 0.85rem; color: var(--emerald); margin-bottom: 6px;">Latență Medie (Latency)</div>
+                <div style="font-weight: 600; font-size: 0.85rem; color: var(--emerald); margin-bottom: 6px;">Latenta @ Asistent Timp Real</div>
                 <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
-                  Timpul necesar procesării interogării și returnării rezultatelor. Rămânerea sub pragul de 100 ms este critică pentru a susține conversații fluide și răspunsuri în timp real.
+                  Timpul necesar pentru a interoga baza de date si a compune contextul. O latenta sub 100 ms este esentiala pentru a sustine conversatia cu chatbotul in timp ce acesta inventeaza retete din mers.
                 </div>
               </div>
             </div>
             <div style="margin-top: 12px; padding: 10px 14px; background: rgba(168, 85, 247, 0.06); border-radius: var(--radius-sm); border: 1px solid rgba(168, 85, 247, 0.15); font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
-              <strong style="color: var(--violet-lt);">Importanța optimizării:</strong> Fuziunea Hibridă (Hybrid Fusion) este recomandată deoarece combină precizia cuvintelor cheie (BM25) cu înțelegerea semantică a SentenceTransformer (Dense), compensând limitările fiecărei metode în parte pentru a oferi cele mai bune rezultate.
+              <strong style="color: var(--violet-lt);">Utilitatea Fuziunii Hibride:</strong> Cautarea lexicala (BM25) esueaza la sinonime sau interogari in romana (ex: "usturoi"). Prin adaugarea cautarii dense (SentenceTransformer), motorul recunoaste sinonimele (ex: "garlic") si asociaza ingredientele compatibile culinar, furnizand recomandari mult mai inteligente.
             </div>
           </div>
         </div>
