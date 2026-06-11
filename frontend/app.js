@@ -2356,19 +2356,7 @@ for hits in results:
         
         ctx.beginPath();
         // Fallback for older browsers instead of roundRect
-        const r = 6;
-        const w = 150;
-        const h = 36;
-        ctx.moveTo(tooltipX + r, tooltipY);
-        ctx.lineTo(tooltipX + w - r, tooltipY);
-        ctx.arcTo(tooltipX + w, tooltipY, tooltipX + w, tooltipY + r, r);
-        ctx.lineTo(tooltipX + w, tooltipY + h - r);
-        ctx.arcTo(tooltipX + w, tooltipY + h, tooltipX + w - r, tooltipY + h, r);
-        ctx.lineTo(tooltipX + r, tooltipY + h);
-        ctx.arcTo(tooltipX, tooltipY + h, tooltipX, tooltipY + h - r, r);
-        ctx.lineTo(tooltipX, tooltipY + r);
-        ctx.arcTo(tooltipX, tooltipY, tooltipX + r, tooltipY, r);
-        ctx.closePath();
+        ctx.rect(tooltipX, tooltipY, 150, 36);
         ctx.fill();
         ctx.stroke();
 
