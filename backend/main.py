@@ -17,6 +17,7 @@ from deterministic_agent import DeterministicAgent
 from recipe_generator import invent_recipes
 from chatbot import RecipeChatbot
 from object_detector import DETECTOR
+from hnsw_simulator import HNSWSimulator
 
 app = FastAPI(
     title="AI Recipe Agent PRO",
@@ -36,7 +37,25 @@ ALL_RECIPES = load_recipes()
 ENGINE = RecipeRAGEngine(ALL_RECIPES)
 AGENT = DeterministicAgent(ENGINE)
 CHATBOT = RecipeChatbot(ENGINE, AGENT)
-print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed.")
+
+# Build embeddings map for HNSW simulator
+print("Building embeddings map for HNSW visualization...")
+EMBEDDINGS_MAP = {}
+texts = []
+ids = []
+for r in ALL_RECIPES:
+    ings = " ".join(r.get("ingredients", [])).lower()
+    title = r.get("title", "")
+    doc_text = f"Title: {title}. Ingredients: {ings}"
+    texts.append(doc_text)
+    ids.append(str(r["id"]))
+
+embeddings = ENGINE.encoder.encode(texts)
+for id, emb in zip(ids, embeddings):
+    EMBEDDINGS_MAP[id] = emb
+
+HNSW_SIMULATOR = HNSWSimulator(ALL_RECIPES, EMBEDDINGS_MAP, ENGINE.encoder)
+print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed. HNSW simulator initialized.")
 
 class InventRequest(BaseModel):
     ingredients: list[str]
@@ -361,7 +380,7 @@ for hits in results:
         print(hit.id, hit.distance, hit.entity.get('title'))"""
 
     if db_name == "chromadb":
-        return {
+        res_dict = {
             "db_name": "ChromaDB (Active Database)",
             "code": chroma_code,
             "raw_output": chroma_res,
@@ -376,7 +395,7 @@ for hits in results:
             }
             for idx, (dist, meta) in enumerate(zip(chroma_res["distances"][0], chroma_res["metadatas"][0]))
         ]
-        return {
+        res_dict = {
             "db_name": "Qdrant Vector DB",
             "code": qdrant_code,
             "raw_output": qdrant_res,
@@ -392,7 +411,7 @@ for hits in results:
             }
             for idx, (dist, meta) in enumerate(zip(chroma_res["distances"][0], chroma_res["metadatas"][0]))
         ]
-        return {
+        res_dict = {
             "db_name": "pgvector (PostgreSQL)",
             "code": pgvector_code,
             "raw_output": pg_res,
@@ -407,12 +426,16 @@ for hits in results:
             }
             for idx, (dist, meta) in enumerate(zip(chroma_res["distances"][0], chroma_res["metadatas"][0]))
         ]
-        return {
+        res_dict = {
             "db_name": "Milvus",
             "code": milvus_code,
             "raw_output": milvus_res,
             "latency_ms": chroma_latency * 1.05
         }
+    
+    res_dict["query_vector"] = emb
+    return res_dict
+
 
 @app.post("/api/playground/model_benchmark")
 def playground_model_benchmark(req: ModelBenchmarkRequest):
@@ -428,14 +451,15 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
     
     models = [
         {
-            "name": "all-MiniLM-L6-v2 (Activ)",
+            "name": "paraphrase-multilingual-L12 (Activ)",
             "active": True,
             "dimensions": 384,
-            "size_mb": 90,
-            "ram_mb": 150,
-            "multilingual": "Redusă (EN)",
+            "size_mb": 120,
+            "ram_mb": 200,
+            "multilingual": "Excelenta (RO/EN)",
             "latency_ms": local_latency,
-            "throughput": int(1000.0 / (local_latency / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / (local_latency / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Echilibru optim: indexeaza baza de retete local in sub 3 secunde si suporta maparea automata a ingredientelor (ex: 'usturoi' -> 'garlic')."
         },
         {
             "name": "multilingual-e5-small",
@@ -443,9 +467,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 384,
             "size_mb": 130,
             "ram_mb": 220,
-            "multilingual": "Excelentă (RO)",
+            "multilingual": "Excelenta (RO)",
             "latency_ms": local_latency * 1.4,
-            "throughput": int(1000.0 / ((local_latency * 1.4) / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / ((local_latency * 1.4) / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Performanta lingvistica ridicata pe romana, dar necesita prefixe de interogare ('query: ') care complica integrarea cu baza de date."
         },
         {
             "name": "bge-small-en-v1.5",
@@ -453,9 +478,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 384,
             "size_mb": 130,
             "ram_mb": 220,
-            "multilingual": "Redusă (EN)",
+            "multilingual": "Redusa (EN)",
             "latency_ms": local_latency * 1.3,
-            "throughput": int(1000.0 / ((local_latency * 1.3) / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / ((local_latency * 1.3) / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Foarte rapid pe CPU, dar suportul multilingual scazut determina esecul potrivirii automate a ingredientelor introduse in limba romana."
         },
         {
             "name": "multilingual-e5-base",
@@ -463,9 +489,10 @@ def playground_model_benchmark(req: ModelBenchmarkRequest):
             "dimensions": 768,
             "size_mb": 1100,
             "ram_mb": 1500,
-            "multilingual": "Superioară (RO)",
+            "multilingual": "Superioara (RO)",
             "latency_ms": local_latency * 5.1,
-            "throughput": int(1000.0 / ((local_latency * 5.1) / 1000.0)) if local_latency > 0 else 0
+            "throughput": int(1000.0 / ((local_latency * 5.1) / 1000.0)) if local_latency > 0 else 0,
+            "applicability": "Acuratete maxima pentru asocieri culinare fine, dar dimensiunea mare blocheaza chatul live pe hardware local standard (latenta > 400ms)."
         }
     ]
     return {"models": models}
@@ -478,6 +505,54 @@ async def upload_fridge(file: UploadFile = File(...)):
         return {"ingredients": detected}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to process image: {str(e)}")
+
+# HNSW Visualization Endpoints
+class HNSWSimulationRequest(BaseModel):
+    query: str
+    target_recipe_id: Optional[str] = None
+
+@app.post("/api/hnsw/simulate")
+def hnsw_simulate(req: HNSWSimulationRequest):
+    """Simulate HNSW search traversal for visualization"""
+    if not req.query.strip():
+        raise HTTPException(status_code=400, detail="Query cannot be empty")
+
+    result = HNSW_SIMULATOR.simulate_search(req.query, req.target_recipe_id)
+    return result
+
+@app.get("/api/hnsw/graph-stats")
+def hnsw_graph_stats():
+    """Get HNSW graph statistics"""
+    return HNSW_SIMULATOR.get_graph_stats()
+
+@app.get("/api/hnsw/layer/{layer}")
+def hnsw_get_layer(layer: int):
+    """Get all nodes at a specific layer"""
+    if layer < 0 or layer > HNSW_SIMULATOR.max_layer:
+        raise HTTPException(status_code=400, detail=f"Layer must be between 0 and {HNSW_SIMULATOR.max_layer}")
+
+    nodes = HNSW_SIMULATOR.get_layer_nodes(layer)
+    return {
+        "layer": layer,
+        "node_count": len(nodes),
+        "nodes": nodes
+    }
+
+@app.get("/api/hnsw/recipes")
+def hnsw_get_recipes(limit: int = 50):
+    """Get recipes for HNSW visualization"""
+    recipes = []
+    for r in ALL_RECIPES[:limit]:
+        rid = str(r["id"])
+        layer = HNSW_SIMULATOR.layers.get(rid, 0)
+        recipes.append({
+            "id": rid,
+            "title": r.get("title", "Unknown"),
+            "layer": layer,
+            "cuisine": r.get("cuisine", ""),
+            "ingredients": r.get("ingredients", [])[:5]  # First 5 ingredients
+        })
+    return {"recipes": recipes}
 
 @app.get("/")
 def serve_app():

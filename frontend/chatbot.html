@@ -649,6 +649,16 @@
     const sendBtn = document.getElementById("sendBtn");
     const statsBar = document.getElementById("statsBar");
 
+    window.addEventListener("message", (e) => {
+      if (e.data && e.data.action === "suggestRecipe") {
+        chatInput.value = e.data.query;
+        chatInput.focus();
+        if (typeof sendMessage === "function") {
+          sendMessage();
+        }
+      }
+    });
+
     let currentFilters = {
       cuisine: null,
       maxTime: null,
@@ -889,11 +899,17 @@
           addMessage(response.text, "bot", false, false);
           response.recipes.forEach((recipe, idx) => {
             addMessage(renderChatRecipeCard(recipe, idx), "bot", false, true);
+            try {
+              window.parent.postMessage({ action: "recipeCreated", recipe: recipe }, "*");
+            } catch (err) { console.error(err); }
           });
         }
         else if (response.type === "recipe_detail" && response.recipe) {
           addMessage(response.text, "bot", false, false);
           addMessage(renderChatRecipeCard(response.recipe, 0), "bot", false, true);
+          try {
+            window.parent.postMessage({ action: "recipeCreated", recipe: response.recipe }, "*");
+          } catch (err) { console.error(err); }
         }
         else if (response.type === "technique") {
           const techHtml = `
