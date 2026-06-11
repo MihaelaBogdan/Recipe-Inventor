@@ -808,7 +808,7 @@
               Generează un vector în timp real și compară viteza de throughput (vectori/sec) a modelului local activ cu estimările altor modele.
             </p>
             <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-              <input type="text" id="modelBenchText" value="Ingrediente proaspete pentru gătit spaghete" placeholder="Scrie ceva pentru codificare..." 
+              <input type="text" id="modelBenchText" value="pui, usturoi, lămâie, rozmarin" placeholder="Scrie ceva pentru codificare..." 
                 style="flex: 1; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text); font-family: inherit; font-size: .88rem;">
               <button id="runModelBenchBtn" class="btn-invent" style="width: auto; padding: 10px 18px; margin: 0; font-size: 0.85rem;">
                 <span> Run Benchmark</span>
@@ -829,9 +829,9 @@
               Calculează live distanța cosinus (similitudinea semantică) între două texte folosind modelul on-prem.
             </p>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-              <input type="text" id="simText1" value="Cum prepar o porție delicioasă de paste Carbonara?" placeholder="Text A" 
+              <input type="text" id="simText1" value="pui" placeholder="Text A" 
                 style="width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 0.88rem;">
-              <input type="text" id="simText2" value="Rețetă de spaghete carbonara italienești cu pancetta" placeholder="Text B" 
+              <input type="text" id="simText2" value="chicken" placeholder="Text B" 
                 style="width: 100%; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text); font-family: inherit; font-size: 0.88rem;">
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
@@ -842,8 +842,9 @@
                 Similitudine: <span id="simResultVal" style="color: var(--violet-lt); font-size: 1.1rem;">—</span>
               </div>
             </div>
-            <div style="margin-top: 14px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted);">
-              Scorul este normalizat între <strong>-1.0</strong> și <strong>1.0</strong>. Un scor <strong>> 0.60</strong> indică o legătură semantică puternică.
+            <div style="margin-top: 14px; padding: 10px; background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+              Scorul este normalizat între <strong>-1.0</strong> și <strong>1.0</strong>. Modelul multilingual este capabil să recunoască echivalența semantică între limbi diferite sau denumiri alternative de ingrediente. De exemplu, <strong>pui</strong> și <strong>chicken</strong> vor returna o similitudine semantică mare datorită alinierii spațiului vectorial.
+            </div>
           </div>
         </div>
 

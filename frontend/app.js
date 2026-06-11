@@ -1136,39 +1136,39 @@ for hits in results:
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW (Hierarchical Navigable Small World)</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine Similarity (1 - CosSim)</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Metadate:</strong><span>SQLite local pe disc</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Indexare:</strong><span>Automată la adăugarea documentului</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Inventare Rețete:</strong><span>Căutare semantică rapidă pe ingrediente</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            ChromaDB creează în mod implicit un graf HNSW local. Este ideal pentru colecții locale de rețete (ex. meniul unui restaurant) deoarece vectorii sunt asociați cu metadatele și sunt stocați direct într-o bază SQLite locală, fiind optimizat pentru o inițializare rapidă și zero-config.
+            ChromaDB este perfect pentru a inventa rețete rapid la nivel local. Permite stocarea simplă a setului de date culinare și căutarea semantică direct pe disc (în baza SQLite a metadatelor), fiind excelent pentru prototipuri rapide de generare de rețete pe baza ingredientelor pe care le ai deja în frigider.
           </div>
         `;
       } else if (selectedDb === 'qdrant') {
         detailsHtml = `
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW cu Payload Filtering</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine, L2, Dot Product</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Engine:</strong><span>Rust, ultra-rapid</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Filtrare Alergii:</strong><span>Filtre dure direct în graful HNSW</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Stocare:</strong><span>În memorie sau fișiere mapate (mmap)</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            Qdrant este ideal când vrei să filtrezi rețetele în timp ce cauți semantici (ex. cauți 'desert ciocolată' dar doar cele cu eticheta 'fără gluten'). Qdrant permite filtrarea pe payload direct în timpul parcurgerii grafului HNSW, accelerând masiv interogările complexe.
+            Pentru a inventa rețete adaptate nevoilor tale, filtrarea pe payload din Qdrant este ideală. Poți căuta semantic rețete similare cu ingredientele tale și, în același timp, să aplici filtre dure pentru alergii (ex. 'fără lactate', 'vegan') sau timp de preparare, asigurând că sugestiile inventate respectă restricțiile dietetice în timp real.
           </div>
         `;
       } else if (selectedDb === 'pgvector') {
         detailsHtml = `
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW (v0.5.0+) sau IVFFlat (clustere)</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine (<=>), L2 (<->), IP (<#>)</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Integrare:</strong><span>Tabel relațional Postgres normal</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Cumpărături:</strong><span>JOIN direct cu listele utilizatorilor</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Index:</strong><span>CREATE INDEX USING hnsw</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            pgvector stochează embedding-urile direct în rândurile tabelelor SQL normale. Este ideal dacă aplicația ta are deja o bază de date relațională (ex. tabele pentru utilizatori, comenzi, rețete preferate), permițând JOIN-uri și interogări SQL native combinate direct.
+            pgvector este ideal dacă ai deja baza de date a utilizatorilor într-un PostgreSQL clasic. Poți corela istoricul de cumpărături, listele de ingrediente disponibile ale utilizatorilor și rețetele inventate folosind query-uri SQL native și JOIN-uri simple, combinând datele relaționale cu similitudinea vectorială.
           </div>
         `;
       } else {
         detailsHtml = `
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Algoritm:</strong><span>HNSW, IVF-Flat, ScaNN, IVF-PQ</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Distanță:</strong><span>Cosine, L2, IP, Jaccard</span></div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Stocare:</strong><span>MinIO (Vectori) + etcd (Metadate)</span></div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Producție:</strong><span>Pregătit pentru milioane de rețete</span></div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 4px;"><strong>Scalare:</strong><span>Distribuită orizontal (Sharding)</span></div>
           <div style="margin-top: 8px; font-size: 0.75rem; color: var(--text-dim); line-height: 1.3; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 6px;">
-            Milvus fragmentează datele în segmente distribuite. Este ideal pentru platforme globale (ex. milioane de rețete culinare de la mii de utilizatori) deoarece folosește cuantizarea scalară (PQ/SQ) pentru a comprima vectorii rețetelor, reducând memoria ocupată.
+            Milvus este excelent dacă dorești să scalezi sistemul de inventat rețete la milioane de utilizatori și milioane de variante culinare. Permite sharding-ul distribuit și optimizarea memoriei prin cuantizare, asigurând că latența de căutare semantică rămâne sub câteva milisecunde chiar și pentru un volum gigantic de date culinare globale.
           </div>
         `;
       }
