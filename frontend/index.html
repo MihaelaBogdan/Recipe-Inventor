@@ -221,7 +221,6 @@
       <button class="tab-button" data-tab="rag-playground"> RAG Playground</button>
       <button class="tab-button" data-tab="vector-databases"> Vector Databases</button>
       <button class="tab-button" data-tab="galaxy"> Galaxie Ingredients</button>
-      <button class="tab-button" data-tab="about">ℹ️ About</button>
     </div>
   </div>
 
@@ -1069,87 +1068,6 @@
       </div>
     </div>
 
-    <!-- ──━━━━━ TAB: ABOUT ━━━━━── -->
-    <div class="tab-content" id="about" data-tab="about">
-      <section style="margin-bottom: 40px;">
-        <h2 class="results-title" style="margin-bottom: 24px;">ℹ️ About AI Recipe Agent PRO</h2>
-
-        <div class="about-grid">
-          <div class="about-card">
-            <h3> RAG Technology</h3>
-            <ul>
-              <li><strong>BM25</strong> — Ranking probabilistic</li>
-              <li><strong>TF-IDF</strong> — Multi-field vectorization</li>
-              <li><strong>Cosine Similarity</strong> — Semantic matching</li>
-              <li><strong>MMR</strong> — Diversity re-ranking (λ=0.65)</li>
-              <li><strong>Query Expansion</strong> — 37 synonym groups</li>
-              <li><strong>Cuisine Detection</strong> — 12 detectors</li>
-            </ul>
-          </div>
-
-          <div class="about-card">
-            <h3> Statistics</h3>
-            <ul>
-              <li>289 recipes indexed</li>
-              <li>13 different cuisines</li>
-              <li>3161 words in vocabulary</li>
-              <li>Reranking with diversity</li>
-              <li>Zero-shot cuisine detection</li>
-              <li>Explained recommendations</li>
-            </ul>
-          </div>
-
-          <div class="about-card">
-            <h3> PRO Features</h3>
-            <ul>
-              <li>Conversational RAG Chatbot</li>
-              <li>Shopping list generator</li>
-              <li>Advanced filtering</li>
-              <li>Real-time stats</li>
-              <li>Tag-based search</li>
-              <li>No LLM, 100% RAG</li>
-            </ul>
-          </div>
-        </div>
-
-        <!-- RAG Research & Comparison Objectives Section -->
-        <div class="glass-card" style="padding: 28px; margin-top: 32px;">
-          <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: var(--cyan);"> RAG Research & Analysis Objectives</h3>
-          <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.6;">
-            For the current projects, the application serves as a practical playground to test and compare different on-premise RAG technologies and approaches:
-          </p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; text-align: left;">
-            <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;"> RAG Retrieval & Embeddings</strong>
-              <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
-                Comparing the performance between Sparse Retrieval (BM25) and Dense Semantic Search using local embedding models (such as <code>all-MiniLM-L6-v2</code>).
-              </span>
-            </div>
-            <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;">️ Dynamic Relevance Threshold</strong>
-              <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
-                Establishing a dynamic threshold for relevance (Confidence Score), allowing the deterministic Agent to make search rewrite and self-correction decisions.
-              </span>
-            </div>
-            <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;"> Diversity & Reranking</strong>
-              <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
-                Evaluating the impact of the re-ranking algorithm (such as MMR) to improve the relevance and diversity of recipe recommendations.
-              </span>
-            </div>
-            <div>
-              <strong style="color: #fff; display: block; margin-bottom: 4px;"> On-Premise Vector Databases</strong>
-              <span style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5; display: block;">
-                Running ChromaDB entirely locally, keeping all data secure on-premises without external connections.
-              </span>
-            </div>
-          </div>
-          <p style="color: var(--violet-lt); font-size: 0.88rem; font-style: italic; margin-top: 24px; text-align: center; border-top: 1px solid var(--border); padding-top: 16px;">
-            "The goal is to remain in a practical and relevant scope, without depending on the complexity of a commercial project at this stage."
-          </p>
-        </div>
-      </section>
-    </div>
 
   </main>
 
