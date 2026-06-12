@@ -55,6 +55,8 @@ class BM25:
 class RecipeRAGEngine:
     def __init__(self, recipes: list[dict]):
         self.recipes = recipes
+        self.recipe_by_id = {str(r["id"]): r for r in self.recipes}
+        self.recipe_index_by_id = {str(r["id"]): i for i, r in enumerate(self.recipes)}
         
         print("Loading SentenceTransformer model...")
         import torch
@@ -204,10 +206,11 @@ class RecipeRAGEngine:
             max_dist = max(distances) if distances and max(distances) > 0 else 1.0
             
             for rank, (doc_id, dist) in enumerate(zip(ids, distances)):
-                idx = int(doc_id) - 1 # Assuming IDs are 1-indexed and sorted
-                if idx >= len(self.recipes): continue
-                
-                recipe = self.recipes[idx]
+                recipe = self.recipe_by_id.get(str(doc_id))
+                idx = self.recipe_index_by_id.get(str(doc_id))
+
+                if recipe is None or idx is None:
+                    continue
                 
                 # Normalize semantic score (lower distance = higher score)
                 semantic_score = 1.0 - (dist / max_dist)
@@ -272,9 +275,11 @@ class RecipeRAGEngine:
             
             embs_list = embeddings if embeddings is not None else [None] * len(ids)
             for doc_id, dist, emb in zip(ids, distances, embs_list):
-                idx = int(doc_id) - 1
-                if idx >= len(self.recipes): continue
-                recipe = self.recipes[idx]
+                recipe = self.recipe_by_id.get(str(doc_id))
+                idx = self.recipe_index_by_id.get(str(doc_id))
+
+                if recipe is None or idx is None:
+                    continue
                 
                 # Apply filter checks (cuisine/difficulty/max_time)
                 if filters:
@@ -403,6 +408,10 @@ class RecipeRAGEngine:
             
         # 1. Add to local list
         self.recipes.append(r)
+
+        rid = str(r["id"])
+        self.recipe_by_id[rid] = r
+        self.recipe_index_by_id[rid] = len(self.recipes) - 1
         
         # 2. Embed and add to ChromaDB
         ings = " ".join(r.get("ingredients", [])).lower()
