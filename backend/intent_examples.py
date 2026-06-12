@@ -3,7 +3,7 @@ intent_examples.py
 Intent examples for semantic intent detection.
 The model embeds them once at startup.
 """
-
+ 
 INTENT_EXAMPLES: dict[str, list[str]] = {
     "find_recipe": [
         "what can I make with chicken and garlic",

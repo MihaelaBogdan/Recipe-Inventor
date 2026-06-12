@@ -7,15 +7,13 @@ Operates EXCLUSIVELY through:
   3. RAG retrieval: TF-IDF + BM25 for recipe matching
   4. Response formatting via templates and localized knowledge bases
 """
-
+ 
 import re
 import random
-from typing import Optional
 import numpy as np
-from sentence_transformers import SentenceTransformer
 from intent_examples import INTENT_EXAMPLES
-
-
+ 
+ 
 # ─────────────────────────────────────────────────────────────────────────────
 # KNOWLEDGE BASE: Culinary Techniques
 # ─────────────────────────────────────────────────────────────────────────────
@@ -159,7 +157,7 @@ TECHNIQUES: dict[str, dict] = {
         "keywords": ["poach", "poaching", "poached", "poached eggs"],
     },
 }
-
+ 
 # ─────────────────────────────────────────────────────────────────────────────
 # KNOWLEDGE BASE: Ingredient Substitutions
 # ─────────────────────────────────────────────────────────────────────────────
@@ -258,7 +256,7 @@ SUBSTITUTIONS: dict[str, dict] = {
         ],
     },
 }
-
+ 
 # ─────────────────────────────────────────────────────────────────────────────
 # KNOWLEDGE BASE: General Cooking Tips
 # ─────────────────────────────────────────────────────────────────────────────
@@ -274,7 +272,7 @@ COOKING_TIPS_GENERAL: list[dict] = [
     {"tip": "Buy a good kitchen knife and sharpen it monthly. A good knife completely changes the cooking experience.", "emoji": "🔪"},
     {"tip": "Cooking a good risotto = 18 minutes of stirring + patience. There is no shortcut for this.", "emoji": "🍚"},
 ]
-
+ 
 # ─────────────────────────────────────────────────────────────────────────────
 # INTENT PATTERNS (English matching regexes)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -393,7 +391,7 @@ class RecipeChatbot:
         # Index techniques semantically
         self._technique_keys = list(TECHNIQUES.keys())
         self._technique_texts = [
-            f"{v['ro']} {' '.join(v['keywords'])}"
+            f"{v['name']} {' '.join(v['keywords'])}"
             for v in TECHNIQUES.values()
         ]
         self._technique_matrix = self.encoder.encode(self._technique_texts)
@@ -401,7 +399,7 @@ class RecipeChatbot:
         # Index substitutions semantically
         self._sub_keys = list(SUBSTITUTIONS.keys())
         self._sub_texts = [
-            f"{v['ro']} {k}"
+            f"{v['name']} {k}"
             for k, v in SUBSTITUTIONS.items()
         ]
         self._sub_matrix = self.encoder.encode(self._sub_texts)
@@ -418,7 +416,8 @@ class RecipeChatbot:
         print(f"Semantic intent + technique + substitution indexes ready.")
 
     # ── Cosine similarity helper ──────────────────────────────────────────────
-    def _cosine_best(self, matrix: np.ndarray, query_vec: np.ndarray) -> tuple[int, float]:
+    def _cosine_best(self, matrix, query_vec):
+        import numpy as np
         norms = np.linalg.norm(matrix, axis=1)
         q_norm = np.linalg.norm(query_vec)
         if q_norm == 0:
@@ -571,11 +570,11 @@ class RecipeChatbot:
 
             agent_logs = []
             if self.agent:
-                agent_res = self.agent.run_agentic_retrieval(translated_ings, filters={"cuisine": "Any", "difficulty": "Any"})
+                agent_res = self.agent.run_agentic_retrieval(ings, filters={"cuisine": "Any", "difficulty": "Any"})
                 recipes = agent_res["recipes"]
                 agent_logs = agent_res["logs"]
             else:
-                query_str = " ".join(translated_ings)
+                query_str = " ".join(ings)
                 recipes = self.rag.retrieve(query=query_str, top_k=3)
                 agent_logs = [f"Retrieval run for query: {query_str}"]
 
@@ -800,27 +799,27 @@ class RecipeChatbot:
     # ── Helpers ───────────────────────────────────────────────────────────────
     def _recipe_summary(self, r: dict) -> dict:
         return {
-            "title":        r.get("title", ""),
-            "cuisine":      r.get("cuisine", ""),
-            "difficulty":   r.get("difficulty", ""),
-            "time_minutes": r.get("time_minutes", 0),
-            "servings":     r.get("servings", 4),
-            "tags":         r.get("tags", [])[:3],
+            "title":          r.get("title", ""),
+            "cuisine":        r.get("cuisine", ""),
+            "difficulty":     r.get("difficulty", ""),
+            "time_minutes":   r.get("time_minutes", 0),
+            "servings":       r.get("servings", 4),
+            "tags":           r.get("tags", [])[:3],
             "flavor_profile": r.get("flavor_profile", [])[:3],
-            "ingredients":  r.get("ingredients", [])[:6],
-            "score":        round(r.get("hybrid_score", r.get("score", 0)), 3),
+            "ingredients":    r.get("ingredients", [])[:6],
+            "score":          round(r.get("hybrid_score", r.get("score", 0)), 3),
         }
 
     def _recipe_full(self, r: dict) -> dict:
         return {
-            "title":        r.get("title", ""),
-            "cuisine":      r.get("cuisine", ""),
-            "difficulty":   r.get("difficulty", ""),
-            "time_minutes": r.get("time_minutes", 0),
-            "servings":     r.get("servings", 4),
-            "ingredients":  r.get("ingredients", []),
-            "steps":        r.get("steps", []),
-            "tags":         r.get("tags", []),
+            "title":          r.get("title", ""),
+            "cuisine":        r.get("cuisine", ""),
+            "difficulty":     r.get("difficulty", ""),
+            "time_minutes":   r.get("time_minutes", 0),
+            "servings":       r.get("servings", 4),
+            "ingredients":    r.get("ingredients", []),
+            "steps":          r.get("steps", []),
+            "tags":           r.get("tags", []),
             "flavor_profile": r.get("flavor_profile", []),
             "description":  r.get("description", ""),
             "key_technique": r.get("key_technique", ""),

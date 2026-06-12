@@ -20,10 +20,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 2,
@@ -52,10 +49,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 3,
@@ -76,10 +70,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 4,
@@ -98,10 +89,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 5,
@@ -125,10 +113,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 6,
@@ -162,10 +147,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 7,
@@ -185,10 +167,7 @@
     "cuisine": "Trusted-Brands-Recipes-And-Tips",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "trusted-brands-recipes-and-tips",
-      "homemade"
-    ]
+    "tags": ["trusted-brands-recipes-and-tips", "homemade"]
   },
   {
     "id": 8,
@@ -215,10 +194,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 9,
@@ -242,10 +218,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 10,
@@ -265,10 +238,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 11,
@@ -287,10 +257,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 12,
@@ -321,10 +288,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 13,
@@ -348,10 +312,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 14,
@@ -374,10 +335,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 15,
@@ -400,10 +358,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 16,
@@ -428,10 +383,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 17,
@@ -455,10 +407,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 18,
@@ -478,10 +427,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 19,
@@ -501,10 +447,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 20,
@@ -524,10 +467,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 21,
@@ -559,10 +499,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 22,
@@ -599,10 +536,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 23,
@@ -628,10 +562,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 24,
@@ -648,10 +579,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 25,
@@ -673,10 +601,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 26,
@@ -696,10 +621,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 27,
@@ -717,10 +639,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 28,
@@ -740,10 +659,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 29,
@@ -770,10 +686,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 30,
@@ -792,10 +705,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 31,
@@ -819,10 +729,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 32,
@@ -844,10 +751,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 33,
@@ -876,10 +780,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 34,
@@ -902,10 +803,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 35,
@@ -936,10 +834,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 36,
@@ -963,10 +858,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 37,
@@ -996,10 +888,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 38,
@@ -1015,10 +904,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 39,
@@ -1038,10 +924,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 40,
@@ -1062,10 +945,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 41,
@@ -1088,10 +968,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 42,
@@ -1113,10 +990,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 43,
@@ -1147,10 +1021,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 44,
@@ -1171,10 +1042,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 45,
@@ -1190,10 +1058,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 46,
@@ -1219,10 +1084,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 47,
@@ -1257,10 +1119,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 48,
@@ -1286,10 +1145,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 49,
@@ -1312,10 +1168,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 50,
@@ -1340,10 +1193,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 51,
@@ -1361,10 +1211,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 52,
@@ -1396,10 +1243,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 53,
@@ -1419,10 +1263,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 54,
@@ -1445,10 +1286,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 55,
@@ -1471,10 +1309,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 56,
@@ -1498,10 +1333,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 57,
@@ -1519,10 +1351,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 58,
@@ -1546,10 +1375,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 59,
@@ -1566,10 +1392,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 60,
@@ -1594,10 +1417,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 61,
@@ -1625,10 +1445,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 62,
@@ -1651,10 +1468,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 63,
@@ -1676,10 +1490,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 64,
@@ -1698,10 +1509,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 65,
@@ -1724,10 +1532,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 66,
@@ -1747,10 +1552,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 67,
@@ -1773,10 +1575,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 68,
@@ -1800,10 +1599,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 69,
@@ -1823,10 +1619,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 70,
@@ -1846,10 +1639,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 71,
@@ -1874,17 +1664,12 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 72,
     "title": "Microwave Corn On The Cob",
-    "ingredients": [
-      "1 ear corn, husked and cleaned"
-    ],
+    "ingredients": ["1 ear corn, husked and cleaned"],
     "steps": [
       "Remove husk and silk from ear of corn.",
       "Wet a paper towel, then wring it out so it's still moist. Wrap the moist towel around the ear of corn and place it on a microwave-safe plate.",
@@ -1894,10 +1679,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 73,
@@ -1916,10 +1698,7 @@
     "cuisine": "Fruits-And-Vegetables",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "fruits-and-vegetables",
-      "homemade"
-    ]
+    "tags": ["fruits-and-vegetables", "homemade"]
   },
   {
     "id": 74,
@@ -1946,10 +1725,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 75,
@@ -1976,10 +1752,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 76,
@@ -2011,10 +1784,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 77,
@@ -2037,10 +1807,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 78,
@@ -2062,10 +1829,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 79,
@@ -2102,10 +1866,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 80,
@@ -2134,10 +1895,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 81,
@@ -2162,10 +1920,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 82,
@@ -2188,10 +1943,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 83,
@@ -2211,10 +1963,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 84,
@@ -2236,10 +1985,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 85,
@@ -2264,10 +2010,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 86,
@@ -2291,10 +2034,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 87,
@@ -2317,10 +2057,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 88,
@@ -2341,10 +2078,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 89,
@@ -2364,18 +2098,12 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 90,
     "title": "Simple Syrup",
-    "ingredients": [
-      "1 cup white sugar",
-      "1 cup water"
-    ],
+    "ingredients": ["1 cup white sugar", "1 cup water"],
     "steps": [
       "Combine sugar and water in a medium saucepan over medium heat; bring to a boil, stirring, until sugar has dissolved. Allow to cool.",
       "Pour into a clean jar and seal with a tight-fitting lid; store in the refrigerator for up to one month."
@@ -2383,10 +2111,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 91,
@@ -2412,10 +2137,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 92,
@@ -2439,10 +2161,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 93,
@@ -2463,10 +2182,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 94,
@@ -2490,10 +2206,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 95,
@@ -2517,10 +2230,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 96,
@@ -2553,10 +2263,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 97,
@@ -2575,10 +2282,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 98,
@@ -2601,10 +2305,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 99,
@@ -2631,10 +2332,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 100,
@@ -2655,10 +2353,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 101,
@@ -2681,10 +2376,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 102,
@@ -2708,10 +2400,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 103,
@@ -2734,19 +2423,12 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 104,
     "title": "Three Ingredient Peanut Butter Cookies",
-    "ingredients": [
-      "1 cup peanut butter",
-      "1 cup white sugar",
-      "1  egg"
-    ],
+    "ingredients": ["1 cup peanut butter", "1 cup white sugar", "1  egg"],
     "steps": [
       "Preheat oven to 350 degrees F (175 degrees C). Line baking sheets with parchment paper.",
       "Combine the peanut butter, white sugar and egg. Mix until smooth.",
@@ -2755,10 +2437,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 105,
@@ -2784,10 +2463,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 106,
@@ -2814,10 +2490,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 107,
@@ -2841,10 +2514,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 108,
@@ -2863,10 +2533,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 109,
@@ -2889,10 +2556,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 110,
@@ -2918,10 +2582,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 111,
@@ -2949,10 +2610,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 112,
@@ -2974,10 +2632,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 113,
@@ -2999,10 +2654,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 114,
@@ -3020,10 +2672,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 115,
@@ -3049,10 +2698,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 116,
@@ -3074,10 +2720,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 117,
@@ -3100,10 +2743,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 118,
@@ -3122,10 +2762,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 119,
@@ -3146,10 +2783,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 120,
@@ -3171,10 +2805,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 121,
@@ -3195,10 +2826,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 122,
@@ -3218,10 +2846,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 123,
@@ -3242,10 +2867,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 124,
@@ -3274,10 +2896,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 125,
@@ -3298,10 +2917,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 126,
@@ -3328,10 +2944,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 127,
@@ -3357,10 +2970,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 128,
@@ -3379,10 +2989,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 129,
@@ -3405,10 +3012,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 130,
@@ -3430,10 +3034,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 131,
@@ -3453,10 +3054,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 132,
@@ -3476,19 +3074,12 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 133,
     "title": "Gnocchi I",
-    "ingredients": [
-      "2  potatoes",
-      "2 cups all-purpose flour",
-      "1  egg"
-    ],
+    "ingredients": ["2  potatoes", "2 cups all-purpose flour", "1  egg"],
     "steps": [
       "Bring a large pot of salted water to a boil. Peel potatoes and add to pot. Cook until tender but still firm, about 15 minutes. Drain, cool and mash with a fork or potato masher.",
       "Combine 1 cup mashed potato, flour and egg in a large bowl. Knead until dough forms a ball. Shape small portions of the dough into long \"snakes\". On a floured surface, cut snakes into half-inch pieces.",
@@ -3497,10 +3088,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 134,
@@ -3520,10 +3108,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 135,
@@ -3546,10 +3131,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 136,
@@ -3573,10 +3155,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 137,
@@ -3607,10 +3186,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 138,
@@ -3639,10 +3215,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 139,
@@ -3664,10 +3237,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 140,
@@ -3699,10 +3269,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 141,
@@ -3729,10 +3296,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 142,
@@ -3754,10 +3318,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 143,
@@ -3781,10 +3342,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 144,
@@ -3805,10 +3363,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 145,
@@ -3832,10 +3387,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 146,
@@ -3855,10 +3407,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 147,
@@ -3880,10 +3429,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 148,
@@ -3906,10 +3452,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 149,
@@ -3942,10 +3485,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 150,
@@ -3963,10 +3503,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 151,
@@ -3986,10 +3523,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 152,
@@ -4012,10 +3546,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 153,
@@ -4039,10 +3570,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 154,
@@ -4065,10 +3593,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 155,
@@ -4096,10 +3621,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 156,
@@ -4119,10 +3641,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 157,
@@ -4151,10 +3670,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 158,
@@ -4170,10 +3686,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 159,
@@ -4195,10 +3708,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 160,
@@ -4217,10 +3727,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 161,
@@ -4240,10 +3747,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 162,
@@ -4261,10 +3765,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 163,
@@ -4282,10 +3783,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 164,
@@ -4307,10 +3805,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 165,
@@ -4331,10 +3826,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 166,
@@ -4350,10 +3842,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 167,
@@ -4375,10 +3864,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 168,
@@ -4405,10 +3891,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 169,
@@ -4428,10 +3911,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 170,
@@ -4457,10 +3937,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 171,
@@ -4502,10 +3979,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 172,
@@ -4529,10 +4003,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 173,
@@ -4553,10 +4024,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 174,
@@ -4582,10 +4050,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 175,
@@ -4608,10 +4073,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 176,
@@ -4631,10 +4093,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 177,
@@ -4652,10 +4111,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 178,
@@ -4678,10 +4134,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 179,
@@ -4711,10 +4164,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 180,
@@ -4738,10 +4188,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 181,
@@ -4768,10 +4215,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 182,
@@ -4798,10 +4242,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 183,
@@ -4828,10 +4269,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 184,
@@ -4856,10 +4294,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 185,
@@ -4885,10 +4320,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 186,
@@ -4912,10 +4344,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 187,
@@ -4943,10 +4372,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 188,
@@ -4965,10 +4391,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 189,
@@ -4990,10 +4413,7 @@
     "cuisine": "Fruits-And-Vegetables",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "fruits-and-vegetables",
-      "homemade"
-    ]
+    "tags": ["fruits-and-vegetables", "homemade"]
   },
   {
     "id": 190,
@@ -5011,10 +4431,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 191,
@@ -5033,10 +4450,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 192,
@@ -5062,10 +4476,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 193,
@@ -5088,10 +4499,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 194,
@@ -5124,10 +4532,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 195,
@@ -5158,10 +4563,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 196,
@@ -5185,10 +4587,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 197,
@@ -5212,10 +4611,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 198,
@@ -5236,10 +4632,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 199,
@@ -5265,10 +4658,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 200,
@@ -5298,10 +4688,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 201,
@@ -5325,10 +4712,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 202,
@@ -5348,10 +4732,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 203,
@@ -5372,10 +4753,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 204,
@@ -5393,10 +4771,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 205,
@@ -5423,10 +4798,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 206,
@@ -5448,10 +4820,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 207,
@@ -5477,10 +4846,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 208,
@@ -5509,10 +4875,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 209,
@@ -5535,10 +4898,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 210,
@@ -5562,10 +4922,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 211,
@@ -5586,10 +4943,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 212,
@@ -5610,10 +4964,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 213,
@@ -5641,10 +4992,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 214,
@@ -5667,10 +5015,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 215,
@@ -5689,10 +5034,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 216,
@@ -5718,10 +5060,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 217,
@@ -5741,10 +5080,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 218,
@@ -5763,10 +5099,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 219,
@@ -5794,10 +5127,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 220,
@@ -5819,10 +5149,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 221,
@@ -5858,10 +5185,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 222,
@@ -5882,10 +5206,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 223,
@@ -5907,10 +5228,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 224,
@@ -5928,10 +5246,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 225,
@@ -5969,10 +5284,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 226,
@@ -5995,10 +5307,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 227,
@@ -6028,10 +5337,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 228,
@@ -6057,10 +5363,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 229,
@@ -6081,10 +5384,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 230,
@@ -6114,10 +5414,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 231,
@@ -6142,10 +5439,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 232,
@@ -6174,10 +5468,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 233,
@@ -6202,10 +5493,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 234,
@@ -6228,10 +5516,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 235,
@@ -6268,10 +5553,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 236,
@@ -6299,10 +5581,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 237,
@@ -6320,10 +5599,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 238,
@@ -6349,10 +5625,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 239,
@@ -6371,10 +5644,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 240,
@@ -6396,10 +5666,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 241,
@@ -6419,10 +5686,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 242,
@@ -6444,10 +5708,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 243,
@@ -6479,10 +5740,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 244,
@@ -6506,10 +5764,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 245,
@@ -6532,10 +5787,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 246,
@@ -6568,10 +5820,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 247,
@@ -6602,10 +5851,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 248,
@@ -6626,10 +5872,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 249,
@@ -6654,10 +5897,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 250,
@@ -6679,10 +5919,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 251,
@@ -6703,10 +5940,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 252,
@@ -6739,10 +5973,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 253,
@@ -6763,10 +5994,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 254,
@@ -6793,10 +6021,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 255,
@@ -6814,10 +6039,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 256,
@@ -6846,10 +6068,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 257,
@@ -6880,10 +6099,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 258,
@@ -6908,10 +6124,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 259,
@@ -6933,10 +6146,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 260,
@@ -6962,10 +6172,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 261,
@@ -6988,10 +6195,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 262,
@@ -7018,10 +6222,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 263,
@@ -7040,10 +6241,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 264,
@@ -7064,10 +6262,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 265,
@@ -7095,10 +6290,7 @@
     "cuisine": "Trusted-Brands-Recipes-And-Tips",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "trusted-brands-recipes-and-tips",
-      "homemade"
-    ]
+    "tags": ["trusted-brands-recipes-and-tips", "homemade"]
   },
   {
     "id": 266,
@@ -7118,10 +6310,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 267,
@@ -7152,10 +6341,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 268,
@@ -7176,10 +6362,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 269,
@@ -7204,10 +6387,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 270,
@@ -7228,10 +6408,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 271,
@@ -7264,10 +6441,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 272,
@@ -7291,10 +6465,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 273,
@@ -7313,10 +6484,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 274,
@@ -7341,10 +6509,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 275,
@@ -7375,10 +6540,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 276,
@@ -7406,10 +6568,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 277,
@@ -7447,19 +6606,12 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 278,
     "title": "3-Ingredient Peanut Butter Cookies",
-    "ingredients": [
-      "1 cup peanut butter",
-      "1 cup white sugar",
-      "1  egg"
-    ],
+    "ingredients": ["1 cup peanut butter", "1 cup white sugar", "1  egg"],
     "steps": [
       "Preheat the oven to 350 degrees F (175 degrees C).",
       "Mix peanut butter, sugar, and egg together in a bowl using an electric mixer until smooth and creamy. Roll mixture into 1-inch balls and place 1 inch apart on an ungreased baking sheet; flatten each with a fork, making a criss-cross pattern.",
@@ -7468,10 +6620,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 279,
@@ -7494,10 +6643,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 280,
@@ -7523,10 +6669,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 281,
@@ -7556,10 +6699,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 282,
@@ -7577,10 +6717,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 283,
@@ -7602,10 +6739,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 284,
@@ -7632,10 +6766,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 285,
@@ -7656,10 +6787,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 286,
@@ -7685,10 +6813,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 287,
@@ -7711,10 +6836,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 288,
@@ -7740,10 +6862,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 289,
@@ -7763,10 +6882,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 290,
@@ -7792,10 +6908,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 291,
@@ -7819,10 +6932,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 292,
@@ -7841,10 +6951,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 293,
@@ -7872,10 +6979,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 294,
@@ -7898,10 +7002,7 @@
     "cuisine": "Fruits-And-Vegetables",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "fruits-and-vegetables",
-      "homemade"
-    ]
+    "tags": ["fruits-and-vegetables", "homemade"]
   },
   {
     "id": 295,
@@ -7927,10 +7028,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 296,
@@ -7951,10 +7049,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 297,
@@ -7980,10 +7075,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 298,
@@ -8005,10 +7097,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 299,
@@ -8039,10 +7128,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 300,
@@ -8063,10 +7149,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 301,
@@ -8088,10 +7171,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 302,
@@ -8113,10 +7193,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 303,
@@ -8137,10 +7214,7 @@
     "cuisine": "Fruits-And-Vegetables",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "fruits-and-vegetables",
-      "homemade"
-    ]
+    "tags": ["fruits-and-vegetables", "homemade"]
   },
   {
     "id": 304,
@@ -8166,10 +7240,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 305,
@@ -8190,10 +7261,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 306,
@@ -8220,10 +7288,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 307,
@@ -8246,10 +7311,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 308,
@@ -8290,10 +7352,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 309,
@@ -8330,10 +7389,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 310,
@@ -8356,10 +7412,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 311,
@@ -8388,10 +7441,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 312,
@@ -8419,10 +7469,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 313,
@@ -8444,10 +7491,7 @@
     "cuisine": "Pasta-And-Noodles",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "pasta-and-noodles",
-      "homemade"
-    ]
+    "tags": ["pasta-and-noodles", "homemade"]
   },
   {
     "id": 314,
@@ -8470,10 +7514,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 315,
@@ -8503,10 +7544,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 316,
@@ -8530,10 +7568,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 317,
@@ -8557,10 +7592,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 318,
@@ -8590,10 +7622,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 319,
@@ -8623,10 +7652,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 320,
@@ -8655,10 +7681,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 321,
@@ -8680,10 +7703,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 322,
@@ -8710,10 +7730,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 323,
@@ -8737,10 +7754,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 324,
@@ -8766,10 +7780,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 325,
@@ -8795,10 +7806,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 326,
@@ -8826,10 +7834,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 327,
@@ -8855,10 +7860,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 328,
@@ -8881,10 +7883,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 329,
@@ -8905,10 +7904,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 330,
@@ -8937,10 +7933,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 331,
@@ -8961,10 +7954,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 332,
@@ -8988,10 +7978,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 333,
@@ -9009,10 +7996,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 334,
@@ -9035,10 +8019,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 335,
@@ -9062,10 +8043,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 336,
@@ -9091,10 +8069,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 337,
@@ -9113,10 +8088,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 338,
@@ -9145,10 +8117,7 @@
     "cuisine": "Pasta-And-Noodles",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "pasta-and-noodles",
-      "homemade"
-    ]
+    "tags": ["pasta-and-noodles", "homemade"]
   },
   {
     "id": 339,
@@ -9167,10 +8136,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 340,
@@ -9196,10 +8162,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 341,
@@ -9227,10 +8190,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 342,
@@ -9252,10 +8212,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 343,
@@ -9278,10 +8235,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 344,
@@ -9301,10 +8255,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 345,
@@ -9331,10 +8282,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 346,
@@ -9362,10 +8310,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 347,
@@ -9405,10 +8350,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 348,
@@ -9439,18 +8381,12 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 349,
     "title": "Basic Air Fryer Hot Dogs",
-    "ingredients": [
-      "4  hot dog buns",
-      "4  hot dogs"
-    ],
+    "ingredients": ["4  hot dog buns", "4  hot dogs"],
     "steps": [
       "Preheat an air fryer to 400 degrees F (200 degrees C).",
       "Place buns in a single layer in the air fryer basket; cook in the preheated air fryer until crisp, about 2 minutes. Remove buns to a plate.",
@@ -9459,10 +8395,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 350,
@@ -9488,10 +8421,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 351,
@@ -9517,10 +8447,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 352,
@@ -9543,10 +8470,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 353,
@@ -9576,10 +8500,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 354,
@@ -9610,10 +8531,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 355,
@@ -9646,10 +8564,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 356,
@@ -9678,10 +8593,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 357,
@@ -9716,10 +8628,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 358,
@@ -9744,10 +8653,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 359,
@@ -9774,10 +8680,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 360,
@@ -9804,10 +8707,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 361,
@@ -9833,10 +8733,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 362,
@@ -9864,10 +8761,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 363,
@@ -9897,10 +8791,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 364,
@@ -9927,10 +8818,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 365,
@@ -9955,10 +8843,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 366,
@@ -9981,10 +8866,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 367,
@@ -10008,10 +8890,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 368,
@@ -10031,10 +8910,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 369,
@@ -10061,10 +8937,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 370,
@@ -10088,10 +8961,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 371,
@@ -10118,10 +8988,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 372,
@@ -10147,10 +9014,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 373,
@@ -10183,10 +9047,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 374,
@@ -10204,10 +9065,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 375,
@@ -10222,10 +9080,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 376,
@@ -10250,10 +9105,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 377,
@@ -10277,10 +9129,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 378,
@@ -10303,10 +9152,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 379,
@@ -10333,10 +9179,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 380,
@@ -10357,10 +9200,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 381,
@@ -10379,10 +9219,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 382,
@@ -10409,10 +9246,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 383,
@@ -10433,10 +9267,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 384,
@@ -10464,10 +9295,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 385,
@@ -10491,10 +9319,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 386,
@@ -10524,10 +9349,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 387,
@@ -10554,10 +9376,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 388,
@@ -10577,10 +9396,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 389,
@@ -10602,10 +9418,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 390,
@@ -10642,10 +9455,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 391,
@@ -10675,10 +9485,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 392,
@@ -10709,10 +9516,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 393,
@@ -10747,10 +9551,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 394,
@@ -10777,10 +9578,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 395,
@@ -10811,10 +9609,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 396,
@@ -10836,10 +9631,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 397,
@@ -10863,10 +9655,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 398,
@@ -10895,10 +9684,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 399,
@@ -10923,10 +9709,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 400,
@@ -10956,10 +9739,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 401,
@@ -10982,10 +9762,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 402,
@@ -11009,10 +9786,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 403,
@@ -11036,10 +9810,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 404,
@@ -11070,10 +9841,7 @@
     "cuisine": "Trusted-Brands-Recipes-And-Tips",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "trusted-brands-recipes-and-tips",
-      "homemade"
-    ]
+    "tags": ["trusted-brands-recipes-and-tips", "homemade"]
   },
   {
     "id": 405,
@@ -11100,10 +9868,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 406,
@@ -11122,10 +9887,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 407,
@@ -11143,10 +9905,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 408,
@@ -11176,10 +9935,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 409,
@@ -11208,10 +9964,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 410,
@@ -11235,10 +9988,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 411,
@@ -11265,10 +10015,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 412,
@@ -11292,10 +10039,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 413,
@@ -11316,10 +10060,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 414,
@@ -11347,10 +10088,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 415,
@@ -11369,10 +10107,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 416,
@@ -11395,10 +10130,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 417,
@@ -11423,10 +10155,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 418,
@@ -11446,10 +10175,7 @@
     "cuisine": "Drinks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "drinks",
-      "homemade"
-    ]
+    "tags": ["drinks", "homemade"]
   },
   {
     "id": 419,
@@ -11469,10 +10195,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 420,
@@ -11498,10 +10221,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 421,
@@ -11528,10 +10248,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 422,
@@ -11550,10 +10267,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 423,
@@ -11579,10 +10293,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 424,
@@ -11604,10 +10315,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 425,
@@ -11633,10 +10341,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 426,
@@ -11658,10 +10363,7 @@
     "cuisine": "Pasta-And-Noodles",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "pasta-and-noodles",
-      "homemade"
-    ]
+    "tags": ["pasta-and-noodles", "homemade"]
   },
   {
     "id": 427,
@@ -11680,10 +10382,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 428,
@@ -11707,10 +10406,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 429,
@@ -11737,10 +10433,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 430,
@@ -11767,10 +10460,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 431,
@@ -11799,10 +10489,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 432,
@@ -11827,10 +10514,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 433,
@@ -11866,10 +10550,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 434,
@@ -11912,10 +10593,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 435,
@@ -11935,10 +10613,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 436,
@@ -11975,10 +10650,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 437,
@@ -12000,10 +10672,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 438,
@@ -12022,10 +10691,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 439,
@@ -12051,10 +10717,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 440,
@@ -12073,10 +10736,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 441,
@@ -12099,10 +10759,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 442,
@@ -12139,10 +10796,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 443,
@@ -12160,10 +10814,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 444,
@@ -12192,10 +10843,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 445,
@@ -12229,10 +10877,7 @@
     "cuisine": "Salad",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "salad",
-      "homemade"
-    ]
+    "tags": ["salad", "homemade"]
   },
   {
     "id": 446,
@@ -12255,10 +10900,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 447,
@@ -12284,10 +10926,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 448,
@@ -12305,10 +10944,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 449,
@@ -12334,10 +10970,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 450,
@@ -12355,10 +10988,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 451,
@@ -12381,10 +11011,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 452,
@@ -12412,10 +11039,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 453,
@@ -12440,10 +11064,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 454,
@@ -12469,10 +11090,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 455,
@@ -12493,10 +11111,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 456,
@@ -12516,10 +11131,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 457,
@@ -12543,10 +11155,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 458,
@@ -12565,10 +11174,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 459,
@@ -12598,10 +11204,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 460,
@@ -12620,10 +11223,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 461,
@@ -12650,10 +11250,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 462,
@@ -12678,10 +11275,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 463,
@@ -12711,10 +11305,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 464,
@@ -12735,10 +11326,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 465,
@@ -12762,10 +11350,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 466,
@@ -12796,10 +11381,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 467,
@@ -12822,10 +11404,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 468,
@@ -12846,10 +11425,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 469,
@@ -12871,10 +11447,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 470,
@@ -12893,10 +11466,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 471,
@@ -12934,10 +11504,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 472,
@@ -12957,10 +11524,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 473,
@@ -12980,10 +11544,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 474,
@@ -13006,10 +11567,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 475,
@@ -13036,10 +11594,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 476,
@@ -13065,10 +11620,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 477,
@@ -13086,10 +11638,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 478,
@@ -13109,10 +11658,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 479,
@@ -13140,10 +11686,7 @@
     "cuisine": "Bread",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "bread",
-      "homemade"
-    ]
+    "tags": ["bread", "homemade"]
   },
   {
     "id": 480,
@@ -13167,10 +11710,7 @@
     "cuisine": "Fruits-And-Vegetables",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "fruits-and-vegetables",
-      "homemade"
-    ]
+    "tags": ["fruits-and-vegetables", "homemade"]
   },
   {
     "id": 481,
@@ -13199,10 +11739,7 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   },
   {
     "id": 482,
@@ -13221,10 +11758,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 483,
@@ -13257,10 +11791,7 @@
     "cuisine": "Soups-Stews-And-Chili",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "soups-stews-and-chili",
-      "homemade"
-    ]
+    "tags": ["soups-stews-and-chili", "homemade"]
   },
   {
     "id": 484,
@@ -13289,10 +11820,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 485,
@@ -13312,10 +11840,7 @@
     "cuisine": "Desserts",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "desserts",
-      "homemade"
-    ]
+    "tags": ["desserts", "homemade"]
   },
   {
     "id": 486,
@@ -13332,10 +11857,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 487,
@@ -13357,10 +11879,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 488,
@@ -13378,10 +11897,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 489,
@@ -13408,10 +11924,7 @@
     "cuisine": "Appetizers-And-Snacks",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "appetizers-and-snacks",
-      "homemade"
-    ]
+    "tags": ["appetizers-and-snacks", "homemade"]
   },
   {
     "id": 490,
@@ -13437,10 +11950,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 491,
@@ -13468,10 +11978,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 492,
@@ -13493,10 +12000,7 @@
     "cuisine": "Fruits-And-Vegetables",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "fruits-and-vegetables",
-      "homemade"
-    ]
+    "tags": ["fruits-and-vegetables", "homemade"]
   },
   {
     "id": 493,
@@ -13525,10 +12029,7 @@
     "cuisine": "Breakfast-And-Brunch",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "breakfast-and-brunch",
-      "homemade"
-    ]
+    "tags": ["breakfast-and-brunch", "homemade"]
   },
   {
     "id": 494,
@@ -13550,10 +12051,7 @@
     "cuisine": "Everyday-Cooking",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "everyday-cooking",
-      "homemade"
-    ]
+    "tags": ["everyday-cooking", "homemade"]
   },
   {
     "id": 495,
@@ -13577,10 +12075,7 @@
     "cuisine": "Main-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "main-dish",
-      "homemade"
-    ]
+    "tags": ["main-dish", "homemade"]
   },
   {
     "id": 496,
@@ -13604,10 +12099,7 @@
     "cuisine": "Seafood",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "seafood",
-      "homemade"
-    ]
+    "tags": ["seafood", "homemade"]
   },
   {
     "id": 497,
@@ -13631,10 +12123,7 @@
     "cuisine": "Meat-And-Poultry",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "meat-and-poultry",
-      "homemade"
-    ]
+    "tags": ["meat-and-poultry", "homemade"]
   },
   {
     "id": 498,
@@ -13670,10 +12159,7 @@
     "cuisine": "Uncategorized",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "uncategorized",
-      "homemade"
-    ]
+    "tags": ["uncategorized", "homemade"]
   },
   {
     "id": 499,
@@ -13696,10 +12182,7 @@
     "cuisine": "Side-Dish",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "side-dish",
-      "homemade"
-    ]
+    "tags": ["side-dish", "homemade"]
   },
   {
     "id": 500,
@@ -13738,9 +12221,6 @@
     "cuisine": "World-Cuisine",
     "difficulty": "Medium",
     "time_minutes": 30,
-    "tags": [
-      "world-cuisine",
-      "homemade"
-    ]
+    "tags": ["world-cuisine", "homemade"]
   }
 ]

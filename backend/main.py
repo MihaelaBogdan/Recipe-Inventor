@@ -2,6 +2,8 @@
 main.py — FastAPI backend v3 (Agentic RAG)
 """
 import os, sys, random
+
+
 sys.path.insert(0, os.path.dirname(__file__))
 
 from fastapi import FastAPI, HTTPException, Query, UploadFile, File
@@ -15,7 +17,8 @@ from data_loader import load_recipes, get_unique_cuisines, get_unique_difficulti
 from rag_engine import RecipeRAGEngine
 from deterministic_agent import DeterministicAgent
 from recipe_generator import invent_recipes
-from chatbot import RecipeChatbot
+from chatbot_llm import RecipeChatbotLLM
+from llm_engine_local import LLMEngineLocal
 from object_detector import DETECTOR
 from hnsw_simulator import HNSWSimulator
 
@@ -36,7 +39,13 @@ print("Loading recipe database...")
 ALL_RECIPES = load_recipes()
 ENGINE = RecipeRAGEngine(ALL_RECIPES)
 AGENT = DeterministicAgent(ENGINE)
-CHATBOT = RecipeChatbot(ENGINE, AGENT)
+LLM = LLMEngineLocal()
+
+
+
+CHATBOT_LLM = RecipeChatbotLLM(ENGINE, AGENT, LLM)
+
+
 
 # Build embeddings map for HNSW simulator
 print("Building embeddings map for HNSW visualization...")
@@ -57,6 +66,7 @@ for id, emb in zip(ids, embeddings):
 HNSW_SIMULATOR = HNSWSimulator(ALL_RECIPES, EMBEDDINGS_MAP, ENGINE.encoder)
 ENGINE.hnsw_simulator = HNSW_SIMULATOR
 print(f"API v3 ready — {len(ALL_RECIPES)} recipes indexed. HNSW simulator initialized.")
+print("CHROMA COUNT:", ENGINE.collection.count())
 
 class InventRequest(BaseModel):
     ingredients: list[str]
@@ -75,6 +85,7 @@ class ChatRequest(BaseModel):
 
 @app.get("/api/stats")
 def get_stats():
+    
     return {
         "recipes": len(ALL_RECIPES),
         "total_recipes": len(ALL_RECIPES), # Support frontend names
@@ -84,6 +95,21 @@ def get_stats():
         "avg_ingredients": 7,
         "version": "3.0.0 (Agentic RAG)"
     }
+
+@app.get("/debug")
+def debug():
+    return {
+        "engine_id": id(ENGINE),
+        "count": len(ALL_RECIPES)
+    }
+
+@app.get("/debug-search")
+def debug_search():
+    return ENGINE.retrieve_custom(
+        query="chicken pasta",
+        method="hybrid",
+        top_k=5
+    )
 
 @app.get("/api/cuisines")
 def get_cuisines():
@@ -99,14 +125,10 @@ def chat(req: ChatRequest):
     if not cleaned:
         raise HTTPException(status_code=400, detail="Mesajul nu poate fi gol.")
     
-    bot_res = CHATBOT.respond(cleaned)
-    # Register any invented recipes in the engine/HNSW simulator
-    if "recipes" in bot_res and isinstance(bot_res["recipes"], list):
-        for r in bot_res["recipes"]:
-            ENGINE.register_recipe(r)
-    if "recipe" in bot_res and isinstance(bot_res["recipe"], dict):
-        ENGINE.register_recipe(bot_res["recipe"])
-    return bot_res
+    bot_res = CHATBOT_LLM.respond(cleaned)
+    return {
+        "response": bot_res
+    }
 
 @app.post("/api/invent")
 def invent(req: InventRequest):
